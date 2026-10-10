@@ -1,0 +1,916 @@
+{
+  "generated_at": "2026-10-10T09:06:15+00:00",
+  "method": {
+    "endpoint": "POST /api/complaints/voice (real route, routers/complaints.py)",
+    "server": "bench/instrumented_server.py: uvicorn, 1 worker, no reload, temp SQLite DB, repo-default settings",
+    "client": "httpx sync client on the same machine (loopback)",
+    "iterations_per_clip": 3,
+    "fixtures": "bench/fixtures/manifest.json (ALL SYNTHETIC English TTS)",
+    "stage_definitions": {
+      "upload_s": "receive_parse_s + save_s (server-side: body receive + multipart parse + write to temp file)",
+      "preprocess_s": "validate_and_convert_audio: ffmpeg to 16 kHz mono WAV + duration + silence checks",
+      "stt_s": "ai_pipeline.transcribe_audio_detailed (openai-whisper)",
+      "llm_s": "ai_pipeline._call_ollama_llm (Ollama chat, up to 2 attempts)",
+      "rules_s": "parse_complaint_text minus llm_s (rule engine + rate lookup)",
+      "db_write_s": "AsyncSession.commit + AsyncSession.refresh",
+      "server_total_s": "ASGI entry to last response byte (server-side)",
+      "client_minus_server_s": "client wall time minus server_total_s (loopback transfer + client overhead)"
+    },
+    "stats": "median/p95 are linear-interpolated percentiles; with n=3 p95 is close to max"
+  },
+  "host": {
+    "python": "3.14.7",
+    "python_executable": "C:\\Users\\muham\\AppData\\Local\\Temp\\awaaz_baseline_venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "ffmpeg_shim_main_run": {
+    "enabled": true,
+    "dir": "C:\\Users\\muham\\AppData\\Local\\Temp\\awaaz_bench_dv9hjiz9\\ffmpeg_shim",
+    "source": "C:\\Users\\muham\\AppData\\Local\\Temp\\awaaz_baseline_venv\\Lib\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe",
+    "method": "hardlink"
+  },
+  "as_is_without_ffmpeg_on_path": {
+    "ffmpeg_shim": {
+      "enabled": false,
+      "reason": "disabled (as-is environment run)",
+      "ffmpeg_on_path": null
+    },
+    "requests": [
+      {
+        "bench_id": "bb4153402ca84d3bb9949f1380054931",
+        "fixture": "synthetic_en_10s",
+        "status": 400,
+        "client_total_s": 0.1187,
+        "error": null,
+        "response_excerpt": "{\"detail\":\"No audible speech detected. The audio file was silent or contained unrecognised background noise.\"}",
+        "receive_parse_s": 0.0043,
+        "server_total_s": 0.108,
+        "rules_s": null,
+        "parse_total_s": null,
+        "save_s": 0.0,
+        "preprocess_s": 0.0903,
+        "stt_s": 0.0117,
+        "stt_text": "",
+        "stt_language": "ur",
+        "stt_confidence_proxy": 0.0,
+        "stt_error": "[WinError 2] The system cannot find the file specified",
+        "upload_s": 0.0043,
+        "client_minus_server_s": 0.0107,
+        "stt_real_time_factor": 0.001
+      },
+      {
+        "bench_id": "c581ca45612345039f957a202c265059",
+        "fixture": "synthetic_en_30s",
+        "status": 400,
+        "client_total_s": 0.1368,
+        "error": null,
+        "response_excerpt": "{\"detail\":\"No audible speech detected. The audio file was silent or contained unrecognised background noise.\"}",
+        "receive_parse_s": 0.0014,
+        "server_total_s": 0.1358,
+        "rules_s": null,
+        "parse_total_s": null,
+        "save_s": 0.0,
+        "preprocess_s": 0.1239,
+        "stt_s": 0.0088,
+        "stt_text": "",
+        "stt_language": "ur",
+        "stt_confidence_proxy": 0.0,
+        "stt_error": "[WinError 2] The system cannot find the file specified",
+        "upload_s": 0.0014,
+        "client_minus_server_s": 0.001,
+        "stt_real_time_factor": 0.0
+      },
+      {
+        "bench_id": "ce067d01a8d34c2492e588ef118d774b",
+        "fixture": "synthetic_en_60s",
+        "status": 400,
+        "client_total_s": 0.1869,
+        "error": null,
+        "response_excerpt": "{\"detail\":\"No audible speech detected. The audio file was silent or contained unrecognised background noise.\"}",
+        "receive_parse_s": 0.0017,
+        "server_total_s": 0.1856,
+        "rules_s": null,
+        "parse_total_s": null,
+        "save_s": 0.0002,
+        "preprocess_s": 0.1734,
+        "stt_s": 0.0087,
+        "stt_text": "",
+        "stt_language": "ur",
+        "stt_confidence_proxy": 0.0,
+        "stt_error": "[WinError 2] The system cannot find the file specified",
+        "upload_s": 0.0019,
+        "client_minus_server_s": 0.0013,
+        "stt_real_time_factor": 0.0
+      }
+    ]
+  },
+  "server_startup_wall_s": 6.085,
+  "model_load_events": [
+    {
+      "type": "whisper_load_model",
+      "phase": "startup",
+      "duration_s": 0.723,
+      "in_request": false,
+      "args": [
+        "base"
+      ],
+      "kwargs": {
+        "device": "cpu"
+      },
+      "wall_time": 1791623068.365953
+    },
+    {
+      "type": "pipeline_initialize",
+      "duration_s": 2.797,
+      "whisper_loaded": true,
+      "ollama_available": true,
+      "wall_time": 1791623070.4401293
+    }
+  ],
+  "whisper_loads_during_requests": 0,
+  "cold_first_request": {
+    "bench_id": "c232e71cbb29426b9ac7c61501ffa214",
+    "fixture": "synthetic_en_10s",
+    "status": 201,
+    "client_total_s": 8.2367,
+    "error": null,
+    "response_excerpt": "{\"id\":\"fb5f6d19-386c-4cee-9847-e65244bb1e16\",\"created_at\":\"2026-10-10T09:04:43.958791\",\"audio_filename\":\"synthetic_en_10s.ogg\",\"audio_duration_seconds\":10.0,\"transcript_raw\":\"The potato vendor in G-9 Markaz is charging 200 rupees per kilo. Please take action quickly.\",\"detected_language\":\"English\",\"category\":\"PERA - Overpricing\",\"urgency\":\"High\",\"status\":\"Pending\",\"extraction_confidence\":0.85,\"nee",
+    "phase": "cold",
+    "receive_parse_s": 0.004,
+    "server_total_s": 8.2362,
+    "rules_s": 0.0037,
+    "parse_total_s": 5.9305,
+    "save_s": 0.0,
+    "preprocess_s": 0.0912,
+    "stt_s": 2.1849,
+    "stt_text": "The potato vendor in G-9 Markaz is charging 200 rupees per kilo. Please take action quickly.",
+    "stt_language": "en",
+    "stt_confidence_proxy": 1.0,
+    "stt_error": null,
+    "ollama_calls": [
+      {
+        "duration_s": 5.927,
+        "load_duration_s": 0.03,
+        "prompt_eval_s": 0.107,
+        "eval_s": 3.766,
+        "total_duration_s": 3.915,
+        "prompt_eval_count": 963,
+        "eval_count": 71
+      }
+    ],
+    "llm_s": 5.9269,
+    "llm_returned_json": true,
+    "category": "PERA - Overpricing",
+    "urgency": "High",
+    "needs_review": false,
+    "extraction_confidence": 0.85,
+    "db_write_s": 0.017,
+    "upload_s": 0.004,
+    "client_minus_server_s": 0.0005,
+    "stt_real_time_factor": 0.218
+  },
+  "per_clip": {
+    "synthetic_en_10s": {
+      "audio_duration_s": 10.0,
+      "upload_bytes": 32629,
+      "n": 3,
+      "status_codes": [
+        "201"
+      ],
+      "llm_returned_json_count": 3,
+      "stages": {
+        "upload_s": {
+          "n": 3,
+          "min": 0.0017,
+          "median": 0.0019,
+          "p95": 0.002,
+          "max": 0.002,
+          "mean": 0.0019
+        },
+        "receive_parse_s": {
+          "n": 3,
+          "min": 0.0017,
+          "median": 0.0019,
+          "p95": 0.002,
+          "max": 0.002,
+          "mean": 0.0019
+        },
+        "save_s": {
+          "n": 3,
+          "min": 0.0,
+          "median": 0.0,
+          "p95": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "preprocess_s": {
+          "n": 3,
+          "min": 0.1235,
+          "median": 0.1562,
+          "p95": 0.1589,
+          "max": 0.1592,
+          "mean": 0.1463
+        },
+        "stt_s": {
+          "n": 3,
+          "min": 1.8433,
+          "median": 2.0568,
+          "p95": 2.0734,
+          "max": 2.0752,
+          "mean": 1.9918
+        },
+        "llm_s": {
+          "n": 3,
+          "min": 3.4111,
+          "median": 3.7309,
+          "p95": 3.8501,
+          "max": 3.8633,
+          "mean": 3.6684
+        },
+        "rules_s": {
+          "n": 3,
+          "min": 0.0004,
+          "median": 0.0006,
+          "p95": 0.0007,
+          "max": 0.0007,
+          "mean": 0.0006
+        },
+        "db_write_s": {
+          "n": 3,
+          "min": 0.0084,
+          "median": 0.0106,
+          "p95": 0.0108,
+          "max": 0.0108,
+          "mean": 0.0099
+        },
+        "server_total_s": {
+          "n": 3,
+          "min": 5.3916,
+          "median": 5.9791,
+          "p95": 6.0845,
+          "max": 6.0962,
+          "mean": 5.8223
+        },
+        "client_total_s": {
+          "n": 3,
+          "min": 5.3918,
+          "median": 5.9811,
+          "p95": 6.0855,
+          "max": 6.0971,
+          "mean": 5.8233
+        },
+        "client_minus_server_s": {
+          "n": 3,
+          "min": 0.0002,
+          "median": 0.0009,
+          "p95": 0.0019,
+          "max": 0.002,
+          "mean": 0.001
+        }
+      },
+      "stt_real_time_factor": {
+        "n": 3,
+        "min": 0.184,
+        "median": 0.206,
+        "p95": 0.208,
+        "max": 0.208,
+        "mean": 0.199
+      }
+    },
+    "synthetic_en_30s": {
+      "audio_duration_s": 30.0,
+      "upload_bytes": 105071,
+      "n": 3,
+      "status_codes": [
+        "201"
+      ],
+      "llm_returned_json_count": 3,
+      "stages": {
+        "upload_s": {
+          "n": 3,
+          "min": 0.0016,
+          "median": 0.0019,
+          "p95": 0.0021,
+          "max": 0.0021,
+          "mean": 0.0019
+        },
+        "receive_parse_s": {
+          "n": 3,
+          "min": 0.0016,
+          "median": 0.0018,
+          "p95": 0.0021,
+          "max": 0.0021,
+          "mean": 0.0018
+        },
+        "save_s": {
+          "n": 3,
+          "min": 0.0,
+          "median": 0.0,
+          "p95": 0.0001,
+          "max": 0.0001,
+          "mean": 0.0
+        },
+        "preprocess_s": {
+          "n": 3,
+          "min": 0.161,
+          "median": 0.17,
+          "p95": 0.1814,
+          "max": 0.1827,
+          "mean": 0.1712
+        },
+        "stt_s": {
+          "n": 3,
+          "min": 3.6353,
+          "median": 3.7207,
+          "p95": 3.7671,
+          "max": 3.7723,
+          "mean": 3.7094
+        },
+        "llm_s": {
+          "n": 3,
+          "min": 3.6872,
+          "median": 3.7537,
+          "p95": 4.5701,
+          "max": 4.6608,
+          "mean": 4.0339
+        },
+        "rules_s": {
+          "n": 3,
+          "min": 0.0009,
+          "median": 0.0009,
+          "p95": 0.0013,
+          "max": 0.0013,
+          "mean": 0.001
+        },
+        "db_write_s": {
+          "n": 3,
+          "min": 0.0075,
+          "median": 0.008,
+          "p95": 0.0084,
+          "max": 0.0084,
+          "mean": 0.008
+        },
+        "server_total_s": {
+          "n": 3,
+          "min": 7.5829,
+          "median": 7.7229,
+          "p95": 8.4043,
+          "max": 8.48,
+          "mean": 7.9286
+        },
+        "client_total_s": {
+          "n": 3,
+          "min": 7.5835,
+          "median": 7.7233,
+          "p95": 8.4049,
+          "max": 8.4806,
+          "mean": 7.9291
+        },
+        "client_minus_server_s": {
+          "n": 3,
+          "min": 0.0004,
+          "median": 0.0006,
+          "p95": 0.0006,
+          "max": 0.0006,
+          "mean": 0.0005
+        }
+      },
+      "stt_real_time_factor": {
+        "n": 3,
+        "min": 0.121,
+        "median": 0.124,
+        "p95": 0.126,
+        "max": 0.126,
+        "mean": 0.124
+      }
+    },
+    "synthetic_en_60s": {
+      "audio_duration_s": 60.0,
+      "upload_bytes": 211691,
+      "n": 3,
+      "status_codes": [
+        "201"
+      ],
+      "llm_returned_json_count": 3,
+      "stages": {
+        "upload_s": {
+          "n": 3,
+          "min": 0.0022,
+          "median": 0.0023,
+          "p95": 0.0025,
+          "max": 0.0025,
+          "mean": 0.0023
+        },
+        "receive_parse_s": {
+          "n": 3,
+          "min": 0.002,
+          "median": 0.0021,
+          "p95": 0.0023,
+          "max": 0.0023,
+          "mean": 0.0021
+        },
+        "save_s": {
+          "n": 3,
+          "min": 0.0002,
+          "median": 0.0002,
+          "p95": 0.0002,
+          "max": 0.0002,
+          "mean": 0.0002
+        },
+        "preprocess_s": {
+          "n": 3,
+          "min": 0.2224,
+          "median": 0.2232,
+          "p95": 0.2363,
+          "max": 0.2378,
+          "mean": 0.2278
+        },
+        "stt_s": {
+          "n": 3,
+          "min": 6.3271,
+          "median": 6.3639,
+          "p95": 6.6185,
+          "max": 6.6468,
+          "mean": 6.4459
+        },
+        "llm_s": {
+          "n": 3,
+          "min": 5.7716,
+          "median": 7.4387,
+          "p95": 13.4849,
+          "max": 14.1567,
+          "mean": 9.1223
+        },
+        "rules_s": {
+          "n": 3,
+          "min": 0.0012,
+          "median": 0.0013,
+          "p95": 0.0015,
+          "max": 0.0015,
+          "mean": 0.0013
+        },
+        "db_write_s": {
+          "n": 3,
+          "min": 0.0078,
+          "median": 0.008,
+          "p95": 0.0092,
+          "max": 0.0093,
+          "mean": 0.0084
+        },
+        "server_total_s": {
+          "n": 3,
+          "min": 12.3731,
+          "median": 14.3233,
+          "p95": 20.0964,
+          "max": 20.7379,
+          "mean": 15.8114
+        },
+        "client_total_s": {
+          "n": 3,
+          "min": 12.3732,
+          "median": 14.3239,
+          "p95": 20.097,
+          "max": 20.7385,
+          "mean": 15.8119
+        },
+        "client_minus_server_s": {
+          "n": 3,
+          "min": 0.0001,
+          "median": 0.0006,
+          "p95": 0.0006,
+          "max": 0.0006,
+          "mean": 0.0004
+        }
+      },
+      "stt_real_time_factor": {
+        "n": 3,
+        "min": 0.105,
+        "median": 0.106,
+        "p95": 0.111,
+        "max": 0.111,
+        "mean": 0.107
+      }
+    }
+  },
+  "requests": [
+    {
+      "bench_id": "c232e71cbb29426b9ac7c61501ffa214",
+      "fixture": "synthetic_en_10s",
+      "status": 201,
+      "client_total_s": 8.2367,
+      "error": null,
+      "response_excerpt": "{\"id\":\"fb5f6d19-386c-4cee-9847-e65244bb1e16\",\"created_at\":\"2026-10-10T09:04:43.958791\",\"audio_filename\":\"synthetic_en_10s.ogg\",\"audio_duration_seconds\":10.0,\"transcript_raw\":\"The potato vendor in G-9 Markaz is charging 200 rupees per kilo. Please take action quickly.\",\"detected_language\":\"English\",\"category\":\"PERA - Overpricing\",\"urgency\":\"High\",\"status\":\"Pending\",\"extraction_confidence\":0.85,\"nee",
+      "phase": "cold",
+      "receive_parse_s": 0.004,
+      "server_total_s": 8.2362,
+      "rules_s": 0.0037,
+      "parse_total_s": 5.9305,
+      "save_s": 0.0,
+      "preprocess_s": 0.0912,
+      "stt_s": 2.1849,
+      "stt_text": "The potato vendor in G-9 Markaz is charging 200 rupees per kilo. Please take action quickly.",
+      "stt_language": "en",
+      "stt_confidence_proxy": 1.0,
+      "stt_error": null,
+      "ollama_calls": [
+        {
+          "duration_s": 5.927,
+          "load_duration_s": 0.03,
+          "prompt_eval_s": 0.107,
+          "eval_s": 3.766,
+          "total_duration_s": 3.915,
+          "prompt_eval_count": 963,
+          "eval_count": 71
+        }
+      ],
+      "llm_s": 5.9269,
+      "llm_returned_json": true,
+      "category": "PERA - Overpricing",
+      "urgency": "High",
+      "needs_review": false,
+      "extraction_confidence": 0.85,
+      "db_write_s": 0.017,
+      "upload_s": 0.004,
+      "client_minus_server_s": 0.0005,
+      "stt_real_time_factor": 0.218
+    },
+    {
+      "bench_id": "3f2f6e8fa2d741858f83298010e980ce",
+      "fixture": "synthetic_en_10s",
+      "status": 201,
+      "client_total_s": 6.0971,
+      "error": null,
+      "response_excerpt": "{\"id\":\"6bee98d7-a8f9-437e-8c2f-46a7098e87b0\",\"created_at\":\"2026-10-10T09:04:50.060376\",\"audio_filename\":\"synthetic_en_10s.ogg\",\"audio_duration_seconds\":10.0,\"transcript_raw\":\"The potato vendor in G-9 Markaz is charging 200 rupees per kilo. Please take action quickly.\",\"detected_language\":\"English\",\"category\":\"PERA - Overpricing\",\"urgency\":\"High\",\"status\":\"Pending\",\"extraction_confidence\":0.85,\"nee",
+      "phase": "warm",
+      "iteration": 1,
+      "receive_parse_s": 0.0019,
+      "server_total_s": 6.0962,
+      "rules_s": 0.0007,
+      "parse_total_s": 3.864,
+      "save_s": 0.0,
+      "preprocess_s": 0.1592,
+      "stt_s": 2.0568,
+      "stt_text": "The potato vendor in G-9 Markaz is charging 200 rupees per kilo. Please take action quickly.",
+      "stt_language": "en",
+      "stt_confidence_proxy": 1.0,
+      "stt_error": null,
+      "ollama_calls": [
+        {
+          "duration_s": 3.863,
+          "load_duration_s": 0.024,
+          "prompt_eval_s": 0.103,
+          "eval_s": 3.721,
+          "total_duration_s": 3.86,
+          "prompt_eval_count": 963,
+          "eval_count": 74
+        }
+      ],
+      "llm_s": 3.8633,
+      "llm_returned_json": true,
+      "category": "PERA - Overpricing",
+      "urgency": "High",
+      "needs_review": false,
+      "extraction_confidence": 0.85,
+      "db_write_s": 0.0108,
+      "upload_s": 0.0019,
+      "client_minus_server_s": 0.0009,
+      "stt_real_time_factor": 0.206
+    },
+    {
+      "bench_id": "8f31afaa3f1946c5b82285231d59dbf4",
+      "fixture": "synthetic_en_10s",
+      "status": 201,
+      "client_total_s": 5.9811,
+      "error": null,
+      "response_excerpt": "{\"id\":\"d223d176-1f87-4c9f-8e1e-40f75d93c893\",\"created_at\":\"2026-10-10T09:04:56.040124\",\"audio_filename\":\"synthetic_en_10s.ogg\",\"audio_duration_seconds\":10.0,\"transcript_raw\":\"The potato vendor in G-9 Markaz is charging 200 rupees per kilo. Please take action quickly.\",\"detected_language\":\"English\",\"category\":\"PERA - Overpricing\",\"urgency\":\"High\",\"status\":\"Pending\",\"extraction_confidence\":0.85,\"nee",
+      "phase": "warm",
+      "iteration": 2,
+      "receive_parse_s": 0.002,
+      "server_total_s": 5.9791,
+      "rules_s": 0.0006,
+      "parse_total_s": 3.7315,
+      "save_s": 0.0,
+      "preprocess_s": 0.1562,
+      "stt_s": 2.0752,
+      "stt_text": "The potato vendor in G-9 Markaz is charging 200 rupees per kilo. Please take action quickly.",
+      "stt_language": "en",
+      "stt_confidence_proxy": 1.0,
+      "stt_error": null,
+      "ollama_calls": [
+        {
+          "duration_s": 3.731,
+          "load_duration_s": 0.025,
+          "prompt_eval_s": 0.104,
+          "eval_s": 3.588,
+          "total_duration_s": 3.727,
+          "prompt_eval_count": 963,
+          "eval_count": 74
+        }
+      ],
+      "llm_s": 3.7309,
+      "llm_returned_json": true,
+      "category": "PERA - Overpricing",
+      "urgency": "High",
+      "needs_review": false,
+      "extraction_confidence": 0.85,
+      "db_write_s": 0.0106,
+      "upload_s": 0.002,
+      "client_minus_server_s": 0.002,
+      "stt_real_time_factor": 0.208
+    },
+    {
+      "bench_id": "220860b06de24faba476b0d619aa4a05",
+      "fixture": "synthetic_en_10s",
+      "status": 201,
+      "client_total_s": 5.3918,
+      "error": null,
+      "response_excerpt": "{\"id\":\"d377756e-67a5-49b5-806f-41d9e939e949\",\"created_at\":\"2026-10-10T09:05:01.436316\",\"audio_filename\":\"synthetic_en_10s.ogg\",\"audio_duration_seconds\":10.0,\"transcript_raw\":\"The potato vendor in G-9 Markaz is charging 200 rupees per kilo. Please take action quickly.\",\"detected_language\":\"English\",\"category\":\"PERA - Overpricing\",\"urgency\":\"High\",\"status\":\"Pending\",\"extraction_confidence\":0.85,\"nee",
+      "phase": "warm",
+      "iteration": 3,
+      "receive_parse_s": 0.0017,
+      "server_total_s": 5.3916,
+      "rules_s": 0.0004,
+      "parse_total_s": 3.4115,
+      "save_s": 0.0,
+      "preprocess_s": 0.1235,
+      "stt_s": 1.8433,
+      "stt_text": "The potato vendor in G-9 Markaz is charging 200 rupees per kilo. Please take action quickly.",
+      "stt_language": "en",
+      "stt_confidence_proxy": 1.0,
+      "stt_error": null,
+      "ollama_calls": [
+        {
+          "duration_s": 3.411,
+          "load_duration_s": 0.018,
+          "prompt_eval_s": 0.096,
+          "eval_s": 3.286,
+          "total_duration_s": 3.408,
+          "prompt_eval_count": 963,
+          "eval_count": 71
+        }
+      ],
+      "llm_s": 3.4111,
+      "llm_returned_json": true,
+      "category": "PERA - Overpricing",
+      "urgency": "High",
+      "needs_review": false,
+      "extraction_confidence": 0.85,
+      "db_write_s": 0.0084,
+      "upload_s": 0.0017,
+      "client_minus_server_s": 0.0002,
+      "stt_real_time_factor": 0.184
+    },
+    {
+      "bench_id": "15f6587380964919928452b155e8eb2c",
+      "fixture": "synthetic_en_30s",
+      "status": 201,
+      "client_total_s": 8.4806,
+      "error": null,
+      "response_excerpt": "{\"id\":\"6b41247f-1870-4bab-97d4-87abfccfccc8\",\"created_at\":\"2026-10-10T09:05:09.918265\",\"audio_filename\":\"synthetic_en_30s.ogg\",\"audio_duration_seconds\":30.0,\"transcript_raw\":\"The water supply from Wasa has been cut off since Monday morning. The streetlights near Rajabazaar are broken and the road is dark at night. A milk shop in Sattar is selling milk mixed with water. There is a large pothole on ",
+      "phase": "warm",
+      "iteration": 1,
+      "receive_parse_s": 0.0021,
+      "server_total_s": 8.48,
+      "rules_s": 0.0013,
+      "parse_total_s": 4.6621,
+      "save_s": 0.0,
+      "preprocess_s": 0.17,
+      "stt_s": 3.6353,
+      "stt_text": "The water supply from Wasa has been cut off since Monday morning. The streetlights near Rajabazaar are broken and the road is dark at night. A milk shop in Sattar is selling milk mixed with water. There is a large pothole on the main road near the hospital. Garbage has not been collected in our area for two weeks. The gas pressure from SNGPL is very low during the morning hours. Thank you.",
+      "stt_language": "en",
+      "stt_confidence_proxy": 0.99,
+      "stt_error": null,
+      "ollama_calls": [
+        {
+          "duration_s": 4.661,
+          "load_duration_s": 0.021,
+          "prompt_eval_s": 1.023,
+          "eval_s": 3.604,
+          "total_duration_s": 4.658,
+          "prompt_eval_count": 1028,
+          "eval_count": 76
+        }
+      ],
+      "llm_s": 4.6608,
+      "llm_returned_json": true,
+      "category": "Municipal - Infrastructure",
+      "urgency": "Low",
+      "needs_review": false,
+      "extraction_confidence": 0.85,
+      "db_write_s": 0.0075,
+      "upload_s": 0.0021,
+      "client_minus_server_s": 0.0006,
+      "stt_real_time_factor": 0.121
+    },
+    {
+      "bench_id": "cbc3054c4b3e45e896deb4e2a83fd693",
+      "fixture": "synthetic_en_30s",
+      "status": 201,
+      "client_total_s": 7.5835,
+      "error": null,
+      "response_excerpt": "{\"id\":\"1c76315c-c339-4e87-84ab-1ddb2d3958ef\",\"created_at\":\"2026-10-10T09:05:17.501158\",\"audio_filename\":\"synthetic_en_30s.ogg\",\"audio_duration_seconds\":30.0,\"transcript_raw\":\"The water supply from Wasa has been cut off since Monday morning. The streetlights near Rajabazaar are broken and the road is dark at night. A milk shop in Sattar is selling milk mixed with water. There is a large pothole on ",
+      "phase": "warm",
+      "iteration": 2,
+      "receive_parse_s": 0.0016,
+      "server_total_s": 7.5829,
+      "rules_s": 0.0009,
+      "parse_total_s": 3.6881,
+      "save_s": 0.0,
+      "preprocess_s": 0.161,
+      "stt_s": 3.7207,
+      "stt_text": "The water supply from Wasa has been cut off since Monday morning. The streetlights near Rajabazaar are broken and the road is dark at night. A milk shop in Sattar is selling milk mixed with water. There is a large pothole on the main road near the hospital. Garbage has not been collected in our area for two weeks. The gas pressure from SNGPL is very low during the morning hours. Thank you.",
+      "stt_language": "en",
+      "stt_confidence_proxy": 0.99,
+      "stt_error": null,
+      "ollama_calls": [
+        {
+          "duration_s": 3.687,
+          "load_duration_s": 0.017,
+          "prompt_eval_s": 0.103,
+          "eval_s": 3.553,
+          "total_duration_s": 3.684,
+          "prompt_eval_count": 1028,
+          "eval_count": 76
+        }
+      ],
+      "llm_s": 3.6872,
+      "llm_returned_json": true,
+      "category": "Municipal - Infrastructure",
+      "urgency": "Low",
+      "needs_review": false,
+      "extraction_confidence": 0.85,
+      "db_write_s": 0.0084,
+      "upload_s": 0.0016,
+      "client_minus_server_s": 0.0006,
+      "stt_real_time_factor": 0.124
+    },
+    {
+      "bench_id": "b945d8a3981a4144b4492134029e643e",
+      "fixture": "synthetic_en_30s",
+      "status": 201,
+      "client_total_s": 7.7233,
+      "error": null,
+      "response_excerpt": "{\"id\":\"b1a5d2e6-3d82-4e1d-bd63-b6b524f96a58\",\"created_at\":\"2026-10-10T09:05:25.224832\",\"audio_filename\":\"synthetic_en_30s.ogg\",\"audio_duration_seconds\":30.0,\"transcript_raw\":\"The water supply from Wasa has been cut off since Monday morning. The streetlights near Rajabazaar are broken and the road is dark at night. A milk shop in Sattar is selling milk mixed with water. There is a large pothole on ",
+      "phase": "warm",
+      "iteration": 3,
+      "receive_parse_s": 0.0018,
+      "server_total_s": 7.7229,
+      "rules_s": 0.0009,
+      "parse_total_s": 3.7545,
+      "save_s": 0.0001,
+      "preprocess_s": 0.1827,
+      "stt_s": 3.7723,
+      "stt_text": "The water supply from Wasa has been cut off since Monday morning. The streetlights near Rajabazaar are broken and the road is dark at night. A milk shop in Sattar is selling milk mixed with water. There is a large pothole on the main road near the hospital. Garbage has not been collected in our area for two weeks. The gas pressure from SNGPL is very low during the morning hours. Thank you.",
+      "stt_language": "en",
+      "stt_confidence_proxy": 0.99,
+      "stt_error": null,
+      "ollama_calls": [
+        {
+          "duration_s": 3.754,
+          "load_duration_s": 0.017,
+          "prompt_eval_s": 0.103,
+          "eval_s": 3.621,
+          "total_duration_s": 3.751,
+          "prompt_eval_count": 1028,
+          "eval_count": 76
+        }
+      ],
+      "llm_s": 3.7537,
+      "llm_returned_json": true,
+      "category": "Municipal - Infrastructure",
+      "urgency": "Low",
+      "needs_review": false,
+      "extraction_confidence": 0.85,
+      "db_write_s": 0.008,
+      "upload_s": 0.0019,
+      "client_minus_server_s": 0.0004,
+      "stt_real_time_factor": 0.126
+    },
+    {
+      "bench_id": "a0fd1b836dd24e42969f9c0949a5a3b5",
+      "fixture": "synthetic_en_60s",
+      "status": 201,
+      "client_total_s": 14.3239,
+      "error": null,
+      "response_excerpt": "{\"id\":\"be94e64e-9e13-49a4-9ac7-1dafda671614\",\"created_at\":\"2026-10-10T09:05:39.549858\",\"audio_filename\":\"synthetic_en_60s.ogg\",\"audio_duration_seconds\":60.0,\"transcript_raw\":\"The gas pressure from SNGPL is very low during the morning hours. The flower mill dealer is selling a bag of atta above the notified price. Please send the municipal team to clean the block drain near the market. The electric",
+      "phase": "warm",
+      "iteration": 1,
+      "receive_parse_s": 0.0023,
+      "server_total_s": 14.3233,
+      "rules_s": 0.0013,
+      "parse_total_s": 7.44,
+      "save_s": 0.0002,
+      "preprocess_s": 0.2232,
+      "stt_s": 6.6468,
+      "stt_text": "The gas pressure from SNGPL is very low during the morning hours. The flower mill dealer is selling a bag of atta above the notified price. Please send the municipal team to clean the block drain near the market. The electricity bill from Lesco is much higher than our actual usage. Chicken is being sold for 700 rupees per kilo in commercial market. The Tandur in Opbra is charging 30 rupees for 1 roti. Children cannot walk to school because the footpath is flooded with sewage. The vegetable market in I-10 is not displaying the official rate list. Please take action quickly. The drain is blocked again. Thank you. The potato vendor in G9 Marcos is charging 200 rupees per kilo. The official rate list says potatoes should be 100 rupees.",
+      "stt_language": "en",
+      "stt_confidence_proxy": 1.0,
+      "stt_error": null,
+      "ollama_calls": [
+        {
+          "duration_s": 7.439,
+          "load_duration_s": 0.013,
+          "prompt_eval_s": 1.754,
+          "eval_s": 3.624,
+          "total_duration_s": 5.4,
+          "prompt_eval_count": 1112,
+          "eval_count": 72
+        }
+      ],
+      "llm_s": 7.4387,
+      "llm_returned_json": true,
+      "category": "Municipal - Infrastructure",
+      "urgency": "High",
+      "needs_review": false,
+      "extraction_confidence": 0.85,
+      "db_write_s": 0.008,
+      "upload_s": 0.0025,
+      "client_minus_server_s": 0.0006,
+      "stt_real_time_factor": 0.111
+    },
+    {
+      "bench_id": "7f703b92f3aa4a08bf099b4c68154d5c",
+      "fixture": "synthetic_en_60s",
+      "status": 201,
+      "client_total_s": 12.3732,
+      "error": null,
+      "response_excerpt": "{\"id\":\"c97e5a9c-84ab-4530-9af9-4372147d98ad\",\"created_at\":\"2026-10-10T09:05:51.922881\",\"audio_filename\":\"synthetic_en_60s.ogg\",\"audio_duration_seconds\":60.0,\"transcript_raw\":\"The gas pressure from SNGPL is very low during the morning hours. The flower mill dealer is selling a bag of atta above the notified price. Please send the municipal team to clean the block drain near the market. The electric",
+      "phase": "warm",
+      "iteration": 2,
+      "receive_parse_s": 0.0021,
+      "server_total_s": 12.3731,
+      "rules_s": 0.0015,
+      "parse_total_s": 5.7731,
+      "save_s": 0.0002,
+      "preprocess_s": 0.2224,
+      "stt_s": 6.3639,
+      "stt_text": "The gas pressure from SNGPL is very low during the morning hours. The flower mill dealer is selling a bag of atta above the notified price. Please send the municipal team to clean the block drain near the market. The electricity bill from Lesco is much higher than our actual usage. Chicken is being sold for 700 rupees per kilo in commercial market. The Tandur in Opbra is charging 30 rupees for 1 roti. Children cannot walk to school because the footpath is flooded with sewage. The vegetable market in I-10 is not displaying the official rate list. Please take action quickly. The drain is blocked again. Thank you. The potato vendor in G9 Marcos is charging 200 rupees per kilo. The official rate list says potatoes should be 100 rupees.",
+      "stt_language": "en",
+      "stt_confidence_proxy": 1.0,
+      "stt_error": null,
+      "ollama_calls": [
+        {
+          "duration_s": 5.772,
+          "load_duration_s": 0.014,
+          "prompt_eval_s": 0.09,
+          "eval_s": 3.642,
+          "total_duration_s": 3.754,
+          "prompt_eval_count": 1112,
+          "eval_count": 76
+        }
+      ],
+      "llm_s": 5.7716,
+      "llm_returned_json": true,
+      "category": "Municipal - Infrastructure",
+      "urgency": "High",
+      "needs_review": false,
+      "extraction_confidence": 0.85,
+      "db_write_s": 0.0078,
+      "upload_s": 0.0023,
+      "client_minus_server_s": 0.0001,
+      "stt_real_time_factor": 0.106
+    },
+    {
+      "bench_id": "b6419d57e20a4f9c897f81e81e3f5505",
+      "fixture": "synthetic_en_60s",
+      "status": 201,
+      "client_total_s": 20.7385,
+      "error": null,
+      "response_excerpt": "{\"id\":\"c3d62add-f57e-48a6-9841-ad37d246925c\",\"created_at\":\"2026-10-10T09:06:12.660589\",\"audio_filename\":\"synthetic_en_60s.ogg\",\"audio_duration_seconds\":60.0,\"transcript_raw\":\"The gas pressure from SNGPL is very low during the morning hours. The flower mill dealer is selling a bag of atta above the notified price. Please send the municipal team to clean the block drain near the market. The electric",
+      "phase": "warm",
+      "iteration": 3,
+      "receive_parse_s": 0.002,
+      "server_total_s": 20.7379,
+      "rules_s": 0.0012,
+      "parse_total_s": 14.1579,
+      "save_s": 0.0002,
+      "preprocess_s": 0.2378,
+      "stt_s": 6.3271,
+      "stt_text": "The gas pressure from SNGPL is very low during the morning hours. The flower mill dealer is selling a bag of atta above the notified price. Please send the municipal team to clean the block drain near the market. The electricity bill from Lesco is much higher than our actual usage. Chicken is being sold for 700 rupees per kilo in commercial market. The Tandur in Opbra is charging 30 rupees for 1 roti. Children cannot walk to school because the footpath is flooded with sewage. The vegetable market in I-10 is not displaying the official rate list. Please take action quickly. The drain is blocked again. Thank you. The potato vendor in G9 Marcos is charging 200 rupees per kilo. The official rate list says potatoes should be 100 rupees.",
+      "stt_language": "en",
+      "stt_confidence_proxy": 1.0,
+      "stt_error": null,
+      "ollama_calls": [
+        {
+          "duration_s": 14.157,
+          "load_duration_s": 0.016,
+          "prompt_eval_s": 0.083,
+          "eval_s": 12.017,
+          "total_duration_s": 12.124,
+          "prompt_eval_count": 1112,
+          "eval_count": 234
+        }
+      ],
+      "llm_s": 14.1567,
+      "llm_returned_json": true,
+      "category": "Municipal - Infrastructure",
+      "urgency": "High",
+      "needs_review": false,
+      "extraction_confidence": 0.85,
+      "db_write_s": 0.0093,
+      "upload_s": 0.0022,
+      "client_minus_server_s": 0.0006,
+      "stt_real_time_factor": 0.105
+    }
+  ]
+}

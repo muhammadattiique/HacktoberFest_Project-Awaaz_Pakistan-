@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-10-10T09:02:57+00:00",
+  "generator": "bench/make_fixtures.py (Windows SAPI System.Speech + ffmpeg)",
+  "tts_voice": "Microsoft David Desktop",
+  "ffmpeg": "C:\\Users\\muham\\AppData\\Local\\Temp\\awaaz_baseline_venv\\Lib\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe",
+  "ALL_SYNTHETIC": true,
+  "note": "Synthetic English TTS speech for latency/throughput only. Not representative of real citizen recordings (no Urdu/regional speech, no background noise, studio-clean signal). Do not use for WER claims about Urdu.",
+  "fixtures": [
+    {
+      "id": "synthetic_en_10s",
+      "file": "synthetic_en_10s.ogg",
+      "synthetic": true,
+      "target_duration_s": 10,
+      "measured_duration_s": 10.0,
+      "speech_duration_s": 7.86,
+      "trailing_silence_padding": true,
+      "language": "en",
+      "codec": "opus 32 kb/s in ogg, mono",
+      "bytes": 32629,
+      "sha256": "924e14b108461e0d3d828b2fa50f603ce8562887d00edb3ff033c6ebb518e054",
+      "reference_transcript": "The potato vendor in G-9 Markaz is charging two hundred rupees per kilo. Please take action quickly."
+    },
+    {
+      "id": "synthetic_en_30s",
+      "file": "synthetic_en_30s.ogg",
+      "synthetic": true,
+      "target_duration_s": 30,
+      "measured_duration_s": 30.0,
+      "speech_duration_s": 26.85,
+      "trailing_silence_padding": true,
+      "language": "en",
+      "codec": "opus 32 kb/s in ogg, mono",
+      "bytes": 105071,
+      "sha256": "8cb5381436637ff26843117959eb6893383fed0213d34080a904a7e364e941d3",
+      "reference_transcript": "The water supply from WASA has been cut off since Monday morning. The streetlights near Raja Bazaar are broken and the road is dark at night. A milk shop in Saddar is selling milk mixed with water. There is a large pothole on the main road near the hospital. Garbage has not been collected in our area for two weeks. The gas pressure from SNGPL is very low during the morning hours. Thank you."
+    },
+    {
+      "id": "synthetic_en_60s",
+      "file": "synthetic_en_60s.ogg",
+      "synthetic": true,
+      "target_duration_s": 60,
+      "measured_duration_s": 60.0,
+      "speech_duration_s": 53.45,
+      "trailing_silence_padding": true,
+      "language": "en",
+      "codec": "opus 32 kb/s in ogg, mono",
+      "bytes": 211691,
+      "sha256": "745c1bdb88ab966bb8d5803f3beba74a57a00619c12dd4ffd453eda40e86e21c",
+      "reference_transcript": "The gas pressure from SNGPL is very low during the morning hours. The flour mill dealer is selling a bag of atta above the notified price. Please send the municipal team to clean the blocked drain near the market. The electricity bill from LESCO is much higher than our actual usage. Chicken is being sold for seven hundred rupees per kilo in Commercial Market. The tandoor in Aabpara is charging thirty rupees for one roti. Children cannot walk to school because the footpath is flooded with sewage. The vegetable market in I-10 is not displaying the official rate list. Please take action quickly. The drain is blocked again. Thank you. The potato vendor in G-9 Markaz is charging two hundred rupees per kilo. The official rate list says potatoes should be one hundred rupees."
+    }
+  ]
+}

@@ -1,0 +1,4003 @@
+{
+  "generated_at": "2026-10-10T09:06:15+00:00",
+  "method": "psutil sampling every 0.25 s of the uvicorn server process tree (includes ffmpeg children) and of all processes named ollama* (the LLM runs out-of-process in Ollama). CPU% is per-process psutil (100 = one logical core; ceiling = 100 x logical cores). Samples are labelled by the latency phase running at the time.",
+  "logical_cores": 12,
+  "by_phase": {
+    "cold_first_request": {
+      "n_samples": 30,
+      "duration_s": 7.5,
+      "server_tree_cpu_pct": {
+        "mean": 163.8,
+        "p95": 593.1,
+        "max": 600.5
+      },
+      "server_tree_rss_mb": {
+        "mean": 732.7,
+        "p95": 775.7,
+        "max": 818.3
+      },
+      "ollama_cpu_pct": {
+        "mean": 2.0,
+        "p95": 10.4,
+        "max": 28.1
+      },
+      "ollama_rss_mb": {
+        "mean": 74.3,
+        "p95": 81.0,
+        "max": 81.0
+      },
+      "system_cpu_pct": {
+        "mean": 78.4,
+        "p95": 97.7,
+        "max": 100.0
+      },
+      "system_ram_used_pct": {
+        "mean": 88.7,
+        "p95": 89.2,
+        "max": 89.4
+      }
+    },
+    "idle_after_startup": {
+      "n_samples": 18,
+      "duration_s": 4.5,
+      "server_tree_cpu_pct": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "server_tree_rss_mb": {
+        "mean": 720.4,
+        "p95": 720.4,
+        "max": 720.4
+      },
+      "ollama_cpu_pct": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ollama_rss_mb": {
+        "mean": 81.0,
+        "p95": 81.0,
+        "max": 81.0
+      },
+      "system_cpu_pct": {
+        "mean": 32.0,
+        "p95": 48.5,
+        "max": 62.4
+      },
+      "system_ram_used_pct": {
+        "mean": 88.8,
+        "p95": 88.9,
+        "max": 88.9
+      }
+    },
+    "idle_end": {
+      "n_samples": 11,
+      "duration_s": 2.75,
+      "server_tree_cpu_pct": {
+        "mean": 0.5,
+        "p95": 3.0,
+        "max": 5.9
+      },
+      "server_tree_rss_mb": {
+        "mean": 718.4,
+        "p95": 718.4,
+        "max": 718.4
+      },
+      "ollama_cpu_pct": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ollama_rss_mb": {
+        "mean": 75.8,
+        "p95": 75.8,
+        "max": 75.8
+      },
+      "system_cpu_pct": {
+        "mean": 27.2,
+        "p95": 49.5,
+        "max": 69.6
+      },
+      "system_ram_used_pct": {
+        "mean": 88.4,
+        "p95": 88.4,
+        "max": 88.4
+      }
+    },
+    "synthetic_en_10s": {
+      "n_samples": 62,
+      "duration_s": 15.5,
+      "server_tree_cpu_pct": {
+        "mean": 195.7,
+        "p95": 586.6,
+        "max": 604.3
+      },
+      "server_tree_rss_mb": {
+        "mean": 720.4,
+        "p95": 735.3,
+        "max": 745.9
+      },
+      "ollama_cpu_pct": {
+        "mean": 3.4,
+        "p95": 11.2,
+        "max": 73.6
+      },
+      "ollama_rss_mb": {
+        "mean": 77.4,
+        "p95": 82.2,
+        "max": 82.2
+      },
+      "system_cpu_pct": {
+        "mean": 86.5,
+        "p95": 96.5,
+        "max": 98.3
+      },
+      "system_ram_used_pct": {
+        "mean": 88.4,
+        "p95": 88.6,
+        "max": 88.7
+      }
+    },
+    "synthetic_en_30s": {
+      "n_samples": 85,
+      "duration_s": 21.25,
+      "server_tree_cpu_pct": {
+        "mean": 277.5,
+        "p95": 597.9,
+        "max": 620.5
+      },
+      "server_tree_rss_mb": {
+        "mean": 709.6,
+        "p95": 735.2,
+        "max": 737.2
+      },
+      "ollama_cpu_pct": {
+        "mean": 2.1,
+        "p95": 11.6,
+        "max": 50.7
+      },
+      "ollama_rss_mb": {
+        "mean": 81.3,
+        "p95": 82.4,
+        "max": 82.4
+      },
+      "system_cpu_pct": {
+        "mean": 80.8,
+        "p95": 90.5,
+        "max": 96.9
+      },
+      "system_ram_used_pct": {
+        "mean": 88.4,
+        "p95": 88.7,
+        "max": 88.7
+      }
+    },
+    "synthetic_en_60s": {
+      "n_samples": 172,
+      "duration_s": 43.0,
+      "server_tree_cpu_pct": {
+        "mean": 239.4,
+        "p95": 602.2,
+        "max": 623.2
+      },
+      "server_tree_rss_mb": {
+        "mean": 715.0,
+        "p95": 728.4,
+        "max": 750.3
+      },
+      "ollama_cpu_pct": {
+        "mean": 0.9,
+        "p95": 0.0,
+        "max": 52.2
+      },
+      "ollama_rss_mb": {
+        "mean": 77.9,
+        "p95": 80.9,
+        "max": 80.9
+      },
+      "system_cpu_pct": {
+        "mean": 76.8,
+        "p95": 92.7,
+        "max": 100.0
+      },
+      "system_ram_used_pct": {
+        "mean": 88.4,
+        "p95": 88.5,
+        "max": 88.9
+      }
+    }
+  },
+  "samples": [
+    {
+      "t_s": 0.021,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 0.0,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 0.285,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 43.1,
+      "system_ram_used_pct": 88.7
+    },
+    {
+      "t_s": 0.55,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 22.5,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 0.818,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 34.1,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 1.085,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 29.7,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 1.351,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 46.1,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 1.604,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 29.9,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 1.868,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 44.2,
+      "system_ram_used_pct": 88.9
+    },
+    {
+      "t_s": 2.134,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 23.8,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 2.401,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 22.8,
+      "system_ram_used_pct": 88.9
+    },
+    {
+      "t_s": 2.668,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 25.5,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 2.934,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 22.6,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 3.187,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 20.1,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 3.45,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 23.2,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 3.718,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 28.5,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 3.984,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 34.5,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 4.251,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 27.9,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 4.519,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 34.5,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 4.788,
+      "label": "idle_after_startup",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 62.4,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 5.051,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 5.9,
+      "server_tree_rss_mb": 731.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 26.3,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 5.323,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 384.5,
+      "server_tree_rss_mb": 773.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 58.3,
+      "system_ram_used_pct": 89.2
+    },
+    {
+      "t_s": 5.59,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 578.9,
+      "server_tree_rss_mb": 768.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 77.5,
+      "system_ram_used_pct": 89.1
+    },
+    {
+      "t_s": 5.874,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 578.6,
+      "server_tree_rss_mb": 738.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 80.9,
+      "system_ram_used_pct": 88.9
+    },
+    {
+      "t_s": 6.144,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 549.9,
+      "server_tree_rss_mb": 775.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 81.0,
+      "system_ram_used_pct": 89.2
+    },
+    {
+      "t_s": 6.41,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 593.8,
+      "server_tree_rss_mb": 775.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 84.0,
+      "system_ram_used_pct": 89.1
+    },
+    {
+      "t_s": 6.683,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 600.5,
+      "server_tree_rss_mb": 818.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 82.3,
+      "system_ram_used_pct": 89.4
+    },
+    {
+      "t_s": 6.959,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 560.6,
+      "server_tree_rss_mb": 724.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 85.3,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 7.228,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 592.2,
+      "server_tree_rss_mb": 724.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 84.5,
+      "system_ram_used_pct": 88.7
+    },
+    {
+      "t_s": 7.511,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 469.7,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 77.5,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 7.779,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 53.8,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 8.044,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 57.1,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 8.322,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 57.4,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 8.587,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 54.1,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 8.854,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 42.0,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 9.124,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 50.2,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 9.401,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 28.1,
+      "ollama_rss_mb": 81.0,
+      "system_cpu_pct": 86.3,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 9.726,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 14.5,
+      "ollama_rss_mb": 71.1,
+      "system_cpu_pct": 93.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 10.023,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 5.3,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 98.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 10.307,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 5.5,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 93.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 10.593,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 92.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 10.887,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 94.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 11.175,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 100.0,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 11.474,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 95.0,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 11.756,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 92.7,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 12.039,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 85.4,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 12.32,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 86.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 12.607,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 89.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 12.886,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 95.0,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 13.174,
+      "label": "cold_first_request",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 721.6,
+      "ollama_cpu_pct": 5.4,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 96.9,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 13.457,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 11.1,
+      "server_tree_rss_mb": 735.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 91.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 13.734,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 536.1,
+      "server_tree_rss_mb": 709.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 84.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 14.014,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 539.9,
+      "server_tree_rss_mb": 687.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 86.0,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 14.296,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 581.9,
+      "server_tree_rss_mb": 687.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 84.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 14.582,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 540.3,
+      "server_tree_rss_mb": 684.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 87.8,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 14.861,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 549.8,
+      "server_tree_rss_mb": 734.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 86.8,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 15.128,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 497.1,
+      "server_tree_rss_mb": 734.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 84.8,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 15.395,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 520.7,
+      "server_tree_rss_mb": 733.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 65.0,
+      "system_cpu_pct": 90.9,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 15.688,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 245.7,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 69.4,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 95.7,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 15.972,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 95.0,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 16.256,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 93.1,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 16.545,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 92.7,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 16.841,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 97.0,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 17.126,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 97.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 17.423,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 93.9,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 17.705,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 93.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 17.993,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 96.5,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 18.287,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 90.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 18.573,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 87.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 18.854,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 93.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 19.138,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 730.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 93.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 19.415,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 11.3,
+      "server_tree_rss_mb": 745.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 96.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 19.699,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 264.5,
+      "server_tree_rss_mb": 713.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 90.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 19.982,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 562.4,
+      "server_tree_rss_mb": 721.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 88.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 20.266,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 544.9,
+      "server_tree_rss_mb": 716.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 86.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 20.549,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 553.1,
+      "server_tree_rss_mb": 725.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 91.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 20.831,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 575.6,
+      "server_tree_rss_mb": 735.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 88.1,
+      "system_ram_used_pct": 88.7
+    },
+    {
+      "t_s": 21.112,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 545.1,
+      "server_tree_rss_mb": 708.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 93.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 21.394,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 552.8,
+      "server_tree_rss_mb": 707.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.0,
+      "system_cpu_pct": 90.0,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 21.689,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 482.3,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 26.5,
+      "ollama_rss_mb": 82.1,
+      "system_cpu_pct": 87.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 21.99,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 31.1,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 10.4,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 98.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 22.274,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 94.2,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 22.555,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 90.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 22.836,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 88.1,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 23.117,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 79.6,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 23.401,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 77.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 23.684,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 77.1,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 23.966,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 76.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 24.247,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 76.4,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 24.537,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 83.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 24.816,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 90.7,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 25.1,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.7,
+      "ollama_cpu_pct": 5.5,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 92.0,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 25.374,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 5.7,
+      "server_tree_rss_mb": 720.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 91.6,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 25.639,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 283.8,
+      "server_tree_rss_mb": 687.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 77.8,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 25.913,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 586.9,
+      "server_tree_rss_mb": 710.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 77.6,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 26.195,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 559.6,
+      "server_tree_rss_mb": 681.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 79.9,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 26.473,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 560.9,
+      "server_tree_rss_mb": 687.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 74.6,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 26.751,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 600.9,
+      "server_tree_rss_mb": 737.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 72.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 27.028,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 604.3,
+      "server_tree_rss_mb": 734.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 73.9,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 27.292,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 603.4,
+      "server_tree_rss_mb": 734.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.2,
+      "system_cpu_pct": 74.0,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 27.568,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 181.1,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 73.6,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 90.9,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 27.852,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 81.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 28.134,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 83.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 28.426,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 87.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 28.701,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 85.8,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 28.982,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 5.6,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 87.8,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 29.268,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 75.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 29.552,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 79.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 29.834,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 77.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 30.113,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 11.2,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 79.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 30.401,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 10.9,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 82.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 30.686,
+      "label": "synthetic_en_10s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 733.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 79.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 30.964,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 39.4,
+      "server_tree_rss_mb": 734.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 83.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 31.24,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 560.9,
+      "server_tree_rss_mb": 715.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 81.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 31.512,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 620.5,
+      "server_tree_rss_mb": 714.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 78.4,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 31.779,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 597.7,
+      "server_tree_rss_mb": 737.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 76.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 32.057,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 595.3,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 75.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 32.328,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 581.8,
+      "server_tree_rss_mb": 708.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 74.3,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 32.611,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 596.4,
+      "server_tree_rss_mb": 708.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 72.7,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 32.895,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 594.9,
+      "server_tree_rss_mb": 709.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 74.1,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 33.177,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 591.4,
+      "server_tree_rss_mb": 708.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 77.7,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 33.462,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 593.0,
+      "server_tree_rss_mb": 708.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 74.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 33.745,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 568.2,
+      "server_tree_rss_mb": 709.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 76.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 34.025,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 591.7,
+      "server_tree_rss_mb": 709.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 82.6,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 34.293,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 560.3,
+      "server_tree_rss_mb": 709.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 87.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 34.559,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 551.5,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 11.7,
+      "ollama_rss_mb": 81.6,
+      "system_cpu_pct": 89.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 34.843,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 93.5,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 49.5,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 93.7,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 35.112,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 84.4,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 35.394,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 79.7,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 35.668,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 81.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 35.95,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 79.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 36.234,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 76.4,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 36.517,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 76.1,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 36.802,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 80.8,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 37.083,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 83.1,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 37.369,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 10.9,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 83.7,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 37.654,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 95.0,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 37.934,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 81.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 38.217,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 80.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 38.497,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 82.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 38.781,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 82.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 39.065,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 706.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 74.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 39.339,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 5.7,
+      "server_tree_rss_mb": 711.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 77.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 39.61,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 392.9,
+      "server_tree_rss_mb": 685.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 71.3,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 39.891,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 590.3,
+      "server_tree_rss_mb": 699.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 77.4,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 40.161,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 577.2,
+      "server_tree_rss_mb": 692.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 74.8,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 40.438,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 582.0,
+      "server_tree_rss_mb": 687.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 75.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 40.708,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 573.2,
+      "server_tree_rss_mb": 733.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 75.0,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 40.977,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 598.3,
+      "server_tree_rss_mb": 707.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 76.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 41.246,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 574.7,
+      "server_tree_rss_mb": 707.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 78.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 41.523,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 592.4,
+      "server_tree_rss_mb": 708.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 78.5,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 41.794,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 581.5,
+      "server_tree_rss_mb": 708.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 76.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 42.075,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 518.1,
+      "server_tree_rss_mb": 708.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 78.8,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 42.346,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 524.0,
+      "server_tree_rss_mb": 709.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 84.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 42.629,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 585.6,
+      "server_tree_rss_mb": 709.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 75.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 42.892,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 581.3,
+      "server_tree_rss_mb": 710.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 82.4,
+      "system_cpu_pct": 80.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 43.183,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 483.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 16.1,
+      "ollama_rss_mb": 80.7,
+      "system_cpu_pct": 87.9,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 43.485,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 98.4,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 15.5,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 90.5,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 43.768,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 79.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 44.049,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 11.1,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 79.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 44.334,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 79.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 44.618,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 79.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 44.9,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 78.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 45.183,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 76.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 45.468,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 77.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 45.752,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 78.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 46.034,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 83.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 46.317,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 84.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 46.601,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 86.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 46.878,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 11.3,
+      "server_tree_rss_mb": 726.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 90.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 47.144,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 264.3,
+      "server_tree_rss_mb": 693.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 82.1,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 47.429,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 597.9,
+      "server_tree_rss_mb": 688.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 85.8,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 47.712,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 586.3,
+      "server_tree_rss_mb": 687.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 84.8,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 47.974,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 523.9,
+      "server_tree_rss_mb": 687.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 88.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 48.24,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 593.6,
+      "server_tree_rss_mb": 690.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 74.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 48.511,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 605.1,
+      "server_tree_rss_mb": 734.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 71.0,
+      "system_ram_used_pct": 88.7
+    },
+    {
+      "t_s": 48.794,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 596.4,
+      "server_tree_rss_mb": 735.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 73.7,
+      "system_ram_used_pct": 88.7
+    },
+    {
+      "t_s": 49.061,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 591.4,
+      "server_tree_rss_mb": 736.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 82.4,
+      "system_ram_used_pct": 88.7
+    },
+    {
+      "t_s": 49.342,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 411.4,
+      "server_tree_rss_mb": 735.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 96.9,
+      "system_ram_used_pct": 88.7
+    },
+    {
+      "t_s": 49.616,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 576.8,
+      "server_tree_rss_mb": 735.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 84.5,
+      "system_ram_used_pct": 88.7
+    },
+    {
+      "t_s": 49.887,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 593.2,
+      "server_tree_rss_mb": 735.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 83.5,
+      "system_ram_used_pct": 88.7
+    },
+    {
+      "t_s": 50.16,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 571.5,
+      "server_tree_rss_mb": 710.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 78.0,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 50.43,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 608.1,
+      "server_tree_rss_mb": 710.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 77.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 50.698,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 576.3,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 81.9,
+      "system_cpu_pct": 76.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 50.975,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 287.5,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 50.7,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 94.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 51.252,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 79.5,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 51.527,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 81.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 51.802,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 11.3,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 80.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 52.088,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 85.5,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 52.374,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 86.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 52.653,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 86.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 52.935,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 76.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 53.219,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 77.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 53.503,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 79.5,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 53.786,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 80.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 54.069,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 85.0,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 54.354,
+      "label": "synthetic_en_30s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 707.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 80.8,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 54.626,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 5.7,
+      "server_tree_rss_mb": 722.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 78.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 54.895,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 214.9,
+      "server_tree_rss_mb": 697.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 69.0,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 55.166,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 599.8,
+      "server_tree_rss_mb": 683.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 84.1,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 55.447,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 600.0,
+      "server_tree_rss_mb": 694.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 80.6,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 55.714,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 586.4,
+      "server_tree_rss_mb": 698.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 84.0,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 55.984,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 590.7,
+      "server_tree_rss_mb": 687.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 80.5,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 56.264,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 590.6,
+      "server_tree_rss_mb": 735.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 82.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 56.535,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 536.3,
+      "server_tree_rss_mb": 734.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 84.0,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 56.81,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 603.3,
+      "server_tree_rss_mb": 735.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 82.8,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 57.081,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 582.4,
+      "server_tree_rss_mb": 710.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 75.0,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 57.363,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 597.4,
+      "server_tree_rss_mb": 708.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 73.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 57.629,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 581.9,
+      "server_tree_rss_mb": 709.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 75.0,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 57.913,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 572.8,
+      "server_tree_rss_mb": 710.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 82.0,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 58.197,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 269.7,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 100.0,
+      "system_ram_used_pct": 88.8
+    },
+    {
+      "t_s": 58.516,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 411.1,
+      "server_tree_rss_mb": 710.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 100.0,
+      "system_ram_used_pct": 88.9
+    },
+    {
+      "t_s": 58.798,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 458.8,
+      "server_tree_rss_mb": 690.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 95.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 59.081,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 557.6,
+      "server_tree_rss_mb": 710.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 92.2,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 59.365,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 573.5,
+      "server_tree_rss_mb": 708.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 87.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 59.64,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 596.3,
+      "server_tree_rss_mb": 709.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 75.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 59.909,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 586.9,
+      "server_tree_rss_mb": 709.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 73.8,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 60.18,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 610.8,
+      "server_tree_rss_mb": 710.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 75.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 60.46,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 602.9,
+      "server_tree_rss_mb": 709.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 74.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 60.731,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 581.8,
+      "server_tree_rss_mb": 709.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 73.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 60.997,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 598.5,
+      "server_tree_rss_mb": 710.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 80.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 61.266,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 587.7,
+      "server_tree_rss_mb": 710.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 77.5,
+      "system_cpu_pct": 81.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 61.538,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 540.8,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 70.6,
+      "system_cpu_pct": 81.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 61.805,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 105.2,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 70.6,
+      "system_cpu_pct": 60.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 62.07,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 70.6,
+      "system_cpu_pct": 28.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 62.331,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 70.6,
+      "system_cpu_pct": 42.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 62.602,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 70.6,
+      "system_cpu_pct": 23.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 62.869,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 70.6,
+      "system_cpu_pct": 20.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 63.135,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 70.6,
+      "system_cpu_pct": 38.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 63.402,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 70.6,
+      "system_cpu_pct": 20.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 63.672,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 52.2,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 68.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 63.945,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 79.0,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 64.225,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 83.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 64.496,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 84.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 64.779,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 88.5,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 65.063,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 88.8,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 65.336,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 82.8,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 65.618,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 78.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 65.901,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 88.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 66.187,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 85.3,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 66.469,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 86.5,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 66.749,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 81.4,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 67.035,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 82.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 67.319,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 85.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 67.603,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 82.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 67.887,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 86.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 68.168,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 85.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 68.453,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 80.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 68.734,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 703.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 82.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 69.005,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 11.5,
+      "server_tree_rss_mb": 719.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 79.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 69.275,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 387.8,
+      "server_tree_rss_mb": 698.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 64.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 69.546,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 588.1,
+      "server_tree_rss_mb": 689.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 74.0,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 69.827,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 601.6,
+      "server_tree_rss_mb": 689.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 74.1,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 70.096,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 575.1,
+      "server_tree_rss_mb": 700.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 82.2,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 70.367,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 615.3,
+      "server_tree_rss_mb": 750.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 81.9,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 70.642,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 550.9,
+      "server_tree_rss_mb": 720.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 82.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 70.91,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 578.0,
+      "server_tree_rss_mb": 720.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 84.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 71.181,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 606.4,
+      "server_tree_rss_mb": 722.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 79.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 71.454,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 565.0,
+      "server_tree_rss_mb": 721.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 83.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 71.73,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 613.0,
+      "server_tree_rss_mb": 721.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 74.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 72.005,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 572.9,
+      "server_tree_rss_mb": 722.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 73.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 72.279,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 617.0,
+      "server_tree_rss_mb": 722.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 72.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 72.542,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 592.6,
+      "server_tree_rss_mb": 721.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 74.0,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 72.812,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 590.1,
+      "server_tree_rss_mb": 699.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 74.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 73.08,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 583.3,
+      "server_tree_rss_mb": 691.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 81.6,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 73.362,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 538.1,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 89.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 73.643,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 579.1,
+      "server_tree_rss_mb": 721.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 83.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 73.913,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 571.9,
+      "server_tree_rss_mb": 721.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 89.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 74.192,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 571.0,
+      "server_tree_rss_mb": 721.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 85.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 74.461,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 586.2,
+      "server_tree_rss_mb": 721.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 83.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 74.738,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 559.0,
+      "server_tree_rss_mb": 721.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 86.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 75.008,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 613.9,
+      "server_tree_rss_mb": 721.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 76.7,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 75.277,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 579.4,
+      "server_tree_rss_mb": 721.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 81.1,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 75.542,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 531.1,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 77.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 75.805,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 142.9,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 42.6,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 76.07,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 44.9,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 76.336,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 35.6,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 76.602,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 25.4,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 76.869,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 28.0,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 77.136,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 26.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 77.403,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 78.3,
+      "system_cpu_pct": 24.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 77.682,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 44.6,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 75.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 77.953,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 79.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 78.233,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 77.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 78.518,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 77.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 78.802,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 77.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 79.083,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 82.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 79.37,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 87.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 79.653,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 85.4,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 79.935,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 85.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 80.217,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 87.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 80.503,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 85.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 80.785,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 86.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 81.071,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 720.6,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 84.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 81.342,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 11.8,
+      "server_tree_rss_mb": 736.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 85.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 81.612,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 249.0,
+      "server_tree_rss_mb": 705.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 71.6,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 81.883,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 582.1,
+      "server_tree_rss_mb": 708.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 90.2,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 82.149,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 546.6,
+      "server_tree_rss_mb": 694.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 93.3,
+      "system_ram_used_pct": 88.1
+    },
+    {
+      "t_s": 82.429,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 585.9,
+      "server_tree_rss_mb": 711.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 80.3,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 82.697,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 578.4,
+      "server_tree_rss_mb": 699.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 80.3,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 82.976,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 587.5,
+      "server_tree_rss_mb": 747.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 74.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 83.244,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 559.9,
+      "server_tree_rss_mb": 747.0,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 77.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 83.509,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 587.9,
+      "server_tree_rss_mb": 747.9,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 75.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 83.776,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 598.0,
+      "server_tree_rss_mb": 748.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 76.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 84.047,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 564.8,
+      "server_tree_rss_mb": 721.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 80.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 84.324,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 587.7,
+      "server_tree_rss_mb": 723.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 79.0,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 84.596,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 561.9,
+      "server_tree_rss_mb": 721.7,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 76.9,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 84.879,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 546.6,
+      "server_tree_rss_mb": 722.2,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 78.7,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 85.161,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 532.6,
+      "server_tree_rss_mb": 693.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 88.3,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 85.426,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 559.4,
+      "server_tree_rss_mb": 710.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 88.4,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 85.701,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 505.1,
+      "server_tree_rss_mb": 719.8,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 89.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 85.978,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 587.0,
+      "server_tree_rss_mb": 721.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 78.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 86.255,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 548.7,
+      "server_tree_rss_mb": 721.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 78.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 86.525,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 623.2,
+      "server_tree_rss_mb": 722.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 74.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 86.79,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 549.5,
+      "server_tree_rss_mb": 722.1,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 77.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 87.055,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 572.4,
+      "server_tree_rss_mb": 722.3,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 74.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 87.316,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 556.6,
+      "server_tree_rss_mb": 722.5,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 80.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 87.585,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 597.6,
+      "server_tree_rss_mb": 722.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 80.8,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 87.858,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 503.7,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 79.0,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 88.121,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 231.4,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 46.8,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 88.387,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 25.7,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 88.653,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 32.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 88.921,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 40.6,
+      "system_ram_used_pct": 88.6
+    },
+    {
+      "t_s": 89.186,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 39.6,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 89.453,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 27.9,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 89.72,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 80.9,
+      "system_cpu_pct": 28.1,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 90.007,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 32.7,
+      "ollama_rss_mb": 78.8,
+      "system_cpu_pct": 65.2,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 90.288,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 81.4,
+      "system_ram_used_pct": 88.5
+    },
+    {
+      "t_s": 90.565,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 83.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 90.839,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 78.4,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 91.119,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 88.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 91.4,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 86.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 91.685,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 89.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 91.968,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 90.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 92.253,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 83.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 92.535,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 87.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 92.822,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 85.4,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 93.098,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 88.8,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 93.386,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 95.3,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 93.669,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 82.4,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 93.952,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 83.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 94.239,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 86.0,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 94.524,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 88.4,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 94.81,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 84.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 95.097,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 84.0,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 95.381,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 85.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 95.667,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 86.2,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 95.95,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 98.6,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 96.23,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 89.4,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 96.516,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 88.1,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 96.798,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 88.5,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 97.085,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 87.6,
+      "system_ram_used_pct": 88.2
+    },
+    {
+      "t_s": 97.367,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 5.6,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 86.7,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 97.651,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 91.0,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 97.937,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 95.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 98.222,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 94.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 98.502,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 84.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 98.785,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 91.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 99.07,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 87.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 99.354,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 96.4,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 99.633,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 5.6,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 86.7,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 99.919,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 85.9,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 100.202,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 87.2,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 100.486,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 83.4,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 100.77,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 87.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 101.057,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 83.9,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 101.335,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 84.5,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 101.62,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 84.7,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 101.903,
+      "label": "synthetic_en_60s",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 11.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 87.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 102.17,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 5.9,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 69.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 102.436,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 22.5,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 102.703,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 22.1,
+      "system_ram_used_pct": 88.3
+    },
+    {
+      "t_s": 102.97,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 22.4,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 103.237,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 29.3,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 103.504,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 21.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 103.77,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 19.6,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 104.036,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 19.1,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 104.303,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 22.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 104.569,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 22.2,
+      "system_ram_used_pct": 88.4
+    },
+    {
+      "t_s": 104.837,
+      "label": "idle_end",
+      "server_tree_cpu_pct": 0.0,
+      "server_tree_rss_mb": 718.4,
+      "ollama_cpu_pct": 0.0,
+      "ollama_rss_mb": 75.8,
+      "system_cpu_pct": 28.6,
+      "system_ram_used_pct": 88.4
+    }
+  ]
+}

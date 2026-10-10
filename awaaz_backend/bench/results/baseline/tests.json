@@ -1,0 +1,34 @@
+{
+  "generated_at_utc": "2026-10-10T09:28:16.383432+00:00",
+  "frontend_lint": {
+    "command": "npm run lint (oxlint)",
+    "cwd": "C:\\Users\\muham\\OneDrive\\Desktop\\HacktoberFest\\HacktoberFest_Project-Awaaz_Pakistan-\\awaaz_pakistan",
+    "return_code": 0,
+    "passed": true,
+    "warnings": 0,
+    "errors": 0,
+    "summary_line": "Found 0 warnings and 0 errors."
+  },
+  "backend_pytest": {
+    "command": "python -m pytest -q tests",
+    "cwd": "C:\\Users\\muham\\OneDrive\\Desktop\\HacktoberFest\\HacktoberFest_Project-Awaaz_Pakistan-\\awaaz_backend",
+    "database_url_override": "sqlite+aiosqlite:///C:/Users/muham/AppData/Local/Temp/awaaz_bench_pytest.db",
+    "note": "Temporary SQLite DB used; real awaaz.db untouched.",
+    "schema_init_before_run": {
+      "performed": true,
+      "reason": "tests/test_api.py instantiates TestClient(app) without a 'with' block, so the FastAPI lifespan (init_db) never runs; schema is created explicitly for a clean temp DB.",
+      "return_code": 0,
+      "stderr_tail": ""
+    },
+    "finding_tests_depend_on_preexisting_db": "Without this init step, 8 DB-backed tests fail with 'no such table: complaints' against a fresh DB. They pass in the repo only because the committed awaaz.db already contains tables.",
+    "return_code": 0,
+    "passed": true,
+    "summary_counts": {
+      "passed": 39,
+      "warning": 1
+    },
+    "summary_line": "39 passed, 1 warning in 41.50s",
+    "stdout_tail": ".......................................                                  [100%]\n============================== warnings summary ===============================\n..\\..\\..\\..\\..\\AppData\\Local\\Temp\\awaaz_baseline_venv\\Lib\\site-packages\\fastapi\\testclient.py:1\n  C:\\Users\\muham\\AppData\\Local\\Temp\\awaaz_baseline_venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n39 passed, 1 warning in 41.50s",
+    "stderr_tail": ""
+  }
+}

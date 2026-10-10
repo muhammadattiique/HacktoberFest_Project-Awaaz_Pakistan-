@@ -1,0 +1,1400 @@
+{
+  "generated_at": "2026-10-10T09:15:53+00:00",
+  "method": {
+    "fixture": "synthetic_en_10s (10.0 s, SYNTHETIC)",
+    "server": "bench/instrumented_server.py: uvicorn 1 worker, temp SQLite DB, repo-default settings, ffmpeg shim on PATH",
+    "client": "asyncio.gather of N httpx.AsyncClient POSTs fired together; client timeout 1800.0s so server behaviour (not client timeouts) is measured",
+    "event_loop_probe": "GET / every 250 ms during the burst (no /health route exists); 2 s unloaded probe baseline before each level",
+    "frontend_timeout_note": "would_exceed_frontend_axios_timeout_35s counts requests whose measured latency exceeds apiClient's 35 s timeout in awaaz_pakistan/src/lib/api.js"
+  },
+  "host": {
+    "python": "3.14.7",
+    "python_executable": "C:\\Users\\muham\\AppData\\Local\\Temp\\awaaz_baseline_venv\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "warmup_status": 201,
+  "findings": {
+    "whisper_and_llm_inside_request_cycle": true,
+    "voice_handler_is_async_def_calling_sync_blocking_code": true,
+    "whisper_load_model_calls_total": 1,
+    "whisper_load_model_calls_during_requests": 0,
+    "models_loaded_at": "startup (FastAPI lifespan -> ai_pipeline.initialize)",
+    "whisper_serialised_by_threading_lock": true
+  },
+  "whisper_load_events": [
+    {
+      "type": "whisper_load_model",
+      "phase": "startup",
+      "duration_s": 0.698,
+      "in_request": false,
+      "args": [
+        "base"
+      ],
+      "kwargs": {
+        "device": "cpu"
+      },
+      "wall_time": 1791623193.3509016
+    }
+  ],
+  "resource_by_phase": {
+    "concurrency_20": {
+      "n_samples": 531,
+      "duration_s": 132.75,
+      "server_tree_cpu_pct": {
+        "mean": 160.4,
+        "p95": 587.1,
+        "max": 623.1
+      },
+      "server_tree_rss_mb": {
+        "mean": 721.5,
+        "p95": 740.4,
+        "max": 754.5
+      },
+      "ollama_cpu_pct": {
+        "mean": 2.9,
+        "p95": 18.5,
+        "max": 83.0
+      },
+      "ollama_rss_mb": {
+        "mean": 80.1,
+        "p95": 83.9,
+        "max": 84.8
+      },
+      "system_cpu_pct": {
+        "mean": 88.3,
+        "p95": 100.0,
+        "max": 100.0
+      },
+      "system_ram_used_pct": {
+        "mean": 90.4,
+        "p95": 92.7,
+        "max": 93.0
+      }
+    },
+    "concurrency_5": {
+      "n_samples": 141,
+      "duration_s": 35.25,
+      "server_tree_cpu_pct": {
+        "mean": 150.4,
+        "p95": 535.6,
+        "max": 585.9
+      },
+      "server_tree_rss_mb": {
+        "mean": 716.5,
+        "p95": 735.2,
+        "max": 737.7
+      },
+      "ollama_cpu_pct": {
+        "mean": 1.6,
+        "p95": 5.5,
+        "max": 51.1
+      },
+      "ollama_rss_mb": {
+        "mean": 79.8,
+        "p95": 83.1,
+        "max": 84.6
+      },
+      "system_cpu_pct": {
+        "mean": 90.5,
+        "p95": 100.0,
+        "max": 100.0
+      },
+      "system_ram_used_pct": {
+        "mean": 93.6,
+        "p95": 94.2,
+        "max": 94.7
+      }
+    },
+    "concurrency_50": {
+      "n_samples": 1252,
+      "duration_s": 313.0,
+      "server_tree_cpu_pct": {
+        "mean": 166.2,
+        "p95": 585.3,
+        "max": 615.2
+      },
+      "server_tree_rss_mb": {
+        "mean": 727.9,
+        "p95": 749.2,
+        "max": 760.3
+      },
+      "ollama_cpu_pct": {
+        "mean": 2.5,
+        "p95": 17.0,
+        "max": 78.6
+      },
+      "ollama_rss_mb": {
+        "mean": 81.6,
+        "p95": 86.1,
+        "max": 87.9
+      },
+      "system_cpu_pct": {
+        "mean": 87.1,
+        "p95": 100.0,
+        "max": 100.0
+      },
+      "system_ram_used_pct": {
+        "mean": 87.6,
+        "p95": 89.8,
+        "max": 91.9
+      }
+    },
+    "idle_end": {
+      "n_samples": 7,
+      "duration_s": 1.75,
+      "server_tree_cpu_pct": {
+        "mean": 0.8,
+        "p95": 4.0,
+        "max": 5.7
+      },
+      "server_tree_rss_mb": {
+        "mean": 721.4,
+        "p95": 721.4,
+        "max": 721.4
+      },
+      "ollama_cpu_pct": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ollama_rss_mb": {
+        "mean": 83.4,
+        "p95": 83.4,
+        "max": 83.4
+      },
+      "system_cpu_pct": {
+        "mean": 31.5,
+        "p95": 51.1,
+        "max": 58.2
+      },
+      "system_ram_used_pct": {
+        "mean": 85.6,
+        "p95": 85.7,
+        "max": 85.8
+      }
+    },
+    "warmup": {
+      "n_samples": 25,
+      "duration_s": 6.25,
+      "server_tree_cpu_pct": {
+        "mean": 187.8,
+        "p95": 585.2,
+        "max": 593.9
+      },
+      "server_tree_rss_mb": {
+        "mean": 730.9,
+        "p95": 763.4,
+        "max": 767.3
+      },
+      "ollama_cpu_pct": {
+        "mean": 2.9,
+        "p95": 18.9,
+        "max": 43.6
+      },
+      "ollama_rss_mb": {
+        "mean": 76.1,
+        "p95": 79.6,
+        "max": 79.6
+      },
+      "system_cpu_pct": {
+        "mean": 87.2,
+        "p95": 97.0,
+        "max": 100.0
+      },
+      "system_ram_used_pct": {
+        "mean": 88.7,
+        "p95": 88.9,
+        "max": 88.9
+      }
+    }
+  },
+  "levels": [
+    {
+      "concurrency": 5,
+      "wall_time_s": 37.849,
+      "success_201": 5,
+      "failures": 0,
+      "failure_types": {},
+      "throughput_req_per_s": 0.132,
+      "latency_success_s": {
+        "n": 5,
+        "min": 37.804,
+        "median": 37.812,
+        "p95": 37.839,
+        "max": 37.841,
+        "mean": 37.819
+      },
+      "latency_all_s": {
+        "n": 5,
+        "min": 37.804,
+        "median": 37.812,
+        "p95": 37.839,
+        "max": 37.841,
+        "mean": 37.819
+      },
+      "p50_s": 37.812,
+      "p95_s": 37.839,
+      "would_exceed_frontend_axios_timeout_35s": 5,
+      "probe_unloaded_latency_s": {
+        "n": 8,
+        "min": 0.0063,
+        "median": 0.0136,
+        "p95": 0.0442,
+        "max": 0.051,
+        "mean": 0.0188
+      },
+      "probe_under_load_latency_s": {
+        "n": 2,
+        "min": 0.019,
+        "median": 18.7629,
+        "p95": 35.6323,
+        "max": 37.5067,
+        "mean": 18.7629
+      },
+      "probe_under_load_count": 2,
+      "probe_over_1s": 1,
+      "requests": [
+        {
+          "bench_id": "b33c409683414ff9a55f45a155be3edb",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 37.808,
+          "completed_at_s": 37.81,
+          "server_stt_s": 3.3118,
+          "server_llm_s": 6.2458,
+          "server_total_s": 37.7776,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "9ad559e312c34055a37b6d8fedf08ef2",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 37.812,
+          "completed_at_s": 37.815,
+          "server_stt_s": 2.241,
+          "server_llm_s": 4.3378,
+          "server_total_s": 37.7961,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "1763bf03f777404fabf35fcb4998ebba",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 37.829,
+          "completed_at_s": 37.834,
+          "server_stt_s": 2.5893,
+          "server_llm_s": 5.1201,
+          "server_total_s": 37.8153,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "493405d39cad462e95d777349c71d2a7",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 37.804,
+          "completed_at_s": 37.811,
+          "server_stt_s": 2.4479,
+          "server_llm_s": 4.2088,
+          "server_total_s": 37.7839,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "f29b5882e3594f68ae026e2141da85d0",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 37.841,
+          "completed_at_s": 37.849,
+          "server_stt_s": 2.0373,
+          "server_llm_s": 4.3832,
+          "server_total_s": 37.8294,
+          "llm_returned_json": true
+        }
+      ],
+      "probes_under_load": [
+        {
+          "sent_at_s": 0.0,
+          "latency_s": 0.019,
+          "status": 200
+        },
+        {
+          "sent_at_s": 0.273,
+          "latency_s": 37.5067,
+          "status": 200
+        }
+      ],
+      "server_stage_s": {
+        "stt_s": {
+          "n": 5,
+          "min": 2.037,
+          "median": 2.448,
+          "p95": 3.167,
+          "max": 3.312,
+          "mean": 2.525
+        },
+        "llm_s": {
+          "n": 5,
+          "min": 4.209,
+          "median": 4.383,
+          "p95": 6.021,
+          "max": 6.246,
+          "mean": 4.859
+        },
+        "server_total_s": {
+          "n": 5,
+          "min": 37.778,
+          "median": 37.796,
+          "p95": 37.827,
+          "max": 37.829,
+          "mean": 37.8
+        }
+      },
+      "llm_fallback_count": 0
+    },
+    {
+      "concurrency": 20,
+      "wall_time_s": 150.365,
+      "success_201": 15,
+      "failures": 5,
+      "failure_types": {
+        "500": 5
+      },
+      "throughput_req_per_s": 0.1,
+      "latency_success_s": {
+        "n": 15,
+        "min": 149.717,
+        "median": 149.836,
+        "p95": 150.311,
+        "max": 150.352,
+        "mean": 149.906
+      },
+      "latency_all_s": {
+        "n": 20,
+        "min": 149.557,
+        "median": 149.779,
+        "p95": 150.297,
+        "max": 150.352,
+        "mean": 149.845
+      },
+      "p50_s": 149.779,
+      "p95_s": 150.297,
+      "would_exceed_frontend_axios_timeout_35s": 20,
+      "probe_unloaded_latency_s": {
+        "n": 8,
+        "min": 0.0036,
+        "median": 0.0046,
+        "p95": 0.0068,
+        "max": 0.0072,
+        "mean": 0.005
+      },
+      "probe_under_load_latency_s": {
+        "n": 5,
+        "min": 0.0043,
+        "median": 0.005,
+        "p95": 119.3822,
+        "max": 149.2197,
+        "mean": 29.8532
+      },
+      "probe_under_load_count": 5,
+      "probe_over_1s": 1,
+      "requests": [
+        {
+          "bench_id": "52ec4ae66a504865914688340b0320d6",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.812,
+          "completed_at_s": 149.814,
+          "server_stt_s": 1.9643,
+          "server_llm_s": 4.0956,
+          "server_total_s": 149.7789,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "670c5b7633b145319dc4b9ddfeb535ca",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.719,
+          "completed_at_s": 149.721,
+          "server_stt_s": 1.963,
+          "server_llm_s": 4.1833,
+          "server_total_s": 149.6857,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "70210fc5eedc4ddab7114be8bf687c57",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 150.294,
+          "completed_at_s": 150.297,
+          "server_stt_s": 1.9983,
+          "server_llm_s": 3.7669,
+          "server_total_s": 150.2599,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "9f72114bf326499e9124b2926b6ff635",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 150.159,
+          "completed_at_s": 150.162,
+          "server_stt_s": 2.1477,
+          "server_llm_s": 3.7061,
+          "server_total_s": 150.127,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "23b5535efbee4764963921a62b76f6b2",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.774,
+          "completed_at_s": 149.779,
+          "server_stt_s": 1.8747,
+          "server_llm_s": 4.2195,
+          "server_total_s": 149.7432,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "835868657dc54baabf910adf9d9353b5",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.86,
+          "completed_at_s": 149.865,
+          "server_stt_s": 2.2502,
+          "server_llm_s": 4.155,
+          "server_total_s": 149.8296,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "b0f28482dd4240f6b8b889a0847a1ff6",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 149.687,
+          "completed_at_s": 149.693,
+          "server_stt_s": 1.8852,
+          "server_llm_s": 4.4312,
+          "server_total_s": 149.6077,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "fab2e8fbdacc459aab83204329d7c76a",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 149.685,
+          "completed_at_s": 149.692,
+          "server_stt_s": 1.8991,
+          "server_llm_s": 3.6994,
+          "server_total_s": 149.5748,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "f91252c19a4b4f9d8b5e94166f2c4229",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 149.706,
+          "completed_at_s": 149.714,
+          "server_stt_s": 1.8882,
+          "server_llm_s": 3.6026,
+          "server_total_s": 149.6646,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "6cb0e97bd12f4e48914fa8945d4fcb9f",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.718,
+          "completed_at_s": 149.727,
+          "server_stt_s": 2.0134,
+          "server_llm_s": 3.9567,
+          "server_total_s": 149.6912,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "cc4fe291d2934248af5c6e2edb169663",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 149.684,
+          "completed_at_s": 149.694,
+          "server_stt_s": 2.0135,
+          "server_llm_s": 3.8249,
+          "server_total_s": 149.6375,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "daeeb7573b064eadab8832d6778cd29a",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.906,
+          "completed_at_s": 149.917,
+          "server_stt_s": 2.0026,
+          "server_llm_s": 3.8318,
+          "server_total_s": 149.8802,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "884439c7f0074c1b838dc2145c45fd77",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 150.034,
+          "completed_at_s": 150.046,
+          "server_stt_s": 4.3269,
+          "server_llm_s": 8.8961,
+          "server_total_s": 150.0089,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "1180e852add34571964463208b426dd5",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 150.352,
+          "completed_at_s": 150.365,
+          "server_stt_s": 3.7349,
+          "server_llm_s": 7.0175,
+          "server_total_s": 150.3275,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "5eb7e722085c4b79b334502265be9c44",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.836,
+          "completed_at_s": 149.849,
+          "server_stt_s": 3.8972,
+          "server_llm_s": 9.1094,
+          "server_total_s": 149.8117,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "aadfb3bbd6b546438c44a993212f2988",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 149.557,
+          "completed_at_s": 149.571,
+          "server_stt_s": 2.2792,
+          "server_llm_s": 4.1578,
+          "server_total_s": 149.4931,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "cd9bec0a684d4498913a028da58b78ec",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.887,
+          "completed_at_s": 149.902,
+          "server_stt_s": 2.1754,
+          "server_llm_s": 4.2443,
+          "server_total_s": 149.8637,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "bace9925d53c42eba3b0c5d951034e01",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.73,
+          "completed_at_s": 149.746,
+          "server_stt_s": 2.7245,
+          "server_llm_s": 5.1568,
+          "server_total_s": 149.7082,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "7f55dc4013b54b69841ceae9a2747a2a",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.717,
+          "completed_at_s": 149.734,
+          "server_stt_s": 2.6121,
+          "server_llm_s": 7.7154,
+          "server_total_s": 149.6963,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "f432eb30eba548c0981f1b1c2c6480a1",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 149.785,
+          "completed_at_s": 149.802,
+          "server_stt_s": 2.2559,
+          "server_llm_s": 4.4927,
+          "server_total_s": 149.7641,
+          "llm_returned_json": true
+        }
+      ],
+      "probes_under_load": [
+        {
+          "sent_at_s": 0.0,
+          "latency_s": 0.0323,
+          "status": 200
+        },
+        {
+          "sent_at_s": 0.284,
+          "latency_s": 149.2197,
+          "status": 200
+        },
+        {
+          "sent_at_s": 149.769,
+          "latency_s": 0.0045,
+          "status": 200
+        },
+        {
+          "sent_at_s": 150.036,
+          "latency_s": 0.005,
+          "status": 200
+        },
+        {
+          "sent_at_s": 150.294,
+          "latency_s": 0.0043,
+          "status": 200
+        }
+      ],
+      "server_stage_s": {
+        "stt_s": {
+          "n": 20,
+          "min": 1.875,
+          "median": 2.081,
+          "p95": 3.919,
+          "max": 4.327,
+          "mean": 2.395
+        },
+        "llm_s": {
+          "n": 20,
+          "min": 3.603,
+          "median": 4.171,
+          "p95": 8.907,
+          "max": 9.109,
+          "mean": 4.913
+        },
+        "server_total_s": {
+          "n": 20,
+          "min": 149.493,
+          "median": 149.754,
+          "p95": 150.263,
+          "max": 150.327,
+          "mean": 149.808
+        }
+      },
+      "llm_fallback_count": 0
+    },
+    {
+      "concurrency": 50,
+      "wall_time_s": 354.181,
+      "success_201": 20,
+      "failures": 30,
+      "failure_types": {
+        "500": 30
+      },
+      "throughput_req_per_s": 0.056,
+      "latency_success_s": {
+        "n": 20,
+        "min": 353.646,
+        "median": 353.885,
+        "p95": 354.158,
+        "max": 354.17,
+        "mean": 353.886
+      },
+      "latency_all_s": {
+        "n": 50,
+        "min": 353.515,
+        "median": 353.561,
+        "p95": 354.04,
+        "max": 354.17,
+        "mean": 353.677
+      },
+      "p50_s": 353.561,
+      "p95_s": 354.04,
+      "would_exceed_frontend_axios_timeout_35s": 50,
+      "probe_unloaded_latency_s": {
+        "n": 8,
+        "min": 0.0038,
+        "median": 0.0051,
+        "p95": 0.0077,
+        "max": 0.0089,
+        "mean": 0.0054
+      },
+      "probe_under_load_latency_s": {
+        "n": 4,
+        "min": 0.0045,
+        "median": 0.0715,
+        "p95": 300.2401,
+        "max": 353.203,
+        "mean": 88.3376
+      },
+      "probe_under_load_count": 4,
+      "probe_over_1s": 1,
+      "requests": [
+        {
+          "bench_id": "49252ebe01b24166be4d88423a3f819b",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.585,
+          "completed_at_s": 353.587,
+          "server_stt_s": 2.0417,
+          "server_llm_s": 4.0657,
+          "server_total_s": 353.4212,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "993d878d42e04427b7320be8ef016e84",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.629,
+          "completed_at_s": 353.631,
+          "server_stt_s": 2.1241,
+          "server_llm_s": 3.6364,
+          "server_total_s": 353.4407,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "db7161e5c80d436e9970433cd9cc7c0e",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.635,
+          "completed_at_s": 353.638,
+          "server_stt_s": 2.0367,
+          "server_llm_s": 6.4591,
+          "server_total_s": 353.4592,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "ba8231ef47e94ae8914a61d9e8b63b1c",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.634,
+          "completed_at_s": 353.639,
+          "server_stt_s": 1.9968,
+          "server_llm_s": 4.1626,
+          "server_total_s": 353.4746,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "5e06387250294a45837c14e3d87a903f",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.631,
+          "completed_at_s": 353.637,
+          "server_stt_s": 1.7876,
+          "server_llm_s": 3.4955,
+          "server_total_s": 353.4908,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "02d34113f41f4568ae42b62d3103ae9c",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.881,
+          "completed_at_s": 353.887,
+          "server_stt_s": 1.8017,
+          "server_llm_s": 3.4222,
+          "server_total_s": 353.7638,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "9a058c8d465a4b1db5d6120f2040cc9e",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.646,
+          "completed_at_s": 353.654,
+          "server_stt_s": 3.7783,
+          "server_llm_s": 6.314,
+          "server_total_s": 353.5313,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "6e584674e65349728d0e977605b90c35",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.711,
+          "completed_at_s": 353.72,
+          "server_stt_s": 2.2438,
+          "server_llm_s": 6.0196,
+          "server_total_s": 353.5991,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "ba98803642b447ea95d1876df7806ce6",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.759,
+          "completed_at_s": 353.768,
+          "server_stt_s": 2.1382,
+          "server_llm_s": 7.1662,
+          "server_total_s": 353.6444,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "b5c5dca7249649d794201452025571e8",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 354.17,
+          "completed_at_s": 354.18,
+          "server_stt_s": 2.1766,
+          "server_llm_s": 4.0884,
+          "server_total_s": 354.0544,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "6e754386929846e18d07d20d38497da4",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 354.053,
+          "completed_at_s": 354.064,
+          "server_stt_s": 1.991,
+          "server_llm_s": 4.3463,
+          "server_total_s": 353.9375,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "c8d85924e18e4ffdbbeebb6b2f9e4ac2",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.947,
+          "completed_at_s": 353.959,
+          "server_stt_s": 2.874,
+          "server_llm_s": 4.061,
+          "server_total_s": 353.832,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "a4cc9e655e3f4d02b50a664231e54e2c",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 354.157,
+          "completed_at_s": 354.17,
+          "server_stt_s": 2.0062,
+          "server_llm_s": 3.7227,
+          "server_total_s": 354.0441,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "e585ae504d434e6e802fd1bfd5832a26",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.825,
+          "completed_at_s": 353.838,
+          "server_stt_s": 1.8139,
+          "server_llm_s": 3.6877,
+          "server_total_s": 353.7142,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "c0ed44f052584fe3b41ba6eda639a951",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.674,
+          "completed_at_s": 353.69,
+          "server_stt_s": 1.8143,
+          "server_llm_s": 3.5657,
+          "server_total_s": 353.5643,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "42475b6b19ae49f1a7a891aed556063a",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.843,
+          "completed_at_s": 353.862,
+          "server_stt_s": 1.9874,
+          "server_llm_s": 7.1949,
+          "server_total_s": 353.7394,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "39e08684350d4b59b6b7bec6d9d5d290",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.702,
+          "completed_at_s": 353.722,
+          "server_stt_s": 1.9983,
+          "server_llm_s": 3.8881,
+          "server_total_s": 353.5981,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "f2bb165379ba4f78a1c1adbe74a7eb97",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.537,
+          "completed_at_s": 353.559,
+          "server_stt_s": 2.0651,
+          "server_llm_s": 4.5981,
+          "server_total_s": 352.9656,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "440d6a43e92c40bead9d62af190ecc7c",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 354.003,
+          "completed_at_s": 354.028,
+          "server_stt_s": 3.6889,
+          "server_llm_s": 9.2909,
+          "server_total_s": 353.8996,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "d1a62a65bbd048f3b940fac194bfc19e",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.971,
+          "completed_at_s": 353.997,
+          "server_stt_s": 3.6352,
+          "server_llm_s": 4.9957,
+          "server_total_s": 353.8681,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "747ddc2404cb41a89727fb936aa09303",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.888,
+          "completed_at_s": 353.914,
+          "server_stt_s": 3.6456,
+          "server_llm_s": 7.9444,
+          "server_total_s": 353.7859,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "732fb031485948fba59190653275f849",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 354.023,
+          "completed_at_s": 354.05,
+          "server_stt_s": 1.9436,
+          "server_llm_s": 4.5126,
+          "server_total_s": 353.9213,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "726e2127141e41e2874ec54f68d2cf47",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.947,
+          "completed_at_s": 353.975,
+          "server_stt_s": 2.1621,
+          "server_llm_s": 4.2587,
+          "server_total_s": 353.8471,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "d3abc8f3b58740868b5bc773e6024483",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.842,
+          "completed_at_s": 353.871,
+          "server_stt_s": 2.0977,
+          "server_llm_s": 4.7756,
+          "server_total_s": 353.7423,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "6a2874f70cec4287b3777e8b5bd51183",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.758,
+          "completed_at_s": 353.788,
+          "server_stt_s": 2.4664,
+          "server_llm_s": 3.8365,
+          "server_total_s": 353.6603,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "5d247ec71b6e4d3ea3c597c69038d302",
+          "status": 201,
+          "error_type": null,
+          "detail": null,
+          "latency_s": 353.913,
+          "completed_at_s": 353.943,
+          "server_stt_s": 1.9373,
+          "server_llm_s": 6.3492,
+          "server_total_s": 353.8174,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "010a07104a944ecbb902d007f79df9f5",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.524,
+          "completed_at_s": 353.557,
+          "server_stt_s": 1.9289,
+          "server_llm_s": 3.6592,
+          "server_total_s": 352.887,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "79e84e444fb14ee490c21cfe380b39ae",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.523,
+          "completed_at_s": 353.557,
+          "server_stt_s": 2.0369,
+          "server_llm_s": 4.4445,
+          "server_total_s": 352.9133,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "379ae57ebbaa4cdf82ae242d96765a21",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.518,
+          "completed_at_s": 353.558,
+          "server_stt_s": 2.3085,
+          "server_llm_s": 4.1409,
+          "server_total_s": 352.9385,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "92d756790f42491c92689cffcdd4ae63",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.518,
+          "completed_at_s": 353.559,
+          "server_stt_s": 2.2556,
+          "server_llm_s": 4.3768,
+          "server_total_s": 352.9919,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "df588882e8f94a9fb2bdc7f47ffa5161",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.517,
+          "completed_at_s": 353.56,
+          "server_stt_s": 1.9068,
+          "server_llm_s": 3.5525,
+          "server_total_s": 353.0176,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "41d730895a824fac8c6b342b5f5d7a45",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.517,
+          "completed_at_s": 353.561,
+          "server_stt_s": 1.9408,
+          "server_llm_s": 3.6076,
+          "server_total_s": 353.0346,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "9ce45fe0453e428e9d0b129d94c02987",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.519,
+          "completed_at_s": 353.565,
+          "server_stt_s": 1.8781,
+          "server_llm_s": 6.7887,
+          "server_total_s": 353.0522,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "88afe7dfeaae434dbf193dbd3aca80d6",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.519,
+          "completed_at_s": 353.565,
+          "server_stt_s": 2.1966,
+          "server_llm_s": 3.9875,
+          "server_total_s": 353.0701,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "4297f5bf980447a7a75d84f357891258",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.518,
+          "completed_at_s": 353.566,
+          "server_stt_s": 1.861,
+          "server_llm_s": 3.6514,
+          "server_total_s": 353.0856,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "735a57750e3941adb47599f221ca3e9e",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.517,
+          "completed_at_s": 353.567,
+          "server_stt_s": 1.8894,
+          "server_llm_s": 3.6055,
+          "server_total_s": 353.1015,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "d508068ee6f34f9fbfd271dcedd118e1",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.516,
+          "completed_at_s": 353.567,
+          "server_stt_s": 1.8704,
+          "server_llm_s": 4.4266,
+          "server_total_s": 353.1253,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "09140c566c1d4cf8b84966dabd0c1615",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.515,
+          "completed_at_s": 353.568,
+          "server_stt_s": 1.9701,
+          "server_llm_s": 3.9802,
+          "server_total_s": 353.1517,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "c5546a8679974b4a894b4817510e3304",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.522,
+          "completed_at_s": 353.576,
+          "server_stt_s": 2.1181,
+          "server_llm_s": 4.2484,
+          "server_total_s": 353.1744,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "baef9479e3fc4fa59502f8f0848076a4",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.522,
+          "completed_at_s": 353.577,
+          "server_stt_s": 1.9295,
+          "server_llm_s": 3.713,
+          "server_total_s": 353.1968,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "b41dbcbe25314b21988ae4827aaaa356",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.522,
+          "completed_at_s": 353.578,
+          "server_stt_s": 2.071,
+          "server_llm_s": 3.8845,
+          "server_total_s": 353.2193,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "d6d9903dc6fe41f3a051096165c35126",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.522,
+          "completed_at_s": 353.579,
+          "server_stt_s": 1.9815,
+          "server_llm_s": 6.3888,
+          "server_total_s": 353.2405,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "84f9686aedd24d7f8b07c0182fa8f6a6",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.522,
+          "completed_at_s": 353.58,
+          "server_stt_s": 1.9798,
+          "server_llm_s": 4.2113,
+          "server_total_s": 353.2649,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "9c2ca21e36af4468bc7d7f262b779fc7",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.522,
+          "completed_at_s": 353.581,
+          "server_stt_s": 1.9827,
+          "server_llm_s": 4.1095,
+          "server_total_s": 353.2893,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "ecc13527666f4e8c98d394325dbf45fa",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.522,
+          "completed_at_s": 353.582,
+          "server_stt_s": 2.0321,
+          "server_llm_s": 5.2792,
+          "server_total_s": 353.3132,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "271a790ea72843dcb8d8b41e24f6b2c6",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.522,
+          "completed_at_s": 353.583,
+          "server_stt_s": 2.6938,
+          "server_llm_s": 4.0909,
+          "server_total_s": 353.3352,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "8ac267c57def41058028c83ff7756543",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.522,
+          "completed_at_s": 353.584,
+          "server_stt_s": 2.1476,
+          "server_llm_s": 4.5864,
+          "server_total_s": 353.3508,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "ee98dad210f647f4a118a05d2238114a",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.522,
+          "completed_at_s": 353.584,
+          "server_stt_s": 2.3708,
+          "server_llm_s": 5.0422,
+          "server_total_s": 353.3658,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "b7e6af346c85481c8acce351d4f7ba40",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.521,
+          "completed_at_s": 353.585,
+          "server_stt_s": 2.0808,
+          "server_llm_s": 5.3938,
+          "server_total_s": 353.3811,
+          "llm_returned_json": true
+        },
+        {
+          "bench_id": "e608594bc37945b9938128f77438e0a8",
+          "status": 500,
+          "error_type": null,
+          "detail": "{\"error\":\"Internal Server Error\",\"message\":\"An unexpected error occurred. Please try again or contact administration.\"}",
+          "latency_s": 353.518,
+          "completed_at_s": 353.586,
+          "server_stt_s": 2.6365,
+          "server_llm_s": 4.2018,
+          "server_total_s": 353.3962,
+          "llm_returned_json": true
+        }
+      ],
+      "probes_under_load": [
+        {
+          "sent_at_s": 0.0,
+          "latency_s": 0.1168,
+          "status": 200
+        },
+        {
+          "sent_at_s": 0.384,
+          "latency_s": 353.203,
+          "status": 200
+        },
+        {
+          "sent_at_s": 353.838,
+          "latency_s": 0.0262,
+          "status": 200
+        },
+        {
+          "sent_at_s": 354.122,
+          "latency_s": 0.0045,
+          "status": 200
+        }
+      ],
+      "server_stage_s": {
+        "stt_s": {
+          "n": 50,
+          "min": 1.788,
+          "median": 2.037,
+          "p95": 3.641,
+          "max": 3.778,
+          "mean": 2.206
+        },
+        "llm_s": {
+          "n": 50,
+          "min": 3.422,
+          "median": 4.207,
+          "p95": 7.182,
+          "max": 9.291,
+          "mean": 4.705
+        },
+        "server_total_s": {
+          "n": 50,
+          "min": 352.887,
+          "median": 353.409,
+          "p95": 353.93,
+          "max": 354.054,
+          "mean": 353.434
+        }
+      },
+      "llm_fallback_count": 0
+    }
+  ]
+}

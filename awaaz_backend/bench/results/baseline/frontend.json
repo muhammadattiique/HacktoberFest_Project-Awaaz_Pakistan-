@@ -1,0 +1,148 @@
+{
+    "generated_at_utc":  "2026-10-10T09:23:30.8232726Z",
+    "build":  {
+                  "tool":  "vite build (production)",
+                  "index_html_bytes":  1744,
+                  "assets":  [
+                                 {
+                                     "file":  "Admin-BiCKqDHJ.js",
+                                     "bytes":  34739,
+                                     "kib":  33.92
+                                 },
+                                 {
+                                     "file":  "index-BgQj8L4y.css",
+                                     "bytes":  89053,
+                                     "kib":  86.97
+                                 },
+                                 {
+                                     "file":  "index-CK1bas_q.js",
+                                     "bytes":  231776,
+                                     "kib":  226.34
+                                 },
+                                 {
+                                     "file":  "vendor-charts-DemVEFJ_.js",
+                                     "bytes":  364929,
+                                     "kib":  356.38
+                                 },
+                                 {
+                                     "file":  "vendor-leaflet-DRKIVYhP.js",
+                                     "bytes":  289448,
+                                     "kib":  282.66
+                                 },
+                                 {
+                                     "file":  "vendor-motion-XHln91gA.js",
+                                     "bytes":  19860,
+                                     "kib":  19.39
+                                 },
+                                 {
+                                     "file":  "vendor-three-Dd-BJ0sV.js",
+                                     "bytes":  806582,
+                                     "kib":  787.68
+                                 }
+                             ],
+                  "total_assets_bytes":  1836387,
+                  "note":  "gzip sizes are in the raw build log; byte sizes here are uncompressed on-disk.",
+                  "raw_build_log":  "\u003e awaaz_pakistan@1.0.0 build\r\n\u003e vite build\r\n\r\n\u001b[36mvite v5.4.21 \u001b[32mbuilding for production...\u001b[36m\u001b[39m\r\ntransforming...\r\n\u001b[32mΓ£ô\u001b[39m 2541 modules transformed.\r\nrendering chunks...\r\ncomputing gzip size...\r\n\u001b[2mdist/\u001b[22m\u001b[32mindex.html                         \u001b[39m\u001b[1m\u001b[2m  1.74 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m Γöé gzip:   0.86 kB\u001b[22m\r\n\u001b[2mdist/\u001b[22m\u001b[35massets/index-BgQj8L4y.css          \u001b[39m\u001b[1m\u001b[2m 89.05 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m Γöé gzip:  13.43 kB\u001b[22m\r\n\u001b[2mdist/\u001b[22m\u001b[36massets/vendor-motion-XHln91gA.js   \u001b[39m\u001b[1m\u001b[2m 19.86 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m Γöé gzip:   5.74 kB\u001b[22m\r\n\u001b[2mdist/\u001b[22m\u001b[36massets/Admin-BiCKqDHJ.js           \u001b[39m\u001b[1m\u001b[2m 34.73 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m Γöé gzip:   8.82 kB\u001b[22m\r\n\u001b[2mdist/\u001b[22m\u001b[36massets/index-CK1bas_q.js           \u001b[39m\u001b[1m\u001b[2m225.60 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m Γöé gzip:  70.34 kB\u001b[22m\r\n\u001b[2mdist/\u001b[22m\u001b[36massets/vendor-leaflet-DRKIVYhP.js  \u001b[39m\u001b[1m\u001b[2m289.45 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m Γöé gzip:  88.65 kB\u001b[22m\r\n\u001b[2mdist/\u001b[22m\u001b[36massets/vendor-charts-DemVEFJ_.js   \u001b[39m\u001b[1m\u001b[2m364.92 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m Γöé gzip: 101.25 kB\u001b[22m\r\n\u001b[2mdist/\u001b[22m\u001b[36massets/vendor-three-Dd-BJ0sV.js    \u001b[39m\u001b[1m\u001b[2m806.58 kB\u001b[22m\u001b[1m\u001b[22m\u001b[2m Γöé gzip: 218.16 kB\u001b[22m\r\n\u001b[32mΓ£ô built in 5.54s\u001b[39m"
+              },
+    "lighthouse":  {
+                       "home_mobile":  {
+                                           "url":  "http://127.0.0.1:4173/",
+                                           "form_factor":  "mobile",
+                                           "performance":  29,
+                                           "accessibility":  93,
+                                           "metrics":  {
+                                                           "first_contentful_paint":  "6.3Â s",
+                                                           "largest_contentful_paint":  "6.9Â s",
+                                                           "total_blocking_time":  "9,990Â ms",
+                                                           "cumulative_layout_shift":  "0",
+                                                           "speed_index":  "7.6Â s"
+                                                       },
+                                           "html_report":  "home_mobile.report.html",
+                                           "json_report":  "home_mobile.report.json"
+                                       },
+                       "home_desktop":  {
+                                            "url":  "http://127.0.0.1:4173/",
+                                            "form_factor":  "desktop",
+                                            "performance":  76,
+                                            "accessibility":  93,
+                                            "metrics":  {
+                                                            "first_contentful_paint":  "1.2Â s",
+                                                            "largest_contentful_paint":  "1.2Â s",
+                                                            "total_blocking_time":  "410Â ms",
+                                                            "cumulative_layout_shift":  "0.013",
+                                                            "speed_index":  "1.4Â s"
+                                                        },
+                                            "html_report":  "home_desktop.report.html",
+                                            "json_report":  "home_desktop.report.json"
+                                        },
+                       "dashboard_mobile":  {
+                                                "url":  "http://127.0.0.1:4173/admin",
+                                                "form_factor":  "mobile",
+                                                "performance":  69,
+                                                "accessibility":  88,
+                                                "metrics":  {
+                                                                "first_contentful_paint":  "4.9Â s",
+                                                                "largest_contentful_paint":  "5.0Â s",
+                                                                "total_blocking_time":  "0Â ms",
+                                                                "cumulative_layout_shift":  "0",
+                                                                "speed_index":  "5.1Â s"
+                                                            },
+                                                "html_report":  "dashboard_mobile.report.html",
+                                                "json_report":  "dashboard_mobile.report.json"
+                                            },
+                       "dashboard_desktop":  {
+                                                 "url":  "http://127.0.0.1:4173/admin",
+                                                 "form_factor":  "desktop",
+                                                 "performance":  94,
+                                                 "accessibility":  88,
+                                                 "metrics":  {
+                                                                 "first_contentful_paint":  "1.0Â s",
+                                                                 "largest_contentful_paint":  "1.4Â s",
+                                                                 "total_blocking_time":  "0Â ms",
+                                                                 "cumulative_layout_shift":  "0",
+                                                                 "speed_index":  "1.0Â s"
+                                                             },
+                                                 "html_report":  "dashboard_desktop.report.html",
+                                                 "json_report":  "dashboard_desktop.report.json"
+                                             }
+                   },
+    "runtime":  {
+                    "profile":  {
+                                    "viewport":  {
+                                                     "width":  390,
+                                                     "height":  844
+                                                 },
+                                    "cpu_throttle_x":  4,
+                                    "fps_window_ms":  10000,
+                                    "note":  "Mid-range phone emulation via CDP CPU throttle + mobile viewport. Software/host GPU, not a real device."
+                                },
+                    "base_url":  "http://127.0.0.1:4173",
+                    "pages":  {
+                                  "home":  {
+                                               "wall_goto_ms":  15602,
+                                               "navigation_timing":  {
+                                                                         "dom_content_loaded_ms":  820,
+                                                                         "load_event_ms":  828,
+                                                                         "first_contentful_paint_ms":  null,
+                                                                         "response_end_ms":  11
+                                                                     },
+                                               "canvas_count":  1,
+                                               "three_d_fps":  {
+                                                                   "frames":  563,
+                                                                   "elapsed_s":  10.01,
+                                                                   "fps":  56.3
+                                                               }
+                                           },
+                                  "dashboard":  {
+                                                    "wall_goto_ms":  2698,
+                                                    "navigation_timing":  {
+                                                                              "dom_content_loaded_ms":  1011,
+                                                                              "load_event_ms":  1020,
+                                                                              "first_contentful_paint_ms":  null,
+                                                                              "response_end_ms":  6
+                                                                          },
+                                                    "note":  "Admin route is the current dashboard; data from demo fallback when backend absent."
+                                                }
+                              }
+                }
+}
