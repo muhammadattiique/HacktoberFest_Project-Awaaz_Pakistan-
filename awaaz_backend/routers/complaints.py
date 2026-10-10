@@ -2,13 +2,15 @@ import os
 import shutil
 import tempfile
 import logging
-from typing import Optional, List
+from datetime import datetime
+from typing import Optional, List, Tuple
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc, or_
 
 from db.session import get_db
 from db.models import Complaint
+from auth import verify_admin_api_key
 from schemas import (
     ComplaintResponse,
     ComplaintListResponse,
@@ -20,6 +22,10 @@ from services.nlp_rules import extract_price_and_normalize
 from ai_pipeline import ai_pipeline
 
 logger = logging.getLogger(__name__)
+
+# Starlette renamed the 422 constant; prefer the new name and fall back to the
+# legacy alias so the API returns a correct status code on any Starlette version.
+UNPROCESSABLE = getattr(status, "HTTP_422_UNPROCESSABLE_CONTENT", None) or status.HTTP_422_UNPROCESSABLE_ENTITY
 
 router = APIRouter(prefix="/complaints", tags=["Citizen Complaints"])
 
@@ -37,6 +43,70 @@ def extract_area_from_text(text: str) -> Optional[str]:
         if area.lower() in lowered:
             return area
     return None
+
+
+def _parse_date_bound(value: str, end_of_day: bool = False) -> datetime:
+    """Parse an ISO ``YYYY-MM-DD`` (or full timestamp) query bound.
+
+    Returns a naive UTC datetime. Raises 422 with a clear message on bad input
+    so magistrates get actionable feedback instead of a silent 500.
+    """
+    raw = (value or "").strip()
+    formats = ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")
+    parsed: Optional[datetime] = None
+    for fmt in formats:
+        try:
+            parsed = datetime.strptime(raw, fmt)
+            break
+        except ValueError:
+            continue
+
+    if parsed is None:
+        raise HTTPException(
+            status_code=UNPROCESSABLE,
+            detail=f"Invalid date '{value}'. Use ISO format YYYY-MM-DD.",
+        )
+
+    if end_of_day and len(raw) == 10:
+        parsed = parsed.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+    return parsed
+
+
+def _parse_bbox(value: str) -> Tuple[float, float, float, float]:
+    """Parse a 'min_lat,min_lng,max_lat,max_lng' bounding box."""
+    try:
+        parts = [float(p.strip()) for p in (value or "").split(",")]
+    except ValueError:
+        raise HTTPException(
+            status_code=UNPROCESSABLE,
+            detail="Invalid bbox. Expected 'min_lat,min_lng,max_lat,max_lng'.",
+        )
+
+    if len(parts) != 4:
+        raise HTTPException(
+            status_code=UNPROCESSABLE,
+            detail="Invalid bbox. Expected exactly 4 comma-separated numbers.",
+        )
+
+    min_lat, min_lng, max_lat, max_lng = parts
+    if not (-90 <= min_lat <= 90 and -90 <= max_lat <= 90):
+        raise HTTPException(
+            status_code=UNPROCESSABLE,
+            detail="Invalid bbox. Latitude must be between -90 and 90.",
+        )
+    if not (-180 <= min_lng <= 180 and -180 <= max_lng <= 180):
+        raise HTTPException(
+            status_code=UNPROCESSABLE,
+            detail="Invalid bbox. Longitude must be between -180 and 180.",
+        )
+    if min_lat > max_lat or min_lng > max_lng:
+        raise HTTPException(
+            status_code=UNPROCESSABLE,
+            detail="Invalid bbox. min values must not exceed max values.",
+        )
+
+    return min_lat, min_lng, max_lat, max_lng
 
 
 @router.post("/voice", response_model=ComplaintResponse, status_code=status.HTTP_201_CREATED)
@@ -184,6 +254,14 @@ async def list_complaints(
     needs_review: Optional[bool] = Query(None, description="Filter complaints requiring human review"),
     location_area: Optional[str] = Query(None, description="Filter by location area"),
     search: Optional[str] = Query(None, description="Search transcript, item, or shop"),
+    shop: Optional[str] = Query(None, description="Exact/partial shop or vendor name"),
+    authority: Optional[str] = Query(None, description="Filter by routing agency"),
+    date_from: Optional[str] = Query(None, description="ISO date (YYYY-MM-DD) lower bound on created_at"),
+    date_to: Optional[str] = Query(None, description="ISO date (YYYY-MM-DD) upper bound on created_at"),
+    bbox: Optional[str] = Query(
+        None,
+        description="Spatial filter as 'min_lat,min_lng,max_lat,max_lng' (WGS84)",
+    ),
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db)
@@ -201,6 +279,24 @@ async def list_complaints(
         query = query.where(Complaint.needs_review == needs_review)
     if location_area:
         query = query.where(Complaint.location_area.ilike(f"%{location_area}%"))
+    if shop:
+        query = query.where(Complaint.shop_name.ilike(f"%{shop}%"))
+    if authority:
+        query = query.where(Complaint.routing_agency.ilike(f"%{authority}%"))
+    if date_from:
+        query = query.where(Complaint.created_at >= _parse_date_bound(date_from, end_of_day=False))
+    if date_to:
+        query = query.where(Complaint.created_at <= _parse_date_bound(date_to, end_of_day=True))
+    if bbox:
+        min_lat, min_lng, max_lat, max_lng = _parse_bbox(bbox)
+        query = query.where(
+            Complaint.lat.is_not(None),
+            Complaint.lng.is_not(None),
+            Complaint.lat >= min_lat,
+            Complaint.lat <= max_lat,
+            Complaint.lng >= min_lng,
+            Complaint.lng <= max_lng,
+        )
     if search:
         search_filter = or_(
             Complaint.transcript_raw.ilike(f"%{search}%"),
@@ -240,13 +336,20 @@ async def get_complaint(complaint_id: str, db: AsyncSession = Depends(get_db)):
     return ComplaintResponse.model_validate(complaint)
 
 
-@router.patch("/{complaint_id}", response_model=ComplaintResponse)
+@router.patch(
+    "/{complaint_id}",
+    response_model=ComplaintResponse,
+    dependencies=[Depends(verify_admin_api_key)],
+)
 async def update_complaint_status(
     complaint_id: str,
     update: ComplaintUpdateStatusRequest,
     db: AsyncSession = Depends(get_db)
 ):
-    """Updates the administrative resolution status and notes of a complaint."""
+    """Updates the administrative resolution status and notes of a complaint.
+
+    Restricted to authorized magistrates via the ``X-API-Key`` header.
+    """
     res = await db.execute(select(Complaint).where(Complaint.id == complaint_id))
     complaint = res.scalar_one_or_none()
     if not complaint:
@@ -265,6 +368,8 @@ async def update_complaint_status(
     complaint.status = update.status
     if update.admin_notes is not None:
         complaint.admin_notes = update.admin_notes
+    if update.assigned_authority is not None:
+        complaint.routing_agency = update.assigned_authority.strip() or complaint.routing_agency
 
     # If resolved or rejected, clear review flag
     if update.status in ["Resolved", "Rejected"]:

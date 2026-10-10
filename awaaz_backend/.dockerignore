@@ -1,0 +1,37 @@
+# Keep the build context small and the image reproducible
+
+# Virtual environments and bytecode (recreated inside the image)
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Secrets and local state
+.env
+.env.*
+!.env.example
+
+# Local databases and generated data
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploaded / processed audio artifacts
+uploads/
+tmp/
+*.wav
+*.m4a
+*.webm
+*.mp3
+
+# Cached Whisper models (downloaded during build)
+.cache/
+models/
+
+# VCS and editor noise
+.git/
+.gitignore
+.vscode/
+.idea/

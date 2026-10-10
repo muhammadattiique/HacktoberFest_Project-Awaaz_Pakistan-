@@ -8,7 +8,7 @@ import { LocationPicker } from '../components/map/LocationPicker';
 import { MiniLocationMap } from '../components/map/MiniLocationMap';
 import { CardTilt } from '../components/ui/CardTilt';
 import { Badge } from '../components/ui/Badge';
-import { formatPrice, formatVariance, getSeverityStyle } from '../lib/utils';
+import { formatPrice, formatVariance } from '../lib/utils';
 import {
   Mic,
   Square,
@@ -20,20 +20,17 @@ import {
   Copy,
   Check,
   AlertTriangle,
-  CheckCircle,
   HelpCircle,
   MapPin,
   Store,
   Volume2,
-  VolumeX,
-  XCircle,
 } from 'lucide-react';
 
 export const ReportSection = ({
   avatarController, // { setListening, setThinking, setSpeaking, setVerdict, setError, setIdle }
   onComplaintSubmitted,
 }) => {
-  const { t, language, isRtl } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Active Tab: 'voice' | 'upload' | 'text'
   const [activeTab, setActiveTab] = useState('voice');
@@ -75,8 +72,9 @@ export const ReportSection = ({
     clearLocation,
   } = useGeolocation();
 
-  // Lip Sync hook
-  const { mouthAperture, isSpeaking, speakText, connectAudioElement, stopSpeaking } = useLipSync();
+  // Lip Sync hook - only speakText is consumed here; the avatar reads mouth
+  // aperture from its own controller rather than from this section.
+  const { speakText } = useLipSync();
 
   const abortControllerRef = useRef(null);
   const fileInputRef = useRef(null);

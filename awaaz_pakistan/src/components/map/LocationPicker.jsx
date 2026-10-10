@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { MapPin, Navigation, AlertCircle, ShieldAlert, Check } from 'lucide-react';
+import { MapPin, Navigation, AlertCircle, Check } from 'lucide-react';
 import { LOCATION_STATUS } from '../../hooks/useGeolocation';
 
 // Recenter map helper
@@ -210,7 +210,7 @@ export const LocationPicker = ({
               />
 
               {/* Accuracy Circle */}
-              {coordinates.accuracy && (
+              {typeof coordinates?.accuracy === 'number' && coordinates.accuracy >= 0 && (
                 <Circle
                   center={position}
                   radius={coordinates.accuracy}

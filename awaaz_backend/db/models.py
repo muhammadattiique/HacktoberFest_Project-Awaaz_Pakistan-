@@ -1,7 +1,8 @@
 import uuid
-from datetime import datetime
 from sqlalchemy import Column, String, Float, DateTime, Boolean, Text
 from sqlalchemy.orm import declarative_base
+
+from timeutils import utcnow
 
 Base = declarative_base()
 
@@ -10,8 +11,8 @@ class Complaint(Base):
     __tablename__ = "complaints"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utcnow, nullable=False, index=True)
+    updated_at = Column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
 
     # Audio details (if submitted via voice)
     audio_filename = Column(String(255), nullable=True)

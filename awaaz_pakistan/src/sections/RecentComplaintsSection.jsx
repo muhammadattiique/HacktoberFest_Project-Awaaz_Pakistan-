@@ -4,7 +4,7 @@ import { Badge } from '../components/ui/Badge';
 import { Skeleton } from '../components/ui/Skeleton';
 import { getComplaints } from '../lib/api';
 import { formatPrice, formatVariance, formatTimeAgo, getSeverityStyle, getStatusStyle } from '../lib/utils';
-import { RefreshCw, AlertTriangle, Clock, MapPin, CheckCircle } from 'lucide-react';
+import { RefreshCw, Clock, CheckCircle } from 'lucide-react';
 
 export const RecentComplaintsSection = () => {
   const { t, language } = useLanguage();

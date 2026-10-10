@@ -11,28 +11,45 @@ from config import settings
 
 logger = logging.getLogger(__name__)
 
-# Ensure ffmpeg and ffprobe are accessible in PATH
+# Directory that holds the interpreter's own scripts (where a pip-installed
+# ffmpeg binary would live on Windows).
 VENV_SCRIPTS = Path(sys.executable).parent
-KILO_FFMPEG = Path(r"C:\Users\zali4\.vscode\extensions\kilocode.kilo-code-7.8.8-win32-x64\bin")
 
-paths_to_check = [str(VENV_SCRIPTS), str(KILO_FFMPEG)]
-current_path = os.environ.get("PATH", "")
-for p in paths_to_check:
-    if os.path.exists(p) and p not in current_path:
-        os.environ["PATH"] = f"{p};{current_path}"
+# Make sure the interpreter's script directory is importable by subprocesses.
+_current_path = os.environ.get("PATH", "")
+if str(VENV_SCRIPTS) not in _current_path:
+    os.environ["PATH"] = f"{VENV_SCRIPTS}{os.pathsep}{_current_path}"
+
+# imageio-ffmpeg ships a static ffmpeg build; use it as the last-resort fallback
+# so audio processing still works on machines without a system ffmpeg.
+try:
+    import imageio_ffmpeg
+
+    IMAGEIO_FFMPEG = Path(imageio_ffmpeg.get_ffmpeg_exe())
+except Exception:  # pragma: no cover - optional dependency
+    IMAGEIO_FFMPEG = None
 
 
 def get_ffmpeg_binary() -> str:
-    """Finds ffmpeg executable path."""
+    """Resolve an ffmpeg executable path.
+
+    Resolution order:
+    1. ``ffmpeg`` on PATH.
+    2. ``ffmpeg.exe`` next to the running interpreter.
+    3. The static binary bundled with ``imageio-ffmpeg``.
+    4. Bare ``"ffmpeg"`` (lets the OS raise a clear error downstream).
+    """
     bin_path = shutil.which("ffmpeg")
     if bin_path:
         return bin_path
-    
-    # Direct fallbacks
-    for candidate in [VENV_SCRIPTS / "ffmpeg.exe", KILO_FFMPEG / "ffmpeg.exe"]:
-        if candidate.exists():
-            return str(candidate)
-            
+
+    candidate = VENV_SCRIPTS / ("ffmpeg.exe" if os.name == "nt" else "ffmpeg")
+    if candidate.exists():
+        return str(candidate)
+
+    if IMAGEIO_FFMPEG and IMAGEIO_FFMPEG.exists():
+        return str(IMAGEIO_FFMPEG)
+
     return "ffmpeg"
 
 

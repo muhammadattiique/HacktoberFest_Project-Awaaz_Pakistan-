@@ -5,6 +5,7 @@ import {
   setAdminApiKey,
   getComplaints,
   updateComplaintStatus,
+  downloadComplaintsCsv,
   getHotspots,
   getRepeatOffenders,
 } from '../lib/api';
@@ -168,8 +169,10 @@ export const Admin = () => {
     setIsSaving(true);
     setSaveSuccess(false);
 
+    // Capture the previous values so an API failure can be rolled back.
     const oldStatus = selectedComplaint.status;
     const oldNotes = selectedComplaint.admin_notes;
+    const oldAuthority = selectedComplaint.routing_agency;
 
     const updatedComplaint = {
       ...selectedComplaint,
@@ -186,6 +189,7 @@ export const Admin = () => {
       await updateComplaintStatus(selectedComplaint.id, {
         status: editingStatus,
         adminNotes: editingNotes,
+        assignedAuthority: editingAuthority,
       });
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 2500);
@@ -195,15 +199,46 @@ export const Admin = () => {
         ...selectedComplaint,
         status: oldStatus,
         admin_notes: oldNotes,
+        routing_agency: oldAuthority,
       };
       setSelectedComplaint(rolledBack);
       setComplaints((prev) =>
         prev.map((c) => (c.id === selectedComplaint.id ? rolledBack : c))
       );
-      alert('Failed to update resolution on server.');
+      // Surface the server's message when available (e.g. 401/403 key problems).
+      const serverMsg = err?.response?.data?.detail;
+      alert(
+        serverMsg
+          ? `Failed to update resolution: ${serverMsg}`
+          : 'Failed to update resolution on server. Please check your API key and connection.'
+      );
     } finally {
       setIsSaving(false);
     }
+  };
+
+  /**
+   * Export grievances to CSV.
+   * Prefers the authenticated server-side export (full dataset, Excel-safe BOM)
+   * and falls back to generating the file in the browser from the currently
+   * loaded rows when the backend is unreachable or running in demo mode.
+   */
+  const handleExportCsv = async () => {
+    if (!filteredComplaints.length) return;
+
+    if (!isDemoMode) {
+      try {
+        // Only `status` maps to a server-side filter; the remaining filters are
+        // applied client-side, so the full authorized dataset is exported and
+        // the user can narrow it further in Excel if needed.
+        const result = await downloadComplaintsCsv({ status: filterStatus });
+        if (result.success) return;
+      } catch (err) {
+        console.warn('Server CSV export failed, using client-side export:', err);
+      }
+    }
+
+    exportToCsv('awaaz_incident_export', filteredComplaints);
   };
 
   const handleCopy = (text, field) => {
@@ -350,7 +385,7 @@ export const Admin = () => {
           </div>
 
           <button
-            onClick={() => exportToCsv('awaaz_incident_export', filteredComplaints)}
+            onClick={handleExportCsv}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white text-xs font-medium transition-colors cursor-pointer"
             title="Export filtered grievances to CSV"
           >
@@ -772,11 +807,17 @@ export const Admin = () => {
                     onChange={(e) => setEditingAuthority(e.target.value)}
                     className="w-full bg-[#0c0c0c] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
                   >
-                    <option value="PERA - Price Enforcement">PERA - Price Enforcement</option>
-                    <option value="PFA - Punjab Food Authority">PFA - Punjab Food Authority</option>
-                    <option value="ICT District Administration">ICT District Administration</option>
-                    <option value="Rawalpindi DC Office">Rawalpindi DC Office</option>
-                    <option value="Municipal Corporation">Municipal Corporation</option>
+                    {/* Values mirror the backend `routing_agency` strings exactly,
+                        otherwise the persisted assignment would not round-trip. */}
+                    <option value="Punjab Enforcement &amp; Regulatory Authority (PERA) / ICT Administration">
+                      PERA - Price Enforcement
+                    </option>
+                    <option value="Punjab Food Authority (PFA)">
+                      PFA - Punjab Food Authority
+                    </option>
+                    <option value="Capital Development Authority (CDA / MCI) / WASA Rawalpindi">
+                      Municipal Corporation
+                    </option>
                   </select>
                 </div>
 

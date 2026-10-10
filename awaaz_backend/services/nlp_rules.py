@@ -380,7 +380,16 @@ def classify_category_and_urgency(text: str, overcharge_pct: float = 0.0) -> Tup
         category = "PFA - Food Safety"
         agency = "Punjab Food Authority (PFA)"
         helpline = settings.PFA_FOOD_SAFETY_HELPLINE
-        urgency = "High" if ("bimar" in norm or "keere" in norm or "chemical" in norm) else "Medium"
+        # Escalate to High when the report describes actual harm to people or
+        # deliberate adulteration, not merely an untidy kitchen. "pet kharab"
+        # (stomach upset / food poisoning) is the most common way citizens
+        # describe illness caused by unsafe food.
+        illness_kw = [
+            "bimar", "bimari", "pet kharab", "keere", "keera", "chemical",
+            "vomit", "ulti", "hospital", "zeher", "poison", "death", "mar gaya",
+            "بیمار", "زہر", "الٹی", "قے",
+        ]
+        urgency = "High" if any(kw in norm for kw in illness_kw) else "Medium"
         return category, urgency, agency, helpline
 
     # 2. Municipal - Infrastructure

@@ -53,6 +53,10 @@ class TextComplaintRequest(BaseModel):
 class ComplaintUpdateStatusRequest(BaseModel):
     status: str = Field(..., description="Pending, Investigating, Resolved, Rejected")
     admin_notes: Optional[str] = None
+    assigned_authority: Optional[str] = Field(
+        None,
+        description="Enforcement body the grievance is assigned to, e.g. 'Punjab Food Authority (PFA)'",
+    )
 
 
 class ComplaintResponse(BaseModel):
@@ -124,6 +128,20 @@ class HotspotArea(BaseModel):
     lng: Optional[float] = None
 
 
+class PublicMapPoint(BaseModel):
+    """Privacy-preserving spatial point for public macro heatmaps.
+
+    Coordinates are obfuscated and the vendor/shop identity is deliberately
+    withheld; exact GPS data is only exposed through the authenticated portal.
+    """
+    lat: float
+    lng: float
+    category: str
+    urgency: str
+    is_overpriced: bool
+    overcharge_pct: float
+
+
 class RepeatOffender(BaseModel):
     shop_name: str
     area: str
@@ -132,6 +150,22 @@ class RepeatOffender(BaseModel):
     max_overcharge_pct: float
     status: str
     latest_complaint_date: datetime
+
+
+class ShopProfile(BaseModel):
+    """Aggregated enforcement dossier for a single vendor."""
+    shop_name: str
+    area: Optional[str] = None
+    total_citations: int
+    open_citations: int
+    resolved_citations: int
+    average_overcharge_pct: float
+    max_overcharge_pct: float
+    total_excess_charged_est_pkr: float
+    items_gouged: List[str]
+    is_repeat_offender: bool
+    recommended_action: str
+    latest_complaint_date: Optional[datetime] = None
 
 
 class DailyTrendPoint(BaseModel):

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { Mic, Volume2, Globe, Menu, X, ArrowUpRight } from 'lucide-react';
+import { Mic, Menu, X, ArrowUpRight } from 'lucide-react';
 
 export const Navbar = () => {
-  const { language, setLanguage, t, isRtl } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

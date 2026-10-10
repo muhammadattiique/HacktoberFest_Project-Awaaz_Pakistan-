@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { Maximize2, Layers, RefreshCw, Flame, MapPin } from 'lucide-react';
+import { Maximize2, RefreshCw } from 'lucide-react';
 
 // Custom Map Controller for programmatic Fit All & non-intrusive pan
 function MapController({ complaints, shouldFitBounds, onBoundsFitted, selectedComplaint }) {
@@ -94,7 +94,6 @@ export const AdminMap = ({
   newComplaintIds = new Set(),
 }) => {
   const [shouldFitBounds, setShouldFitBounds] = useState(false);
-  const [heatmapMode, setHeatmapMode] = useState(false);
   const mapRef = useRef(null);
 
   // Islamabad / Rawalpindi center coordinates

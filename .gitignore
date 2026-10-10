@@ -5,12 +5,15 @@ node_modules/
 # Python
 venv/
 */venv/
+.venv/
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
 .coverage
 htmlcov/
+.ruff_cache/
+.mypy_cache/
 
 # Build outputs
 dist/
@@ -19,10 +22,11 @@ build/
 dist-ssr/
 *.local
 
-# Environment files
+# Environment files (never commit real credentials)
 .env
 .env.local
 .env.*.local
+!.env.example
 
 # IDE/Editor
 .vscode/*
@@ -45,7 +49,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Database
+# Databases (regenerated at runtime)
 *.db
 *.sqlite
 *.sqlite3
@@ -56,6 +60,13 @@ docker-compose.override.yml
 # Test coverage
 coverage/
 .nyc_output/
+
+# Audio artifacts
+uploads/
+tmp/
+*.wav
+*.m4a
+*.webm
 
 # Misc
 *.suo

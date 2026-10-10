@@ -340,7 +340,14 @@ class AIPipeline:
         item_id, item_info, item_confidence = resolved if resolved else (None, {}, 0.0)
 
         # Step 2: Try LLM extraction
-        llm_output = self._call_ollama_llm(text)
+        # Never let an LLM outage break a citizen's complaint: any failure here
+        # degrades to the deterministic rule engine instead of raising.
+        llm_output = None
+        try:
+            llm_output = self._call_ollama_llm(text)
+        except Exception as exc:
+            logger.warning(f"Ollama LLM call raised, falling back to rules: {exc}")
+            llm_output = None
 
         # Step 3: Hybrid validation and repair
         final_item_name = None

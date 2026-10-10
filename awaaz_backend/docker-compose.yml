@@ -24,6 +24,9 @@ services:
       - DATABASE_URL=sqlite+aiosqlite:///./awaaz.db
       - RATE_LIST_PATH=./rate-list.json
       - CORS_ORIGINS=*
+      # Shared secret for the Price Magistrate portal. Override in production
+      # with a long random value (e.g. via a .env file next to this compose file).
+      - AWAAZ_ADMIN_API_KEY=${AWAAZ_ADMIN_API_KEY:-awaaz-admin-2024}
     depends_on:
       - ollama
     restart: unless-stopped

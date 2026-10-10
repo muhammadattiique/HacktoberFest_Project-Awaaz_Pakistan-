@@ -1,7 +1,7 @@
 import asyncio
 import random
 import uuid
-from datetime import datetime, timedelta
+from datetime import timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import delete
 
@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from db.session import AsyncSessionLocal, init_db
 from db.models import Complaint
 from config import settings
+from timeutils import utcnow
 
 DEMO_COMPLAINTS_DATA = [
     # --- Urdu Script (Overpricing) ---
@@ -552,7 +553,7 @@ async def seed_database(db: AsyncSession) -> int:
     await db.commit()
 
     created_count = 0
-    now = datetime.utcnow()
+    now = utcnow()
 
     # Pre-calculated area coordinates
     COORDS = {

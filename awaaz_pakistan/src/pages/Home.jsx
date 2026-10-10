@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSmoothScroll } from '../hooks/useSmoothScroll';
 import { useAvatarState } from '../hooks/useAvatarState';
 import { Navbar } from '../components/ui/Navbar';

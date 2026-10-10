@@ -212,13 +212,19 @@ export const getComplaintById = async (id) => {
 
 /**
  * Update complaint status & notes (for Admin)
+ * @param {string} id
+ * @param {object} payload
+ * @param {string} [payload.status]      Pending | Investigating | Resolved | Rejected
+ * @param {string} [payload.adminNotes]  Free-text magistrate notes
+ * @param {string} [payload.assignedAuthority] Enforcement body the case is routed to
  */
-export const updateComplaintStatus = async (id, { status, adminNotes }) => {
+export const updateComplaintStatus = async (id, { status, adminNotes, assignedAuthority }) => {
+  const body = { status };
+  if (adminNotes !== undefined) body.admin_notes = adminNotes;
+  if (assignedAuthority !== undefined) body.assigned_authority = assignedAuthority;
+
   try {
-    const res = await apiClient.patch(`/api/complaints/${id}`, {
-      status,
-      admin_notes: adminNotes,
-    });
+    const res = await apiClient.patch(`/api/complaints/${id}`, body);
     return { success: true, data: res.data, isDemo: false };
   } catch (err) {
     if (!err.response || err.code === 'ERR_NETWORK') {
@@ -227,10 +233,61 @@ export const updateComplaintStatus = async (id, { status, adminNotes }) => {
       if (idx !== -1) {
         MOCK_ADMIN_COMPLAINTS[idx].status = status;
         if (adminNotes !== undefined) MOCK_ADMIN_COMPLAINTS[idx].admin_notes = adminNotes;
+        if (assignedAuthority !== undefined) {
+          MOCK_ADMIN_COMPLAINTS[idx].routing_agency = assignedAuthority;
+        }
         return { success: true, data: MOCK_ADMIN_COMPLAINTS[idx], isDemo: true };
       }
     }
     throw err;
+  }
+};
+
+/**
+ * Fetch the aggregated enforcement dossier for a single vendor.
+ * Requires the administrative API key.
+ */
+export const getShopProfile = async (shopName) => {
+  const res = await apiClient.get(
+    `/api/admin/shops/${encodeURIComponent(shopName)}`
+  );
+  return { success: true, data: res.data, isDemo: false };
+};
+
+/**
+ * Trigger the server-side CSV export and download it in the browser.
+ * Falls back to the client-side generator when the backend is offline.
+ */
+export const downloadComplaintsCsv = async ({ category = '', status = '' } = {}) => {
+  const params = {};
+  if (category) params.category = category;
+  if (status) params.status = status;
+
+  try {
+    const res = await apiClient.get('/api/admin/export', {
+      params,
+      responseType: 'blob',
+      timeout: 60000,
+    });
+
+    const disposition = res.headers['content-disposition'] || '';
+    const match = disposition.match(/filename="?([^"]+)"?/);
+    const filename = match ? match[1] : 'awaaz_complaints.csv';
+
+    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'text/csv' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    const count = Number(res.headers['x-record-count'] || 0);
+    return { success: true, count, serverSide: true };
+  } catch (err) {
+    console.warn('Server-side CSV export unavailable, using client-side export:', err);
+    return { success: false, serverSide: false, error: err };
   }
 };
 
@@ -279,7 +336,7 @@ export const getAnalyticsOverview = async () => {
       res = await apiClient.get('/api/stats');
     }
     return { success: true, data: res.data, isDemo: false };
-  } catch (err) {
+  } catch {
     return { success: true, data: MOCK_ANALYTICS, isDemo: true };
   }
 };
@@ -291,7 +348,7 @@ export const getHotspots = async () => {
   try {
     const res = await apiClient.get('/api/analytics/hotspots');
     return { success: true, data: res.data, isDemo: false };
-  } catch (err) {
+  } catch {
     return { success: true, data: MOCK_ANALYTICS.hotspots, isDemo: true };
   }
 };
@@ -303,7 +360,7 @@ export const getRepeatOffenders = async () => {
   try {
     const res = await apiClient.get('/api/analytics/repeat-offenders');
     return { success: true, data: res.data, isDemo: false };
-  } catch (err) {
+  } catch {
     return { success: true, data: MOCK_ANALYTICS.repeat_offenders, isDemo: true };
   }
 };

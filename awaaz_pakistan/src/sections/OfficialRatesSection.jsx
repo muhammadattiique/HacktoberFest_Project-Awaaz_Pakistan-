@@ -5,7 +5,7 @@ import { Skeleton } from '../components/ui/Skeleton';
 import { CardTilt } from '../components/ui/CardTilt';
 import { getRates } from '../lib/api';
 import { formatPrice } from '../lib/utils';
-import { Search, Tag, Filter } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 export const OfficialRatesSection = () => {
   const { t, language } = useLanguage();

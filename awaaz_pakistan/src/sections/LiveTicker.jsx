@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getComplaints } from '../lib/api';
 import { useLanguage } from '../i18n/LanguageContext';
-import { AlertTriangle, TrendingUp } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { formatPrice, formatVariance } from '../lib/utils';
 
 export const LiveTicker = () => {

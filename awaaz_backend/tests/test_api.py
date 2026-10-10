@@ -4,6 +4,9 @@ from main import app
 
 client = TestClient(app)
 
+# The admin portal transmits this shared secret via the X-API-Key header.
+ADMIN_HEADERS = {"X-API-Key": "awaaz-admin-2024"}
+
 
 def test_root_endpoint():
     """Verify root status and metadata."""
@@ -94,10 +97,11 @@ def test_complaints_endpoints():
     assert filter_res.status_code == 200
     assert all(c["category"] == "PERA - Overpricing" for c in filter_res.json()["items"])
 
-    # Update complaint status
+    # Update complaint status (requires the administrative API key)
     update_res = client.patch(
         f"/api/complaints/{comp_id}",
-        json={"status": "Investigating", "admin_notes": "Assigned to Price Magistrate Rawalpindi"}
+        json={"status": "Investigating", "admin_notes": "Assigned to Price Magistrate Rawalpindi"},
+        headers=ADMIN_HEADERS,
     )
     assert update_res.status_code == 200
     assert update_res.json()["status"] == "Investigating"
@@ -136,9 +140,138 @@ def test_admin_endpoints():
     assert health_data["database_connected"] is True
     assert health_data["rates_count"] >= 25
 
-    res_cfg = client.get("/api/admin/config")
+    # /config is administrative and therefore requires the API key.
+    res_cfg = client.get("/api/admin/config", headers=ADMIN_HEADERS)
     assert res_cfg.status_code == 200
     cfg_data = res_cfg.json()
     assert "051" in cfg_data["district_helpline_ict"]
     assert cfg_data["pera_enforcement_helpline"] == "1717"
+
+
+def test_admin_config_requires_api_key():
+    """Non-sensitive /health stays public, but /config must not."""
+    # Health is polled by Docker HEALTHCHECK and the citizen dashboard.
+    assert client.get("/api/admin/health").status_code == 200
+
+    # Missing credentials -> 401
+    res_missing = client.get("/api/admin/config")
+    assert res_missing.status_code == 401
+
+    # Wrong credentials -> 403
+    res_wrong = client.get("/api/admin/config", headers={"X-API-Key": "definitely-wrong"})
+    assert res_wrong.status_code == 403
+
+    # Correct credentials -> 200
+    res_ok = client.get("/api/admin/config", headers=ADMIN_HEADERS)
+    assert res_ok.status_code == 200
+
+
+def test_admin_destructive_routes_are_guarded():
+    """Reseed wipes and regenerates data, so it must require the admin key."""
+    assert client.post("/api/admin/reseed").status_code == 401
+    assert client.get("/api/admin/export").status_code == 401
+
+
+def test_complaint_patch_requires_api_key():
+    """Magistrate resolution updates must not be anonymously writable."""
+    create_res = client.post(
+        "/api/complaints/text",
+        json={"transcript_text": "Auth guard test aloo 250 rupay kilo."},
+    )
+    assert create_res.status_code == 201
+    comp_id = create_res.json()["id"]
+
+    # Anonymous mutation attempt is rejected.
+    anon = client.patch(f"/api/complaints/{comp_id}", json={"status": "Resolved"})
+    assert anon.status_code == 401
+
+    # Authorized mutation succeeds.
+    auth = client.patch(
+        f"/api/complaints/{comp_id}",
+        json={"status": "Resolved", "admin_notes": "Authorized update"},
+        headers=ADMIN_HEADERS,
+    )
+    assert auth.status_code == 200
+    assert auth.json()["status"] == "Resolved"
+    assert auth.json()["admin_notes"] == "Authorized update"
+
+
+def test_assigned_authority_persists():
+    """Authority reassignment is stored on the complaint record."""
+    create_res = client.post(
+        "/api/complaints/text",
+        json={"transcript_text": "Authority reassignment test doodh 300 rupay litre."},
+    )
+    comp_id = create_res.json()["id"]
+
+    res = client.patch(
+        f"/api/complaints/{comp_id}",
+        json={
+            "status": "Investigating",
+            "assigned_authority": "Punjab Food Authority (PFA)",
+        },
+        headers=ADMIN_HEADERS,
+    )
+    assert res.status_code == 200
+    assert res.json()["routing_agency"] == "Punjab Food Authority (PFA)"
+
+
+def test_public_map_points_are_obfuscated():
+    """Public heatmap points must be coarse and free of identifying data."""
+    res = client.get("/api/analytics/map/points")
+    assert res.status_code == 200
+    points = res.json()
+    assert isinstance(points, list)
+
+    for point in points:
+        # Rounded to 3 decimal places (~110m grid) so no shop can be pinpointed.
+        assert round(point["lat"], 3) == point["lat"]
+        assert round(point["lng"], 3) == point["lng"]
+        # Vendor identity and transcripts must never be exposed publicly.
+        assert "shop_name" not in point
+        assert "transcript_raw" not in point
+
+
+def test_shop_profile_endpoint():
+    """Shop dossier returns citations for a known vendor and 404 otherwise."""
+    missing = client.get("/api/admin/shops/No Such Vendor XYZ", headers=ADMIN_HEADERS)
+    assert missing.status_code == 404
+
+    # Seed a known shop, then fetch its dossier.
+    client.post(
+        "/api/complaints/text",
+        json={
+            "transcript_text": "Aloo 300 rupay kilo at dossier shop.",
+            "shop_name": "Dossier Test Store",
+            "location_area": "Raja Bazaar",
+        },
+    )
+    found = client.get("/api/admin/shops/Dossier Test Store", headers=ADMIN_HEADERS)
+    assert found.status_code == 200
+    body = found.json()
+    assert body["shop_name"] == "Dossier Test Store"
+    assert body["total_citations"] >= 1
+    assert "recommended_action" in body
+
+
+def test_csv_export_with_valid_key():
+    """Server-side CSV export streams a downloadable file."""
+    res = client.get("/api/admin/export", headers=ADMIN_HEADERS)
+    assert res.status_code == 200
+    assert "text/csv" in res.headers["content-type"]
+    assert "attachment" in res.headers["content-disposition"]
+    assert "Created At" in res.text
+
+
+def test_complaint_list_query_validation():
+    """Malformed filters fail fast with 422 instead of a server error."""
+    assert client.get("/api/complaints?date_from=not-a-date").status_code == 422
+    assert client.get("/api/complaints?bbox=1,2,3").status_code == 422
+    assert client.get("/api/complaints?bbox=10,10,5,5").status_code == 422
+    assert client.get("/api/complaints?bbox=99,99,100,100").status_code == 422
+
+    # Well-formed filters succeed.
+    assert client.get("/api/complaints?bbox=33.6,73.0,33.7,73.1").status_code == 200
+    assert client.get("/api/complaints?date_from=2020-01-01").status_code == 200
+    assert client.get("/api/complaints?authority=Food Authority").status_code == 200
 

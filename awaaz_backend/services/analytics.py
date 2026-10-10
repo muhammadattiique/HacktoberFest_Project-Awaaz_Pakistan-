@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import List, Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc
 from db.models import Complaint
+from timeutils import utcnow
 from schemas import (
     AnalyticsOverview,
     GougedItemMetric,
@@ -210,14 +211,14 @@ class AnalyticsService:
                     items_gouged=gouged_items or ["Essential Commodities"],
                     max_overcharge_pct=round(float(row.max_pct or 0.0), 1),
                     status="Pending Enforcement Notice",
-                    latest_complaint_date=row.latest_dt or datetime.utcnow()
+                    latest_complaint_date=row.latest_dt or utcnow()
                 )
             )
         return offenders
 
     @staticmethod
     async def get_trends(db: AsyncSession, days: int = 14) -> TrendsResponse:
-        start_date = datetime.utcnow() - timedelta(days=days)
+        start_date = utcnow() - timedelta(days=days)
 
         # Fetch daily aggregate
         all_comp_query = (

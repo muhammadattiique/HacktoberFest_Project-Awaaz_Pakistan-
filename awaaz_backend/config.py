@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from typing import List, Union, Any
-from pydantic import field_validator
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -42,6 +42,23 @@ class Settings(BaseSettings):
 
     # CORS
     CORS_ORIGINS: Union[List[str], str] = ["*"]
+
+    # Administrative portal security.
+    # The React admin portal sends this value in the `X-API-Key` header.
+    # Set AWAAZ_ADMIN_API_KEY (preferred) or ADMIN_API_KEY in the environment.
+    # The default is the documented DEMO key - override it in production.
+    ADMIN_API_KEY: str = Field(
+        default="awaaz-admin-2024",
+        validation_alias=AliasChoices("AWAAZ_ADMIN_API_KEY", "ADMIN_API_KEY"),
+        description="Shared secret required for administrative endpoints.",
+    )
+
+    @field_validator("ADMIN_API_KEY", mode="before")
+    @classmethod
+    def assemble_admin_api_key(cls, v: Any) -> str:
+        if isinstance(v, str) and v.strip():
+            return v.strip()
+        return "awaaz-admin-2024"
 
     # Official Placeholders (Required local context)
     # NOTE: These are placeholder numbers for demo/hackathon purposes.

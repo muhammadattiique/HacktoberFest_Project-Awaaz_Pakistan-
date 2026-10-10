@@ -11,21 +11,21 @@ A citizen voice-governance platform where citizens report commodity price gougin
 - Python 3.10+ with `virtualenv`
 
 ### 2. Backend Setup & Run
-From the root workspace directory:
+From the project root:
 ```bash
-# Activate virtual environment
+# Activate the backend virtual environment
 .\awaaz_backend\venv\Scripts\activate
 
-# Navigate to backend and run uvicorn
-cd backend
+# Start the FastAPI backend from the actual backend folder
+cd awaaz_backend
 python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 The backend API is now live at `http://localhost:8000` (`docs at http://localhost:8000/docs`).
 
 ### 3. Frontend Setup & Run
-From the `frontend` (or `awaaz_pakistan`) directory:
+From the actual frontend folder:
 ```bash
-cd frontend
+cd awaaz_pakistan
 npm install --legacy-peer-deps
 npm run dev
 ```
@@ -45,7 +45,7 @@ A real-time 3D AI avatar is rendered using `@react-three/fiber`. It tracks mouse
    ```
 3. Place it inside the public avatar directory:
    ```
-   frontend/public/avatar/awaaz.glb
+   awaaz_pakistan/public/avatar/awaaz.glb
    ```
 4. Refresh your browser. `AvatarCanvas` automatically checks for this file and mounts it; if omitted, the stylized cybernetic procedural hologram is rendered.
 5. Users on low-end devices or with `prefers-reduced-motion` can toggle **2D Lite Mode** with the button in the avatar corner.
@@ -77,17 +77,30 @@ The Administrative Map Portal is isolated from the public single-page site (no p
 
 ---
 
-## 📋 Backend Additions Required (Recommendations)
+## 📋 Backend Integration (Implemented)
 
-The existing FastAPI backend in `./backend` provides core grievance and rate features. The following endpoints/fields would enhance full administrative parity:
+The FastAPI backend in `./awaaz_backend` implements full administrative parity:
 
-1. **`GET /api/admin/complaints` with Query Filters**:
-   - Add query parameters: `bbox` (bounding box for spatial queries), `authority`, `date_from`, `date_to`, `shop`.
-2. **`PATCH /api/admin/complaints/{id}` Authority Assignment**:
-   - Add `assigned_authority` field update to complement existing `status` and `admin_notes`.
-3. **`GET /api/admin/shops/{shop_name}`**:
-   - Direct aggregation route returning total citations, historical overcharge average, and repeat-offender flags.
-4. **`GET /api/admin/export`**:
-   - Server-side CSV generation (client-side export is already implemented and functional).
-5. **`GET /api/map/points`**:
+1. **`GET /api/complaints` with Query Filters**
+   - Supported parameters: `bbox` (spatial bounding box), `authority`, `date_from`, `date_to`, `shop`, plus `category`, `urgency`, `status`, `needs_review`, `location_area`, and `search`.
+2. **`PATCH /api/admin/complaints/{id}` Authority Assignment**
+   - Send `assigned_authority` alongside `status` and `admin_notes`; the portal's "Assign Authority" dropdown persists through this field.
+3. **`GET /api/admin/shops/{shop_name}`**
+   - Returns total citations, historical overcharge average, peak overcharge, estimated excess charged, and repeat-offender flags.
+4. **`GET /api/admin/export`**
+   - Server-side CSV generation with an Excel-safe UTF-8 BOM. The portal prefers this endpoint and transparently falls back to the client-side generator when offline.
+5. **`GET /api/map/points`**
    - Coarse/obfuscated public spatial points (rounded to 3 decimal places) for public macro heatmaps while preserving vendor/citizen privacy.
+
+### 🔐 Administrative API Key (enforced server-side)
+The admin gate is backed by a real credential check, not just a hidden URL. The
+portal transmits the key in the `X-API-Key` header; the backend validates it with
+a constant-time comparison:
+
+- Missing key → `401 Unauthorized`
+- Wrong key → `403 Forbidden`
+- **Default demo key:** `awaaz-admin-2024`
+- Override in production with the `AWAAZ_ADMIN_API_KEY` environment variable.
+
+`GET /api/admin/health` is intentionally public so container health probes and the
+citizen status badge keep working without credentials.

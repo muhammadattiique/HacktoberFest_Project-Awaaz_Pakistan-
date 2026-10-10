@@ -76,11 +76,14 @@ Awaaz Pakistan solves this with an industrial **Hybrid AI Architecture**:
 awaaz_backend/
 ├── main.py                   # FastAPI app factory, CORS (*), routers, exception handlers
 ├── config.py                 # Pydantic BaseSettings, helplines, model parameters
+├── auth.py                   # Administrative X-API-Key verification (401/403)
+├── timeutils.py              # Timezone-safe naive-UTC timestamp helpers
 ├── ai_pipeline.py            # Whisper singleton + Ollama 1.5B client + hybrid repair
 ├── rate-list.json            # Official notified rate database (32 items with rich aliases)
 ├── schemas.py                # Pydantic v2 schemas for requests, responses, and KPIs
 ├── requirements.txt          # Python dependency specifications
 ├── Dockerfile                # Production container with system FFmpeg
+├── .dockerignore             # Keeps venv/pycache/db out of the build context
 ├── docker-compose.yml        # Multi-service stack (Ollama + Backend)
 ├── db/
 │   ├── models.py             # SQLAlchemy 2.x Complaint model
@@ -91,10 +94,10 @@ awaaz_backend/
 │   ├── audio.py              # FFmpeg conversion, duration validation, silence detection
 │   └── analytics.py          # Hotspots, repeat offenders, trends, KPIs
 ├── routers/
-│   ├── complaints.py         # Voice note & text complaint submission, status tracking
+│   ├── complaints.py         # Voice/text submission, filters (bbox/date/shop/authority), status
 │   ├── rates.py              # Rate list view, dynamic reload, instant price check
-│   ├── analytics.py          # Governance analytics, hotspots, repeat offenders
-│   └── admin.py              # System health check, safe configuration, demo reseeding
+│   ├── analytics.py          # Governance analytics, hotspots, public obfuscated map points
+│   └── admin.py              # Health, safe config, shop dossier, CSV export, demo reseed
 ├── scripts/
 │   └── seed_demo_data.py     # 45+ realistic Twin Cities demo grievances spanning 14 days
 └── tests/
@@ -145,6 +148,31 @@ Interactive Swagger API docs available at: **http://localhost:8000/docs**
 ```bash
 pytest tests/ -v
 ```
+
+### 6. Administrative API Key (Important)
+Citizen-facing endpoints (`/api/complaints/*`, `/api/rates/*`, `/api/analytics/*`) are
+public. Everything that reads enforcement data or mutates a case requires the
+shared administrative secret, sent by the React portal in the **`X-API-Key`** header:
+
+```bash
+# Missing key   -> 401 Unauthorized
+# Wrong key     -> 403 Forbidden
+curl -H "X-API-Key: awaaz-admin-2024" http://localhost:8000/api/admin/config
+```
+
+Configure it via the environment (a hidden URL is **not** access control):
+
+| Variable | Purpose |
+| --- | --- |
+| `AWAAZ_ADMIN_API_KEY` | Preferred name for the admin shared secret |
+| `ADMIN_API_KEY` | Accepted alias |
+
+Set it to an empty string only if you deliberately want to disable admin auth
+(e.g. an isolated local demo). `GET /api/admin/health` is intentionally public so
+Docker `HEALTHCHECK` and the citizen status badge keep working without credentials.
+
+**Protected routes:** `PATCH /api/complaints/{id}`, `GET /api/admin/config`,
+`GET /api/admin/export`, `POST /api/admin/reseed`, `GET /api/admin/shops/{shop_name}`.
 
 ---
 
@@ -243,6 +271,35 @@ Identifies persistent violators with 2+ complaints across multiple visits for ta
 ### 7. System Health Check
 `GET /api/admin/health`
 Checks Whisper model status, Ollama LLM availability, official rate items count, and database connectivity.
+Public by design so container health probes work without credentials.
+
+### 8. Filtered Incident Queries *(admin)*
+`GET /api/complaints`
+Accepts `category`, `urgency`, `status`, `needs_review`, `location_area`, `search`,
+plus `shop`, `authority`, `date_from`, `date_to`, and a spatial `bbox`
+(`min_lat,min_lng,max_lat,max_lng`). Invalid dates or bounding boxes return `422`
+with an explanatory message rather than a generic server error.
+
+```bash
+curl "http://localhost:8000/api/complaints?bbox=33.6,73.0,33.7,73.1&date_from=2024-01-01"
+```
+
+### 9. Vendor Enforcement Dossier *(admin)*
+`GET /api/admin/shops/{shop_name}`
+Returns total/open/resolved citations, historical average and peak overcharge,
+estimated excess charged, gouged commodities, a repeat-offender flag, and a
+recommended enforcement action. Requires the `X-API-Key` header.
+
+### 10. Server-Side CSV Export *(admin)*
+`GET /api/admin/export?category=&status=`
+Streams a UTF-8 CSV (with BOM so Excel renders Urdu correctly) and sets an
+`X-Record-Count` header. Requires the `X-API-Key` header.
+
+### 11. Public Obfuscated Map Points
+`GET /api/analytics/map/points`
+Returns coarse spatial points for public macro heatmaps. Coordinates are rounded
+to 3 decimal places (~110 m grid) and vendor names/transcripts are never included,
+so citizen and vendor privacy is preserved while still showing violation density.
 
 ---
 
