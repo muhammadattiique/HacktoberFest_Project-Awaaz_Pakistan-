@@ -143,8 +143,15 @@ async def submit_voice_complaint(
 
         # Transcribe with Whisper
         transcription_res = ai_pipeline.transcribe_audio_detailed(wav_path)
-        transcript_text = transcription_res.get("text", "").strip()
+        transcription_error = transcription_res.get("error")
+        if transcription_error:
+            logger.error("Voice transcription service failure: %s", transcription_error)
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Voice transcription is temporarily unavailable. Please try again or submit your complaint as text."
+            )
 
+        transcript_text = transcription_res.get("text", "").strip()
         if not transcript_text:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

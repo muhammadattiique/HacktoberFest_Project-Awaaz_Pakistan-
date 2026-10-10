@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Maximize2, RefreshCw } from 'lucide-react';
+import {
+  MAP_LAYER_STATUS,
+  MapStatusOverlay,
+  OpenFreeMapLayer,
+} from './OpenFreeMapLayer';
 
 // Custom Map Controller for programmatic Fit All & non-intrusive pan
 function MapController({ complaints, shouldFitBounds, onBoundsFitted, selectedComplaint }) {
@@ -94,6 +99,7 @@ export const AdminMap = ({
   newComplaintIds = new Set(),
 }) => {
   const [shouldFitBounds, setShouldFitBounds] = useState(false);
+  const [mapStatus, setMapStatus] = useState(MAP_LAYER_STATUS.LOADING);
   const mapRef = useRef(null);
 
   // Islamabad / Rawalpindi center coordinates
@@ -142,12 +148,7 @@ export const AdminMap = ({
           selectedComplaint={selectedComplaint}
         />
 
-        {/* Dark Carto Tile Layer */}
-        <TileLayer
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          maxZoom={19}
-        />
+        <OpenFreeMapLayer onStatusChange={setMapStatus} />
 
         {/* Located Complaints as RED DOTS */}
         {complaints.map((c) => {
@@ -198,6 +199,7 @@ export const AdminMap = ({
           );
         })}
       </MapContainer>
+      <MapStatusOverlay status={mapStatus} className="bottom-4 right-4" />
 
       {/* Floating Top Control Bar */}
       <div className="absolute top-4 left-4 right-4 z-[400] flex flex-wrap items-center justify-between gap-3 pointer-events-none">

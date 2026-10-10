@@ -111,6 +111,7 @@ export const ReportSection = ({
   // Submission handler with AbortController and step-by-step avatar reactions
   const handleSubmit = async () => {
     setSubmitError(null);
+    setVerdictData(null);
     setIsSubmitting(true);
     abortControllerRef.current = new AbortController();
 
@@ -205,18 +206,24 @@ export const ReportSection = ({
         avatarController?.setError('Analysis failed');
 
         // Parse friendly error messages
-        let friendly = t.report.networkError;
         const status = err.response?.status;
-        if (status === 400) {
-          friendly = err.response.data?.detail || t.report.emptyAudio;
+        const responseMessage = err.response?.data?.detail || err.response?.data?.message;
+        let friendly = err.message || t.report.networkError;
+
+        if (!err.response && err.request) {
+          friendly = 'Unable to connect to the complaint service. Check your connection and try again.';
+        } else if (status === 400) {
+          friendly = responseMessage || t.report.emptyAudio;
         } else if (status === 413) {
           friendly = 'Audio file is too large (maximum allowed size is 25MB).';
         } else if (status === 415) {
           friendly = 'Unsupported audio format. Please use WAV, MP3, M4A, or WEBM.';
         } else if (status === 422) {
-          friendly = 'Validation error: Please check that your input contains valid text.';
+          friendly = responseMessage || 'Validation error: Please check that your input is valid.';
+        } else if (status === 503) {
+          friendly = responseMessage || 'Complaint processing is temporarily unavailable. Please try again or submit your complaint as text.';
         } else if (status === 500) {
-          friendly = 'Server error during AI transcription. Switched to offline demo evaluation.';
+          friendly = responseMessage || 'The server could not process your complaint. Please try again.';
         }
         setSubmitError(friendly);
       }

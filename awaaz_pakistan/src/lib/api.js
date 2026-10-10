@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { DEMO_SCENARIOS, MOCK_ADMIN_COMPLAINTS, MOCK_RATES, MOCK_ANALYTICS } from './demoData';
+import { MOCK_ADMIN_COMPLAINTS, MOCK_RATES, MOCK_ANALYTICS } from './demoData';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -54,63 +54,38 @@ export const submitVoiceComplaint = async ({
   lng,
   signal,
 }) => {
+  const formData = new FormData();
+  const filename = audioBlob.type.includes('mp4') || audioBlob.type.includes('m4a')
+    ? 'recording.m4a'
+    : audioBlob.type.includes('wav')
+    ? 'recording.wav'
+    : 'recording.webm';
+
+  formData.append('audio', audioBlob, filename);
+  if (locationArea) formData.append('location_area', locationArea);
+  if (shopName) formData.append('shop_name', shopName);
+  if (lat !== undefined && lat !== null) formData.append('lat', lat.toString());
+  if (lng !== undefined && lng !== null) formData.append('lng', lng.toString());
+
+  // Try primary endpoint first: /api/complaints/voice, fallback to /api/process-complaint
+  let res;
   try {
-    const formData = new FormData();
-    const filename = audioBlob.type.includes('mp4') || audioBlob.type.includes('m4a')
-      ? 'recording.m4a'
-      : audioBlob.type.includes('wav')
-      ? 'recording.wav'
-      : 'recording.webm';
-
-    formData.append('audio', audioBlob, filename);
-    if (locationArea) formData.append('location_area', locationArea);
-    if (shopName) formData.append('shop_name', shopName);
-    if (lat !== undefined && lat !== null) formData.append('lat', lat.toString());
-    if (lng !== undefined && lng !== null) formData.append('lng', lng.toString());
-
-    // Try primary endpoint first: /api/complaints/voice, fallback to /api/process-complaint
-    let res;
-    try {
-      res = await apiClient.post('/api/complaints/voice', formData, {
+    res = await apiClient.post('/api/complaints/voice', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      signal,
+    });
+  } catch (primaryErr) {
+    if (primaryErr?.response?.status === 404) {
+      res = await apiClient.post('/api/process-complaint', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         signal,
       });
-    } catch (primaryErr) {
-      if (primaryErr?.response?.status === 404) {
-        res = await apiClient.post('/api/process-complaint', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          signal,
-        });
-      } else {
-        throw primaryErr;
-      }
+    } else {
+      throw primaryErr;
     }
-
-    return { success: true, data: res.data, isDemo: false };
-  } catch (err) {
-    if (axios.isCancel(err) || err.name === 'CanceledError') {
-      throw err;
-    }
-    // If backend is offline or network fails, offer realistic demo fallback
-    if (!err.response || err.code === 'ERR_NETWORK' || err.response?.status >= 500) {
-      console.warn('Backend unavailable, activating Demo Mode fallback:', err);
-      // Pick demo based on area or default
-      const demo = DEMO_SCENARIOS.urdu_violation;
-      return {
-        success: true,
-        data: {
-          ...demo,
-          id: `demo-${Date.now().toString().slice(-4)}`,
-          location_area: locationArea || demo.location_area,
-          shop_name: shopName || demo.shop_name,
-          lat: lat ?? demo.lat,
-          lng: lng ?? demo.lng,
-        },
-        isDemo: true,
-      };
-    }
-    throw err;
   }
+
+  return { success: true, data: res.data, isDemo: false };
 };
 
 /**
@@ -124,40 +99,16 @@ export const submitTextComplaint = async ({
   lng,
   signal,
 }) => {
-  try {
-    const payload = {
-      transcript_text: text,
-      location_area: locationArea || null,
-      shop_name: shopName || null,
-      lat: lat ?? null,
-      lng: lng ?? null,
-    };
+  const payload = {
+    transcript_text: text,
+    location_area: locationArea || null,
+    shop_name: shopName || null,
+    lat: lat ?? null,
+    lng: lng ?? null,
+  };
 
-    const res = await apiClient.post('/api/complaints/text', payload, { signal });
-    return { success: true, data: res.data, isDemo: false };
-  } catch (err) {
-    if (axios.isCancel(err) || err.name === 'CanceledError') throw err;
-
-    if (!err.response || err.code === 'ERR_NETWORK' || err.response?.status >= 500) {
-      console.warn('Backend unavailable, using text demo response:', err);
-      const isUrdu = /[\u0600-\u06FF]/.test(text);
-      const demo = isUrdu ? DEMO_SCENARIOS.urdu_violation : DEMO_SCENARIOS.english_normal;
-      return {
-        success: true,
-        data: {
-          ...demo,
-          id: `demo-txt-${Date.now().toString().slice(-4)}`,
-          transcript_raw: text,
-          location_area: locationArea || demo.location_area,
-          shop_name: shopName || demo.shop_name,
-          lat: lat ?? demo.lat,
-          lng: lng ?? demo.lng,
-        },
-        isDemo: true,
-      };
-    }
-    throw err;
-  }
+  const res = await apiClient.post('/api/complaints/text', payload, { signal });
+  return { success: true, data: res.data, isDemo: false };
 };
 
 /**
