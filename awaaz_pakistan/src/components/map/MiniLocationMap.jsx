@@ -1,7 +1,12 @@
-import React from 'react';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import React, { useState } from 'react';
+import { MapContainer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import { ExternalLink, MapPin } from 'lucide-react';
+import {
+  MAP_LAYER_STATUS,
+  MapStatusOverlay,
+  OpenFreeMapLayer,
+} from './OpenFreeMapLayer';
 
 const miniPinIcon = L.divIcon({
   className: 'mini-red-pin',
@@ -24,6 +29,8 @@ export const MiniLocationMap = ({
   shopName,
   height = 'h-40',
 }) => {
+  const [mapStatus, setMapStatus] = useState(MAP_LAYER_STATUS.LOADING);
+
   if (!lat || !lng) return null;
 
   const position = [Number(lat), Number(lng)];
@@ -41,13 +48,11 @@ export const MiniLocationMap = ({
           doubleClickZoom={false}
           className="w-full h-full z-0"
         >
-          <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          />
+          <OpenFreeMapLayer onStatusChange={setMapStatus} />
           <Marker position={position} icon={miniPinIcon} />
         </MapContainer>
       </div>
+      <MapStatusOverlay status={mapStatus} className="top-2 left-2" />
 
       {/* Floating Info Overlay & Google Maps button */}
       <div className="absolute bottom-2 left-2 right-2 z-[400] flex items-center justify-between p-2 rounded-xl bg-black/80 backdrop-blur-md border border-white/10 text-xs">

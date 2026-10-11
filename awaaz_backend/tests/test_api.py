@@ -108,6 +108,60 @@ def test_complaints_endpoints():
     assert update_res.json()["admin_notes"] == "Assigned to Price Magistrate Rawalpindi"
 
 
+def test_voice_transcription_failure_returns_503(monkeypatch):
+    """Whisper service failures are distinct from genuine silent audio."""
+    monkeypatch.setattr(
+        "routers.complaints.validate_and_convert_audio",
+        lambda *_: (True, 1.0, "Audio valid"),
+    )
+    monkeypatch.setattr(
+        "routers.complaints.ai_pipeline.transcribe_audio_detailed",
+        lambda _: {
+            "text": "",
+            "language": "ur",
+            "confidence": 0.0,
+            "segments": [],
+            "error": "Whisper model not initialized",
+        },
+    )
+
+    response = client.post(
+        "/api/complaints/voice",
+        files={"audio": ("recording.webm", b"mock audio", "audio/webm")},
+    )
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == (
+        "Voice transcription is temporarily unavailable. Please try again or "
+        "submit your complaint as text."
+    )
+
+
+def test_voice_no_speech_returns_400(monkeypatch):
+    """A successful transcription attempt with no speech remains a bad request."""
+    monkeypatch.setattr(
+        "routers.complaints.validate_and_convert_audio",
+        lambda *_: (True, 1.0, "Audio valid"),
+    )
+    monkeypatch.setattr(
+        "routers.complaints.ai_pipeline.transcribe_audio_detailed",
+        lambda _: {
+            "text": "",
+            "language": "ur",
+            "confidence": 0.0,
+            "segments": [],
+        },
+    )
+
+    response = client.post(
+        "/api/complaints/voice",
+        files={"audio": ("recording.webm", b"mock audio", "audio/webm")},
+    )
+
+    assert response.status_code == 400
+    assert "No audible speech detected" in response.json()["detail"]
+
+
 def test_analytics_endpoints():
     """Verify overview, hotspots, repeat offenders, and trends."""
     res_ov = client.get("/api/analytics/overview")

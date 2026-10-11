@@ -1,9 +1,14 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Circle, useMap } from 'react-leaflet';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { MapContainer, Marker, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { MapPin, Navigation, AlertCircle, Check } from 'lucide-react';
 import { LOCATION_STATUS } from '../../hooks/useGeolocation';
+import {
+  MAP_LAYER_STATUS,
+  MapStatusOverlay,
+  OpenFreeMapLayer,
+} from './OpenFreeMapLayer';
 
 // Recenter map helper
 function ChangeView({ center, zoom }) {
@@ -47,6 +52,7 @@ export const LocationPicker = ({
 }) => {
   const { t } = useLanguage();
   const markerRef = useRef(null);
+  const [mapStatus, setMapStatus] = useState(MAP_LAYER_STATUS.LOADING);
 
   // Default center: Islamabad / Rawalpindi
   const defaultPosition = [33.6844, 73.0479];
@@ -181,21 +187,21 @@ export const LocationPicker = ({
               ))}
             </select>
           </div>
+        </div>
+      )}
 
-          {/* Friendly Error Notice */}
-          {errorMessage && (
-            <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
+      {/* Geolocation errors remain visible after coordinates are captured. */}
+      {consent && errorMessage && (
+        <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs">
+          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+          <span>{errorMessage}</span>
         </div>
       )}
 
       {/* Interactive Map with Draggable Pin */}
       {consent && coordinates && (
         <div className="space-y-2 animate-in fade-in duration-300">
-          <div className="relative h-56 md:h-64 rounded-2xl overflow-hidden border border-white/10 shadow-inner">
+          <div className="relative h-56 md:h-64 rounded-2xl overflow-hidden border border-white/10 bg-[#080808] shadow-inner">
             <MapContainer
               center={position}
               zoom={16}
@@ -203,11 +209,7 @@ export const LocationPicker = ({
               className="w-full h-full z-0"
             >
               <ChangeView center={position} zoom={16} />
-              {/* Dark Carto Tile Layer (Free, no API key) */}
-              <TileLayer
-                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-              />
+              <OpenFreeMapLayer onStatusChange={setMapStatus} />
 
               {/* Accuracy Circle */}
               {typeof coordinates?.accuracy === 'number' && coordinates.accuracy >= 0 && (
@@ -233,6 +235,7 @@ export const LocationPicker = ({
                 icon={draggableIcon}
               />
             </MapContainer>
+            <MapStatusOverlay status={mapStatus} />
 
             {/* Drag helper hint */}
             <div className="absolute bottom-2 left-2 right-2 z-[400] flex items-center justify-between px-3 py-1.5 rounded-lg bg-black/75 backdrop-blur-md text-[11px] text-white/80 border border-white/10 pointer-events-none">
