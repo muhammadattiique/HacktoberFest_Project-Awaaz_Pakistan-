@@ -3,7 +3,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { useLipSync } from '../hooks/useLipSync';
-import { submitVoiceComplaint, submitTextComplaint } from '../lib/api';
+import { submitVoiceComplaint, submitTextComplaint, normalizeComplaintResult } from '../lib/api';
 import { LocationPicker } from '../components/map/LocationPicker';
 import { MiniLocationMap } from '../components/map/MiniLocationMap';
 import { CardTilt } from '../components/ui/CardTilt';
@@ -26,6 +26,156 @@ import {
   Volume2,
 } from 'lucide-react';
 
+// Single violation verdict card. Renders one complaint from a submission,
+// preserving the rose/emerald theming, Badge variants, Noto Nastaliq RTL,
+// per-card Copy-ID and Replay-Voice. The shared transcript and map are rendered
+// once by the parent, not inside this card.
+const VerdictCard = ({ complaint, copiedId, onCopyId, t, language, speakText }) => {
+  const isViolation = complaint.percentage_overcharge > 0;
+
+  return (
+    <CardTilt
+      className={`p-6 sm:p-8 rounded-3xl border backdrop-blur-2xl shadow-2xl transition-all ${
+        isViolation
+          ? 'bg-[#140809]/90 border-rose-500/30 shadow-[0_0_40px_rgba(229,72,77,0.25)]'
+          : 'bg-[#09140d]/90 border-emerald-500/30 shadow-[0_0_40px_rgba(48,164,108,0.2)]'
+      }`}
+    >
+      {/* Header: Badge & Complaint ID */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+        <div className="flex items-center gap-3">
+          {isViolation ? (
+            <Badge variant="red" pulsing={true}>
+              {t.verdict.violationBadge}
+            </Badge>
+          ) : complaint.item_name ? (
+            <Badge variant="green" pulsing={false}>
+              {t.verdict.normalBadge}
+            </Badge>
+          ) : (
+            <Badge variant="neutral" pulsing={false}>
+              {t.verdict.unknownBadge}
+            </Badge>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-white/40">{t.verdict.complaintId}:</span>
+          <span className="font-mono text-xs text-white/80 bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
+            {complaint.id || 'N/A'}
+          </span>
+          <button
+            onClick={() => onCopyId(complaint.id)}
+            className="p-1 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors cursor-pointer"
+            title="Copy Complaint ID"
+          >
+            {copiedId === complaint.id ? (
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+            ) : (
+              <Copy className="w-3.5 h-3.5" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Price Delta Metric Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-6 border-b border-white/[0.08]">
+        <div>
+          <span className="text-[11px] text-white/50 block mb-1">{t.verdict.item}</span>
+          <span className="text-base sm:text-lg font-bold text-white">
+            {complaint.item_name || 'General Grievance'}
+          </span>
+        </div>
+
+        <div>
+          <span className="text-[11px] text-white/50 block mb-1">{t.verdict.reportedPrice}</span>
+          <span className="text-base sm:text-lg font-bold font-mono text-rose-300">
+            {formatPrice(complaint.reported_price, language)}
+          </span>
+        </div>
+
+        <div>
+          <span className="text-[11px] text-white/50 block mb-1">{t.verdict.officialPrice}</span>
+          <span className="text-base sm:text-lg font-bold font-mono text-emerald-300">
+            {formatPrice(complaint.official_price, language)}
+          </span>
+        </div>
+
+        <div>
+          <span className="text-[11px] text-white/50 block mb-1">{t.verdict.variance}</span>
+          <span
+            className={`text-base sm:text-lg font-bold font-mono ${
+              complaint.percentage_overcharge > 0
+                ? 'text-rose-400'
+                : 'text-emerald-400'
+            }`}
+          >
+            {formatVariance(complaint.percentage_overcharge) || '0.0%'}
+          </span>
+        </div>
+      </div>
+
+      {/* Citizen Advisory Voice Output with Noto Nastaliq Urdu RTL */}
+      {complaint.native_response && (
+        <div className="my-6 p-4 rounded-2xl bg-black/40 border border-white/10">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-violet-400 uppercase tracking-wider">
+              {t.verdict.nativeResponse}
+            </span>
+            <button
+              type="button"
+              onClick={() =>
+                speakText(
+                  complaint.native_response,
+                  complaint.detected_language === 'Urdu' ? 'ur-PK' : 'en-US'
+                )
+              }
+              className="flex items-center gap-1 text-[11px] text-white/60 hover:text-white cursor-pointer"
+            >
+              <Volume2 className="w-3.5 h-3.5 text-violet-400" />
+              <span>Replay Voice</span>
+            </button>
+          </div>
+          <p
+            className={`text-sm sm:text-base text-white/90 leading-relaxed ${
+              complaint.detected_language === 'Urdu'
+                ? 'font-urdu text-right text-base sm:text-lg'
+                : 'text-left'
+            }`}
+          >
+            {complaint.native_response}
+          </p>
+        </div>
+      )}
+
+      {/* Routing Agency Details */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-white/70">
+        <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
+          <div>
+            <span className="text-white/40 block mb-1">{t.verdict.routedTo}</span>
+            <p className="font-semibold text-white">
+              {complaint.routing_agency || 'PERA - Price Enforcement'}
+            </p>
+          </div>
+          {complaint.helpline_reference && (
+            <div className="mt-2 text-[11px] text-white/50">
+              Helpline: <span className="font-mono text-white/80">{complaint.helpline_reference}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Review required notice if confidence low or fallback used */}
+      {complaint.needs_review && (
+        <div className="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center gap-2">
+          <HelpCircle className="w-4 h-4 shrink-0" />
+          <span>{t.verdict.autoDetectedNotice}</span>
+        </div>
+      )}
+    </CardTilt>
+  );
+};
+
 export const ReportSection = ({
   avatarController, // { setListening, setThinking, setSpeaking, setVerdict, setError, setIdle }
   onComplaintSubmitted,
@@ -45,7 +195,7 @@ export const ReportSection = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [verdictData, setVerdictData] = useState(null);
-  const [copiedId, setCopiedId] = useState(false);
+  const [copiedId, setCopiedId] = useState(null);
 
   // Audio Recorder hook
   const {
@@ -168,29 +318,33 @@ export const ReportSection = ({
       clearTimeout(stepTimer3);
 
       const data = result.data;
-      setVerdictData(data);
+      const normalized = normalizeComplaintResult(data);
+      setVerdictData(normalized);
       if (onComplaintSubmitted) onComplaintSubmitted(data);
 
-      // Determine violation & severity for Avatar reaction
-      const isViolation = (data.percentage_overcharge && data.percentage_overcharge > 0) || data.is_violation;
+      // Determine violation & severity for Avatar reaction (multi-item)
+      const isViolation = normalized.complaints.some(
+        (c) => (c.percentage_overcharge ?? 0) > 0
+      );
       const chips = [];
-      if (data.item_name) chips.push({ text: data.item_name, variant: 'neutral' });
-      if (data.percentage_overcharge) {
-        chips.push({
-          text: formatVariance(data.percentage_overcharge),
-          variant: isViolation ? 'alert' : 'success',
-        });
-      }
-      if (data.routing_agency) {
-        chips.push({ text: data.routing_agency.split(' ')[0] || 'Authority', variant: 'neutral' });
+      for (const c of normalized.complaints) {
+        if (chips.length >= 6) break;
+        if (c.item_name) chips.push({ text: c.item_name, variant: 'neutral' });
+        if (c.percentage_overcharge && chips.length < 6) {
+          chips.push({
+            text: formatVariance(c.percentage_overcharge),
+            variant: (c.percentage_overcharge ?? 0) > 0 ? 'alert' : 'success',
+          });
+        }
       }
 
-      avatarController?.setVerdict(isViolation, chips);
+      avatarController?.setVerdict(isViolation, chips.slice(0, 6));
 
-      // Speak native response through SpeechSynthesis / LipSync
-      if (data.native_response) {
-        const langCode = data.detected_language === 'Urdu' ? 'ur-PK' : 'en-US';
-        speakText(data.native_response, langCode);
+      // Speak the primary native response ONCE through SpeechSynthesis / LipSync
+      if (normalized.primary?.native_response) {
+        const langCode =
+          normalized.primary.detected_language === 'Urdu' ? 'ur-PK' : 'en-US';
+        speakText(normalized.primary.native_response, langCode);
       }
 
     } catch (err) {
@@ -242,8 +396,8 @@ export const ReportSection = ({
 
   const handleCopyId = (id) => {
     navigator.clipboard.writeText(id);
-    setCopiedId(true);
-    setTimeout(() => setCopiedId(false), 2000);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   return (
@@ -539,168 +693,54 @@ export const ReportSection = ({
           )}
         </div>
 
-        {/* VERDICT ASSESSMENT CARD (Appears on successful processing) */}
-        {verdictData && (
-          <div className="mt-12 animate-in fade-in slide-in-from-bottom-6 duration-500">
-            <CardTilt
-              className={`p-6 sm:p-8 rounded-3xl border backdrop-blur-2xl shadow-2xl transition-all ${
-                verdictData.percentage_overcharge > 0 || verdictData.is_violation
-                  ? 'bg-[#140809]/90 border-rose-500/30 shadow-[0_0_40px_rgba(229,72,77,0.25)]'
-                  : 'bg-[#09140d]/90 border-emerald-500/30 shadow-[0_0_40px_rgba(48,164,108,0.2)]'
-              }`}
-            >
-              {/* Header: Badge & Complaint ID */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
-                <div className="flex items-center gap-3">
-                  {verdictData.percentage_overcharge > 0 || verdictData.is_violation ? (
-                    <Badge variant="red" pulsing={true}>
-                      {t.verdict.violationBadge}
-                    </Badge>
-                  ) : verdictData.item_name ? (
-                    <Badge variant="green" pulsing={false}>
-                      {t.verdict.normalBadge}
-                    </Badge>
-                  ) : (
-                    <Badge variant="neutral" pulsing={false}>
-                      {t.verdict.unknownBadge}
-                    </Badge>
-                  )}
-                </div>
+        {/* VERDICT ASSESSMENT (Appears on successful processing) */}
+        {verdictData && verdictData.complaints.length > 0 && (
+          <div className="mt-12 animate-in fade-in slide-in-from-bottom-6 duration-500 space-y-6">
+            {/* 'N violations detected' header shown only for multi-item submissions */}
+            {verdictData.complaints.length > 1 && (
+              <h3 className="text-lg sm:text-xl font-bold text-rose-300 text-center">
+                {t.verdict.violationsCount.replaceAll(
+                  '{count}',
+                  String(verdictData.complaints.length)
+                )}
+              </h3>
+            )}
 
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-white/40">{t.verdict.complaintId}:</span>
-                  <span className="font-mono text-xs text-white/80 bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
-                    {verdictData.id || 'N/A'}
-                  </span>
-                  <button
-                    onClick={() => handleCopyId(verdictData.id)}
-                    className="p-1 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors cursor-pointer"
-                    title="Copy Complaint ID"
-                  >
-                    {copiedId ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                  </button>
-                </div>
+            {/* Shared transcript shown ONCE above the cards */}
+            {verdictData.primary?.transcript_raw && (
+              <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-xs text-white/70">
+                <span className="text-white/40 block mb-1">{t.verdict.transcript}</span>
+                <p className="italic text-white/90">"{verdictData.primary.transcript_raw}"</p>
               </div>
+            )}
 
-              {/* Price Delta Metric Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-6 border-b border-white/[0.08]">
-                <div>
-                  <span className="text-[11px] text-white/50 block mb-1">{t.verdict.item}</span>
-                  <span className="text-base sm:text-lg font-bold text-white">
-                    {verdictData.item_name || 'General Grievance'}
-                  </span>
-                </div>
+            {/* One verdict card per complaint */}
+            {verdictData.complaints.map((c) => (
+              <VerdictCard
+                key={c.id}
+                complaint={c}
+                copiedId={copiedId}
+                onCopyId={handleCopyId}
+                t={t}
+                language={language}
+                speakText={speakText}
+              />
+            ))}
 
-                <div>
-                  <span className="text-[11px] text-white/50 block mb-1">{t.verdict.reportedPrice}</span>
-                  <span className="text-base sm:text-lg font-bold font-mono text-rose-300">
-                    {formatPrice(verdictData.reported_price, language)}
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-[11px] text-white/50 block mb-1">{t.verdict.officialPrice}</span>
-                  <span className="text-base sm:text-lg font-bold font-mono text-emerald-300">
-                    {formatPrice(verdictData.official_price, language)}
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-[11px] text-white/50 block mb-1">{t.verdict.variance}</span>
-                  <span
-                    className={`text-base sm:text-lg font-bold font-mono ${
-                      verdictData.percentage_overcharge > 0
-                        ? 'text-rose-400'
-                        : 'text-emerald-400'
-                    }`}
-                  >
-                    {formatVariance(verdictData.percentage_overcharge) || '0.0%'}
-                  </span>
-                </div>
+            {/* Shared Mini Map shown ONCE after the card list */}
+            {verdictData.primary?.lat && verdictData.primary?.lng && (
+              <div className="pt-6 border-t border-white/[0.08]">
+                <span className="text-xs font-medium text-white/50 block mb-2">
+                  {t.verdict.viewOnMap}
+                </span>
+                <MiniLocationMap
+                  lat={verdictData.primary.lat}
+                  lng={verdictData.primary.lng}
+                  areaName={verdictData.primary.location_area}
+                  shopName={verdictData.primary.shop_name}
+                />
               </div>
-
-              {/* Citizen Advisory Voice Output with Noto Nastaliq Urdu RTL */}
-              {verdictData.native_response && (
-                <div className="my-6 p-4 rounded-2xl bg-black/40 border border-white/10">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-semibold text-violet-400 uppercase tracking-wider">
-                      {t.verdict.nativeResponse}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        speakText(
-                          verdictData.native_response,
-                          verdictData.detected_language === 'Urdu' ? 'ur-PK' : 'en-US'
-                        )
-                      }
-                      className="flex items-center gap-1 text-[11px] text-white/60 hover:text-white cursor-pointer"
-                    >
-                      <Volume2 className="w-3.5 h-3.5 text-violet-400" />
-                      <span>Replay Voice</span>
-                    </button>
-                  </div>
-                  <p
-                    className={`text-sm sm:text-base text-white/90 leading-relaxed ${
-                      verdictData.detected_language === 'Urdu'
-                        ? 'font-urdu text-right text-base sm:text-lg'
-                        : 'text-left'
-                    }`}
-                  >
-                    {verdictData.native_response}
-                  </p>
-                </div>
-              )}
-
-              {/* Routing Agency & Transcript Details */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-white/70">
-                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <span className="text-white/40 block mb-1">{t.verdict.transcript}</span>
-                  <p className="italic text-white/90">"{verdictData.transcript_raw}"</p>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
-                  <div>
-                    <span className="text-white/40 block mb-1">{t.verdict.routedTo}</span>
-                    <p className="font-semibold text-white">
-                      {verdictData.routing_agency || 'PERA - Price Enforcement'}
-                    </p>
-                  </div>
-                  {verdictData.helpline_reference && (
-                    <div className="mt-2 text-[11px] text-white/50">
-                      Helpline: <span className="font-mono text-white/80">{verdictData.helpline_reference}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Review required notice if confidence low or fallback used */}
-              {verdictData.needs_review && (
-                <div className="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4 shrink-0" />
-                  <span>{t.verdict.autoDetectedNotice}</span>
-                </div>
-              )}
-
-              {/* Attached Mini Map if location was captured */}
-              {verdictData.lat && verdictData.lng && (
-                <div className="mt-6 pt-6 border-t border-white/[0.08]">
-                  <span className="text-xs font-medium text-white/50 block mb-2">
-                    {t.verdict.viewOnMap}
-                  </span>
-                  <MiniLocationMap
-                    lat={verdictData.lat}
-                    lng={verdictData.lng}
-                    areaName={verdictData.location_area}
-                    shopName={verdictData.shop_name}
-                  />
-                </div>
-              )}
-            </CardTilt>
+            )}
           </div>
         )}
       </div>

@@ -121,6 +121,7 @@ export const translations = {
       transcript: "Transcript",
       nativeResponse: "Citizen Advisory",
       viewOnMap: "Incident Location Pin",
+      violationsCount: "{count} violations detected from your report",
     },
     // Impact Stats
     stats: {
@@ -353,6 +354,7 @@ export const translations = {
       transcript: "شکایت کا متن",
       nativeResponse: "شہری کے لیے جوابی پیغام",
       viewOnMap: "جائے وقوعہ کا نقشہ",
+      violationsCount: "آپ کی اطلاع سے {count} خلاف ورزیاں سامنے آئیں",
     },
     stats: {
       badge: "لائیو اعداد و شمار",

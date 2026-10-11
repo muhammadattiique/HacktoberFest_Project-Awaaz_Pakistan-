@@ -33,6 +33,26 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+/**
+ * Normalise a complaint submission response into a consistent shape.
+ * Handles both the MultiComplaintResponse ({ submission_id, complaints, primary })
+ * and the legacy single-object / /api/process-complaint fallback.
+ */
+export const normalizeComplaintResult = (data) => {
+  if (Array.isArray(data?.complaints)) {
+    return {
+      submissionId: data.submission_id ?? null,
+      complaints: data.complaints,
+      primary: data.primary ?? data.complaints[0] ?? null,
+    };
+  }
+  return {
+    submissionId: data?.submission_id ?? null,
+    complaints: data ? [data] : [],
+    primary: data ?? null,
+  };
+};
+
 // Health check to determine if backend is online
 export const checkBackendHealth = async () => {
   try {
