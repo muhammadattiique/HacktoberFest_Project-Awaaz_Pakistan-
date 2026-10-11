@@ -61,6 +61,7 @@ class ComplaintUpdateStatusRequest(BaseModel):
 
 class ComplaintResponse(BaseModel):
     id: str
+    submission_id: Optional[str] = None
     created_at: datetime
     audio_filename: Optional[str] = None
     audio_duration_seconds: Optional[float] = None
@@ -88,6 +89,12 @@ class ComplaintResponse(BaseModel):
     admin_notes: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class MultiComplaintResponse(BaseModel):
+    submission_id: str
+    complaints: List[ComplaintResponse]
+    primary: ComplaintResponse
 
 
 class ComplaintListResponse(BaseModel):

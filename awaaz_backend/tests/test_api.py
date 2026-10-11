@@ -73,8 +73,12 @@ def test_complaints_endpoints():
     }
     create_res = client.post("/api/complaints/text", json=payload)
     assert create_res.status_code == 201
-    created_comp = create_res.json()
+    body = create_res.json()
+    created_comp = body["primary"]
+    assert body["submission_id"] is not None
+    assert len(body["complaints"]) == 1
     assert created_comp["id"] is not None
+    assert created_comp["submission_id"] == body["submission_id"]
     assert created_comp["category"] == "PERA - Overpricing"
     assert created_comp["reported_price"] == 280.0
     assert created_comp["official_price"] == 210.0
@@ -84,6 +88,7 @@ def test_complaints_endpoints():
     get_res = client.get(f"/api/complaints/{comp_id}")
     assert get_res.status_code == 200
     assert get_res.json()["id"] == comp_id
+    assert get_res.json()["submission_id"] == body["submission_id"]
 
     # List complaints
     list_res = client.get("/api/complaints?limit=10")
@@ -106,6 +111,63 @@ def test_complaints_endpoints():
     assert update_res.status_code == 200
     assert update_res.json()["status"] == "Investigating"
     assert update_res.json()["admin_notes"] == "Assigned to Price Magistrate Rawalpindi"
+
+
+def test_multi_item_complaint_splits_into_two_rows():
+    """A submission naming two commodities creates two grouped complaint rows."""
+    driver = (
+        "Bhai sahab, Raja Bazaar Rawalpindi mein Madina Cash & Carry wala dukandar "
+        "aaloo 150 rupay kilo bech raha hai, jabke sarkari rate list ke hisab se ye "
+        "sirf 80 rupay kilo hona chahiye. Pyaaz bhi 200 rupay kilo le raha hai. Ye "
+        "log zabardasti mehngai kar ke awaam ko loot rahe hain. Please is ke khilaf "
+        "action lein."
+    )
+    res = client.post(
+        "/api/complaints/text",
+        json={"transcript_text": driver, "location_area": "Raja Bazaar, Rawalpindi"},
+    )
+    assert res.status_code == 201
+    body = res.json()
+
+    complaints = body["complaints"]
+    assert len(complaints) == 2
+
+    submission_id = body["submission_id"]
+    assert all(c["submission_id"] == submission_id for c in complaints)
+    ids = {c["id"] for c in complaints}
+    assert len(ids) == 2  # distinct rows
+
+    by_id = {c["item_canonical_id"]: c for c in complaints}
+    assert "aloo" in by_id
+    assert "pyaaz" in by_id
+
+    potato = by_id["aloo"]
+    assert potato["reported_price"] == 150.0
+    assert potato["official_price"] == 100.0
+    assert potato["percentage_overcharge"] == 50.0
+    assert potato["category"] == "PERA - Overpricing"
+
+    onion = by_id["pyaaz"]
+    assert onion["reported_price"] == 200.0
+    assert onion["official_price"] == 120.0
+    assert onion["price_difference_pkr"] == 80.0
+    assert onion["percentage_overcharge"] == 66.7
+    assert onion["urgency"] == "High"
+
+    assert body["primary"]["item_canonical_id"] == "pyaaz"
+
+    # Shared fields are copied verbatim onto every row.
+    assert all(c["transcript_raw"] == driver for c in complaints)
+    assert all(c["location_area"] == "Raja Bazaar, Rawalpindi" for c in complaints)
+
+    # PATCH response carries submission_id too.
+    patch_res = client.patch(
+        f"/api/complaints/{potato['id']}",
+        json={"status": "Investigating"},
+        headers=ADMIN_HEADERS,
+    )
+    assert patch_res.status_code == 200
+    assert patch_res.json()["submission_id"] == submission_id
 
 
 def test_voice_transcription_failure_returns_503(monkeypatch):
@@ -233,7 +295,7 @@ def test_complaint_patch_requires_api_key():
         json={"transcript_text": "Auth guard test aloo 250 rupay kilo."},
     )
     assert create_res.status_code == 201
-    comp_id = create_res.json()["id"]
+    comp_id = create_res.json()["primary"]["id"]
 
     # Anonymous mutation attempt is rejected.
     anon = client.patch(f"/api/complaints/{comp_id}", json={"status": "Resolved"})
@@ -256,7 +318,7 @@ def test_assigned_authority_persists():
         "/api/complaints/text",
         json={"transcript_text": "Authority reassignment test doodh 300 rupay litre."},
     )
-    comp_id = create_res.json()["id"]
+    comp_id = create_res.json()["primary"]["id"]
 
     res = client.patch(
         f"/api/complaints/{comp_id}",

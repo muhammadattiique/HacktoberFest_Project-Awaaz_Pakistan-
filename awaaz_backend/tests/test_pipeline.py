@@ -15,9 +15,13 @@ from ai_pipeline import ai_pipeline
 
 # Force the pipeline down its rule-based path for every test in this module.
 # Autouse keeps the intent obvious and prevents accidental live-network calls.
+# Both the single-item and multi-item LLM entry points are stubbed so that
+# `native_response` and classification assertions are deterministic regardless
+# of whether a local Ollama happens to be running.
 @pytest.fixture(autouse=True)
 def _disable_live_llm():
-    with patch.object(ai_pipeline, "_call_ollama_llm", return_value=None):
+    with patch.object(ai_pipeline, "_call_ollama_llm", return_value=None), \
+            patch.object(ai_pipeline, "_call_ollama_llm_multi", return_value=None):
         yield
 
 
@@ -107,7 +111,7 @@ def test_pipeline_llm_failure_graceful_fallback():
     The module-level fixture already stubs the LLM out; this test additionally
     proves the pipeline survives an exception (not just a None return).
     """
-    with patch.object(ai_pipeline, "_call_ollama_llm", side_effect=RuntimeError("ollama down")):
+    with patch.object(ai_pipeline, "_call_ollama_llm_multi", side_effect=RuntimeError("ollama down")):
         text = "Aloo 180 rupay kilo de raha hai dukandar."
         res = ai_pipeline.parse_complaint_text(text)
 
@@ -117,4 +121,75 @@ def test_pipeline_llm_failure_graceful_fallback():
         assert res["category"] == "PERA - Overpricing"
         assert res["native_response"] is not None
         assert res["extraction_confidence"] > 0.0
+
+
+# --- Multi-item pipeline (FEAT-001) ---
+
+DRIVER_TEXT = (
+    "Bhai sahab, Raja Bazaar Rawalpindi mein Madina Cash & Carry wala dukandar "
+    "aaloo 150 rupay kilo bech raha hai, jabke sarkari rate list ke hisab se ye "
+    "sirf 80 rupay kilo hona chahiye. Pyaaz bhi 200 rupay kilo le raha hai. Ye "
+    "log zabardasti mehngai kar ke awaam ko loot rahe hain. Please is ke khilaf "
+    "action lein."
+)
+
+
+def test_parse_complaint_items_driver_yields_two_items():
+    """The aaloo+pyaaz driver splits into Potato and Onion rows (rule path)."""
+    items = ai_pipeline.parse_complaint_items(DRIVER_TEXT)
+    by_id = {it["item_canonical_id"]: it for it in items}
+    assert "aloo" in by_id
+    assert "pyaaz" in by_id
+
+    potato = by_id["aloo"]
+    assert potato["reported_price"] == 150.0
+    assert potato["official_price"] == 100.0
+    assert potato["percentage_overcharge"] == 50.0
+
+    onion = by_id["pyaaz"]
+    assert onion["reported_price"] == 200.0
+    assert onion["official_price"] == 120.0
+    assert onion["price_difference_pkr"] == 80.0
+    assert onion["percentage_overcharge"] == 66.7
+
+
+def test_segment_clauses_one_commodity_per_clause():
+    """Each commodity lands in its own clause for the driver text."""
+    clauses = ai_pipeline._segment_clauses(DRIVER_TEXT)
+    aaloo_clauses = [c for c in clauses if "aaloo" in c.lower()]
+    pyaaz_clauses = [c for c in clauses if "pyaaz" in c.lower()]
+    assert len(aaloo_clauses) >= 1
+    assert len(pyaaz_clauses) >= 1
+    # No single clause names both commodities.
+    assert all(not ("aaloo" in c.lower() and "pyaaz" in c.lower()) for c in clauses)
+
+
+def test_find_all_items_returns_both_ids():
+    from services.rates import rate_service
+
+    ids = {cid for cid, _ in rate_service.find_all_items("aaloo aur pyaaz dono mehnge")}
+    assert {"aloo", "pyaaz"} <= ids
+
+
+def test_merge_rule_price_overrides_llm_price():
+    """When both lists carry the same id, the deterministic clause price wins."""
+    fake_llm = [{
+        "item_name": "Potato",
+        "reported_price": 999,  # hallucinated, must NOT win
+        "category": "PERA - Overpricing",
+        "urgency": "Low",
+        "detected_language": "Roman Urdu",
+        "native_response": "Aap ki shikayat darj kar li gayi hai.",
+    }]
+    with patch.object(ai_pipeline, "_call_ollama_llm_multi", return_value=fake_llm):
+        items = ai_pipeline.parse_complaint_items("Aloo 150 rupay kilo bech raha hai.")
+    by_id = {it["item_canonical_id"]: it for it in items}
+    assert "aloo" in by_id
+    assert by_id["aloo"]["reported_price"] == 150.0  # rule clause price, not 999
+
+
+def test_select_primary_is_pyaaz_for_driver():
+    """Primary (index 0 after overcharge sort) is the Onion row."""
+    items = ai_pipeline.parse_complaint_items(DRIVER_TEXT)
+    assert items[0]["item_canonical_id"] == "pyaaz"
 

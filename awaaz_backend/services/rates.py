@@ -114,6 +114,27 @@ class RateService:
 
         return None
 
+    def find_all_items(self, text_or_name: str) -> List[Tuple[str, Dict[str, Any]]]:
+        """All distinct ``(canonical_id, item_dict)`` whose name/alias (len>=3)
+        appears in the text.
+
+        Mirrors ``resolve_item`` tiers 1-3 (exact id / exact alias / >=3-char
+        substring) but collects ALL matches instead of returning the first.
+        The greedy fuzzy tier-4 is deliberately excluded so discovery never
+        fabricates spurious commodities. De-duplicated by canonical id,
+        preserving alias-map insertion order.
+        """
+        norm = (text_or_name or "").lower().strip()
+        out: List[Tuple[str, Dict[str, Any]]] = []
+        seen: set = set()
+        with self._lock:
+            for alias, canonical_id in self._alias_map.items():
+                if len(alias) >= 3 and (alias == norm or alias in norm or norm in alias):
+                    if canonical_id not in seen:
+                        seen.add(canonical_id)
+                        out.append((canonical_id, dict(self.items[canonical_id])))
+        return out
+
     def compare_price(
         self,
         item_id: str,

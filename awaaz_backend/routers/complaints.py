@@ -1,10 +1,12 @@
 import os
+import uuid
 import shutil
 import tempfile
 import logging
 from datetime import datetime
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict, Any
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, Query, status
+from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc, or_
 
@@ -14,6 +16,7 @@ from auth import verify_admin_api_key
 from schemas import (
     ComplaintResponse,
     ComplaintListResponse,
+    MultiComplaintResponse,
     TextComplaintRequest,
     ComplaintUpdateStatusRequest
 )
@@ -43,6 +46,74 @@ def extract_area_from_text(text: str) -> Optional[str]:
         if area.lower() in lowered:
             return area
     return None
+
+
+_URGENCY_RANK = {"High": 3, "Medium": 2, "Low": 1}
+
+
+def _select_primary(responses: List[ComplaintResponse]) -> ComplaintResponse:
+    """Highest overcharge wins; ties broken by urgency rank, then original order."""
+    return max(
+        responses,
+        key=lambda r: (
+            r.percentage_overcharge or 0.0,
+            _URGENCY_RANK.get(r.urgency, 0),
+        ),
+    )
+
+
+async def _persist_submission(
+    db: AsyncSession,
+    *,
+    transcript_text: str,
+    shared: Dict[str, Any],
+) -> MultiComplaintResponse:
+    """Extract every item, persist one Complaint row per item under one shared
+    ``submission_id`` in a single transaction, and return a MultiComplaintResponse.
+    """
+    items = await run_in_threadpool(ai_pipeline.parse_complaint_items, transcript_text)
+    submission_id = str(uuid.uuid4())
+
+    complaints: List[Complaint] = []
+    for extracted in items:
+        complaints.append(
+            Complaint(
+                submission_id=submission_id,
+                transcript_raw=transcript_text,
+                detected_language=extracted["detected_language"],
+                category=extracted["category"],
+                urgency=extracted["urgency"],
+                status="Pending",
+                extraction_confidence=extracted["extraction_confidence"],
+                needs_review=extracted["needs_review"],
+                item_name=extracted.get("item_name"),
+                item_canonical_id=extracted.get("item_canonical_id"),
+                unit=extracted.get("unit"),
+                reported_price=extracted.get("reported_price"),
+                official_price=extracted.get("official_price"),
+                price_difference_pkr=extracted.get("price_difference_pkr"),
+                percentage_overcharge=extracted.get("percentage_overcharge"),
+                native_response=extracted["native_response"],
+                routing_agency=extracted["routing_agency"],
+                helpline_reference=extracted["helpline_reference"],
+                **shared,
+            )
+        )
+
+    db.add_all(complaints)
+    await db.commit()
+    for complaint in complaints:
+        await db.refresh(complaint)
+
+    responses = [ComplaintResponse.model_validate(c) for c in complaints]
+    responses.sort(key=lambda r: r.percentage_overcharge or 0.0, reverse=True)
+    primary = _select_primary(responses)
+
+    return MultiComplaintResponse(
+        submission_id=submission_id,
+        complaints=responses,
+        primary=primary,
+    )
 
 
 def _parse_date_bound(value: str, end_of_day: bool = False) -> datetime:
@@ -109,7 +180,7 @@ def _parse_bbox(value: str) -> Tuple[float, float, float, float]:
     return min_lat, min_lng, max_lat, max_lng
 
 
-@router.post("/voice", response_model=ComplaintResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/voice", response_model=MultiComplaintResponse, status_code=status.HTTP_201_CREATED)
 async def submit_voice_complaint(
     audio: UploadFile = File(..., description="Audio file (m4a, mp3, wav, webm, ogg, aac)"),
     location_area: Optional[str] = Form(None, description="E.g. 'G-9 Markaz, Islamabad' or 'Raja Bazaar'"),
@@ -129,20 +200,30 @@ async def submit_voice_complaint(
     wav_path = os.path.join(temp_dir, "processed_16k.wav")
 
     try:
-        # Save uploaded file
-        with open(raw_path, "wb") as f:
-            shutil.copyfileobj(audio.file, f)
+        # Save uploaded file. Reading the UploadFile and writing to disk is
+        # blocking I/O, so run it in a worker thread to keep the event loop free.
+        def _save_upload() -> None:
+            with open(raw_path, "wb") as f:
+                shutil.copyfileobj(audio.file, f)
 
-        # Validate and convert audio to 16kHz mono WAV
-        is_valid, duration_sec, msg = validate_and_convert_audio(raw_path, wav_path)
+        await run_in_threadpool(_save_upload)
+
+        # Validate and convert audio to 16kHz mono WAV.
+        # ffmpeg runs as a blocking subprocess; offload it to a worker thread
+        # so concurrent requests and health checks are not stalled.
+        is_valid, duration_sec, msg = await run_in_threadpool(
+            validate_and_convert_audio, raw_path, wav_path
+        )
         if not is_valid:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Audio validation failed: {msg}"
             )
 
-        # Transcribe with Whisper
-        transcription_res = ai_pipeline.transcribe_audio_detailed(wav_path)
+        # Transcribe with Whisper (CPU-heavy, blocking) -> worker thread.
+        transcription_res = await run_in_threadpool(
+            ai_pipeline.transcribe_audio_detailed, wav_path
+        )
         transcription_error = transcription_res.get("error")
         if transcription_error:
             logger.error("Voice transcription service failure: %s", transcription_error)
@@ -158,51 +239,29 @@ async def submit_voice_complaint(
                 detail="No audible speech detected. The audio file was silent or contained unrecognised background noise."
             )
 
-        # Parse complaint with hybrid AI pipeline
-        extracted = ai_pipeline.parse_complaint_text(transcript_text)
-
         # Resolve location if not provided
         inferred_area = location_area or extract_area_from_text(transcript_text)
 
-        # Create Complaint record
-        complaint = Complaint(
-            audio_filename=audio.filename,
-            audio_duration_seconds=duration_sec,
-            transcript_raw=transcript_text,
-            detected_language=extracted["detected_language"],
-            category=extracted["category"],
-            urgency=extracted["urgency"],
-            status="Pending",
-            extraction_confidence=extracted["extraction_confidence"],
-            needs_review=extracted["needs_review"],
-            item_name=extracted.get("item_name"),
-            item_canonical_id=extracted.get("item_canonical_id"),
-            unit=extracted.get("unit"),
-            reported_price=extracted.get("reported_price"),
-            official_price=extracted.get("official_price"),
-            price_difference_pkr=extracted.get("price_difference_pkr"),
-            percentage_overcharge=extracted.get("percentage_overcharge"),
-            native_response=extracted["native_response"],
-            routing_agency=extracted["routing_agency"],
-            helpline_reference=extracted["helpline_reference"],
-            location_area=inferred_area,
-            shop_name=shop_name,
-            lat=lat,
-            lng=lng
+        # Persist one Complaint per extracted item under one submission_id.
+        return await _persist_submission(
+            db,
+            transcript_text=transcript_text,
+            shared={
+                "audio_filename": audio.filename,
+                "audio_duration_seconds": duration_sec,
+                "location_area": inferred_area,
+                "shop_name": shop_name,
+                "lat": lat,
+                "lng": lng,
+            },
         )
-
-        db.add(complaint)
-        await db.commit()
-        await db.refresh(complaint)
-
-        return ComplaintResponse.model_validate(complaint)
 
     finally:
         # Clean up temporary audio files
         shutil.rmtree(temp_dir, ignore_errors=True)
 
 
-@router.post("/text", response_model=ComplaintResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/text", response_model=MultiComplaintResponse, status_code=status.HTTP_201_CREATED)
 async def submit_text_complaint(
     request: TextComplaintRequest,
     db: AsyncSession = Depends(get_db)
@@ -217,40 +276,21 @@ async def submit_text_complaint(
             detail="Complaint text cannot be empty"
         )
 
-    extracted = ai_pipeline.parse_complaint_text(text)
     inferred_area = request.location_area or extract_area_from_text(text)
 
-    complaint = Complaint(
-        audio_filename=None,
-        audio_duration_seconds=None,
-        transcript_raw=text,
-        detected_language=extracted["detected_language"],
-        category=extracted["category"],
-        urgency=extracted["urgency"],
-        status="Pending",
-        extraction_confidence=extracted["extraction_confidence"],
-        needs_review=extracted["needs_review"],
-        item_name=extracted.get("item_name"),
-        item_canonical_id=extracted.get("item_canonical_id"),
-        unit=extracted.get("unit"),
-        reported_price=extracted.get("reported_price"),
-        official_price=extracted.get("official_price"),
-        price_difference_pkr=extracted.get("price_difference_pkr"),
-        percentage_overcharge=extracted.get("percentage_overcharge"),
-        native_response=extracted["native_response"],
-        routing_agency=extracted["routing_agency"],
-        helpline_reference=extracted["helpline_reference"],
-        location_area=inferred_area,
-        shop_name=request.shop_name,
-        lat=request.lat,
-        lng=request.lng
+    # Persist one Complaint per extracted item under one submission_id.
+    return await _persist_submission(
+        db,
+        transcript_text=text,
+        shared={
+            "audio_filename": None,
+            "audio_duration_seconds": None,
+            "location_area": inferred_area,
+            "shop_name": request.shop_name,
+            "lat": request.lat,
+            "lng": request.lng,
+        },
     )
-
-    db.add(complaint)
-    await db.commit()
-    await db.refresh(complaint)
-
-    return ComplaintResponse.model_validate(complaint)
 
 
 @router.get("", response_model=ComplaintListResponse)

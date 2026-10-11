@@ -11,6 +11,7 @@ class Complaint(Base):
     __tablename__ = "complaints"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    submission_id = Column(String(36), nullable=True, index=True)
     created_at = Column(DateTime, default=utcnow, nullable=False, index=True)
     updated_at = Column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
 
@@ -57,6 +58,7 @@ class Complaint(Base):
     def to_dict(self):
         return {
             "id": self.id,
+            "submission_id": self.submission_id,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "audio_filename": self.audio_filename,
