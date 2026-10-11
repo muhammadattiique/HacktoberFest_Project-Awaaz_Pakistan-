@@ -450,7 +450,7 @@ class AIPipeline:
                         {"role": "user", "content": prompt}
                     ],
                     options={"temperature": 0.1},
-                    format=COMPLAINT_SCHEMA
+                    format=COMPLAINT_ITEM_SCHEMA
                 )
                 msg_content = response.get("message", {}).get("content", "").strip()
                 if not msg_content:
