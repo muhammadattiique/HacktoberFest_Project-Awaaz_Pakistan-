@@ -1,4 +1,4 @@
-import os
+﻿import os
 from pathlib import Path
 from typing import List, Union, Any
 from pydantic import AliasChoices, Field, field_validator
@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api"
 
     # Audio Processing & Whisper
-    WHISPER_MODEL: str = "base"
+    WHISPER_MODEL: str = "small"
     WHISPER_DEVICE: str = "cpu"
     UPLOAD_MAX_BYTES: int = 25 * 1024 * 1024  # 25MB limit
     AUDIO_MIN_DURATION_SECONDS: float = 0.5
@@ -99,3 +99,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+

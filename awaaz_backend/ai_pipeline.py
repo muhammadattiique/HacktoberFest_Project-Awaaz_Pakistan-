@@ -1,4 +1,6 @@
-import os
+﻿import os
+import shutil
+import tempfile
 import re
 import json
 import time
@@ -18,6 +20,7 @@ from services.nlp_rules import (
     generate_native_acknowledgment
 )
 from services.rates import rate_service
+from services.audio import get_ffmpeg_binary
 
 logger = logging.getLogger(__name__)
 
@@ -78,14 +81,14 @@ Urgency levels:
 Return output strictly complying with the specified JSON schema.
 
 Examples:
-Input: "آلو مارکیٹ میں دو سو روپے کلو بیچ رہے ہیں جبکہ لسٹ میں سو روپے ہے۔"
+Input: "Ø¢Ù„Ùˆ Ù…Ø§Ø±Ú©ÛŒÙ¹ Ù…ÛŒÚº Ø¯Ùˆ Ø³Ùˆ Ø±ÙˆÙ¾Û’ Ú©Ù„Ùˆ Ø¨ÛŒÚ† Ø±ÛÛ’ ÛÛŒÚº Ø¬Ø¨Ú©Û Ù„Ø³Ù¹ Ù…ÛŒÚº Ø³Ùˆ Ø±ÙˆÙ¾Û’ ÛÛ’Û”"
 Output: {
   "item_name": "Potato",
   "reported_price": 200,
   "category": "PERA - Overpricing",
   "urgency": "High",
   "detected_language": "Urdu",
-  "native_response": "آپ کی شکایت موصول ہو چکی ہے۔ پرائس کنٹرول مجسٹریٹ کو کارروائی کے لیے مطلع کر دیا گیا ہے۔ شکریہ۔"
+  "native_response": "Ø¢Ù¾ Ú©ÛŒ Ø´Ú©Ø§ÛŒØª Ù…ÙˆØµÙˆÙ„ ÛÙˆ Ú†Ú©ÛŒ ÛÛ’Û” Ù¾Ø±Ø§Ø¦Ø³ Ú©Ù†Ù¹Ø±ÙˆÙ„ Ù…Ø¬Ø³Ù¹Ø±ÛŒÙ¹ Ú©Ùˆ Ú©Ø§Ø±Ø±ÙˆØ§Ø¦ÛŒ Ú©Û’ Ù„ÛŒÛ’ Ù…Ø·Ù„Ø¹ Ú©Ø± Ø¯ÛŒØ§ Ú¯ÛŒØ§ ÛÛ’Û” Ø´Ú©Ø±ÛŒÛÛ”"
 }
 
 Input: "Bhai Raja Bazaar mein Madina store wala doodh 280 rupay liter de raha hai, bohat loot machai hai."
@@ -105,7 +108,7 @@ Output: {
   "category": "PERA - Overpricing",
   "urgency": "Medium",
   "detected_language": "Punjabi",
-  "native_response": "تہاڈی شکایت درج ہو گئی اے۔ متعلقہ مجسٹریٹ نوں کارروائی واسطے بھیج دتا گیا اے۔ مہربانی۔"
+  "native_response": "ØªÛØ§ÚˆÛŒ Ø´Ú©Ø§ÛŒØª Ø¯Ø±Ø¬ ÛÙˆ Ú¯Ø¦ÛŒ Ø§Û’Û” Ù…ØªØ¹Ù„Ù‚Û Ù…Ø¬Ø³Ù¹Ø±ÛŒÙ¹ Ù†ÙˆÚº Ú©Ø§Ø±Ø±ÙˆØ§Ø¦ÛŒ ÙˆØ§Ø³Ø·Û’ Ø¨Ú¾ÛŒØ¬ Ø¯ØªØ§ Ú¯ÛŒØ§ Ø§Û’Û” Ù…ÛØ±Ø¨Ø§Ù†ÛŒÛ”"
 }
 
 Input: "Dukaan waale khorak kharab shaway shodi rakrre di, dukaandar da pfa yaftah na de."
@@ -115,7 +118,7 @@ Output: {
   "category": "PFA - Food Safety",
   "urgency": "High",
   "detected_language": "Pashto",
-  "native_response": "ستاسو شکایت ثبت شو او د خوړو خوندیتوب ادارې ته واستول شو. مننه."
+  "native_response": "Ø³ØªØ§Ø³Ùˆ Ø´Ú©Ø§ÛŒØª Ø«Ø¨Øª Ø´Ùˆ Ø§Ùˆ Ø¯ Ø®ÙˆÚ“Ùˆ Ø®ÙˆÙ†Ø¯ÛŒØªÙˆØ¨ Ø§Ø¯Ø§Ø±Û ØªÙ‡ ÙˆØ§Ø³ØªÙˆÙ„ Ø´Ùˆ. Ù…Ù†Ù†Ù‡."
 }
 
 Input: "Open sewerage gutter overflowing in front of school in G-9 Markaz Islamabad."
@@ -143,8 +146,46 @@ class AIPipeline:
         self._init_whisper()
         self._init_ollama()
 
+    def _ensure_ffmpeg_on_path(self):
+        """Make an ``ffmpeg`` executable discoverable to openai-whisper.
+
+        Whisper's internal ``load_audio`` shells out to a bare ``ffmpeg`` on
+        PATH, bypassing our ``services.audio`` resolver. On machines without a
+        system ffmpeg this raises WinError 2 / FileNotFoundError and every
+        transcription fails.
+
+        The bundled imageio-ffmpeg binary is NOT named ``ffmpeg`` (e.g.
+        ``ffmpeg-win-x86_64-v7.1.exe``), so adding its directory to PATH is not
+        enough. We expose a correctly named ``ffmpeg``/``ffmpeg.exe`` copy in a
+        cache directory and prepend that directory to PATH.
+        """
+        try:
+            if shutil.which("ffmpeg"):
+                return
+            ffmpeg_bin = get_ffmpeg_binary()
+            exe_name = "ffmpeg.exe" if os.name == "nt" else "ffmpeg"
+            resolved_dir = os.path.dirname(ffmpeg_bin)
+            if os.path.basename(ffmpeg_bin).lower() in ("ffmpeg", "ffmpeg.exe") and resolved_dir:
+                self._prepend_path(resolved_dir)
+                return
+            if os.path.exists(ffmpeg_bin):
+                cache_dir = os.path.join(tempfile.gettempdir(), "awaaz_ffmpeg_bin")
+                os.makedirs(cache_dir, exist_ok=True)
+                alias = os.path.join(cache_dir, exe_name)
+                if not os.path.exists(alias):
+                    shutil.copy2(ffmpeg_bin, alias)
+                self._prepend_path(cache_dir)
+        except Exception as e:  # pragma: no cover - defensive
+            logger.warning("Could not make ffmpeg discoverable for Whisper: %s" % e)
+
+    @staticmethod
+    def _prepend_path(directory):
+        if directory and directory not in os.environ.get("PATH", "").split(os.pathsep):
+            os.environ["PATH"] = directory + os.pathsep + os.environ.get("PATH", "")
+
     def _init_whisper(self):
         """Load Whisper model with timing log."""
+        self._ensure_ffmpeg_on_path()
         start_t = time.time()
         try:
             logger.info(f"Loading Whisper model '{settings.WHISPER_MODEL}' on {settings.WHISPER_DEVICE}...")
@@ -324,7 +365,7 @@ class AIPipeline:
                 "category": "PERA - Overpricing",
                 "urgency": "Low",
                 "detected_language": "Urdu",
-                "native_response": "آپ کی آواز ریکارڈ نہیں ہو سکی۔ برائے مہربانی دوبارہ بولیں۔",
+                "native_response": "Ø¢Ù¾ Ú©ÛŒ Ø¢ÙˆØ§Ø² Ø±ÛŒÚ©Ø§Ø±Úˆ Ù†ÛÛŒÚº ÛÙˆ Ø³Ú©ÛŒÛ” Ø¨Ø±Ø§Ø¦Û’ Ù…ÛØ±Ø¨Ø§Ù†ÛŒ Ø¯ÙˆØ¨Ø§Ø±Û Ø¨ÙˆÙ„ÛŒÚºÛ”",
                 "routing_agency": "Punjab Enforcement & Regulatory Authority (PERA) / ICT Administration",
                 "helpline_reference": settings.PERA_ENFORCEMENT_HELPLINE,
                 "extraction_confidence": 0.0,
@@ -505,3 +546,5 @@ class AIPipeline:
 
 # Singleton pipeline instance
 ai_pipeline = AIPipeline()
+
+

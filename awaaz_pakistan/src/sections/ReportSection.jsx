@@ -4,6 +4,7 @@ import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { useLipSync } from '../hooks/useLipSync';
 import { submitVoiceComplaint, submitTextComplaint } from '../lib/api';
+import { getSpeechLangCode } from '../lib/speechLang';
 import { LocationPicker } from '../components/map/LocationPicker';
 import { MiniLocationMap } from '../components/map/MiniLocationMap';
 import { CardTilt } from '../components/ui/CardTilt';
@@ -189,7 +190,7 @@ export const ReportSection = ({
 
       // Speak native response through SpeechSynthesis / LipSync
       if (data.native_response) {
-        const langCode = data.detected_language === 'Urdu' ? 'ur-PK' : 'en-US';
+        const langCode = getSpeechLangCode(data.detected_language);
         speakText(data.native_response, langCode);
       }
 
@@ -485,7 +486,7 @@ export const ReportSection = ({
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-white/[0.08]">
             <div className="text-xs text-white/50">
               {consent && coordinates ? (
-                <span className="text-rose-400 font-medium">✓ GPS Pin Attached</span>
+                <span className="text-rose-400 font-medium">âœ“ GPS Pin Attached</span>
               ) : (
                 <span>No location attached (submission remains 100% valid)</span>
               )}
@@ -635,7 +636,7 @@ export const ReportSection = ({
                       onClick={() =>
                         speakText(
                           verdictData.native_response,
-                          verdictData.detected_language === 'Urdu' ? 'ur-PK' : 'en-US'
+                          getSpeechLangCode(verdictData.detected_language)
                         )
                       }
                       className="flex items-center gap-1 text-[11px] text-white/60 hover:text-white cursor-pointer"
@@ -707,4 +708,5 @@ export const ReportSection = ({
     </section>
   );
 };
+
 

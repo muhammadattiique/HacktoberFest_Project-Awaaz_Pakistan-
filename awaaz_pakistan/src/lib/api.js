@@ -73,12 +73,17 @@ export const submitVoiceComplaint = async ({
     res = await apiClient.post('/api/complaints/voice', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       signal,
+      // Voice runs Whisper transcription + the local LLM, which on CPU can take
+      // well over the default 35s. Allow up to 3 minutes so the browser does not
+      // abort a request the backend is still successfully processing.
+      timeout: 180000,
     });
   } catch (primaryErr) {
     if (primaryErr?.response?.status === 404) {
       res = await apiClient.post('/api/process-complaint', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         signal,
+        timeout: 180000,
       });
     } else {
       throw primaryErr;
