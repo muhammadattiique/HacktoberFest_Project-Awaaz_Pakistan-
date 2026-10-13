@@ -52,14 +52,21 @@ _URGENCY_RANK = {"High": 3, "Medium": 2, "Low": 1}
 
 
 def _select_primary(responses: List[ComplaintResponse]) -> ComplaintResponse:
-    """Highest overcharge wins; ties broken by urgency rank, then original order."""
-    return max(
-        responses,
-        key=lambda r: (
+    """Highest overcharge wins; ties broken by urgency rank, then original order.
+
+    An under-rate item (percentage_overcharge <= 0) is never chosen as primary
+    while any item is a real violation (percentage_overcharge > 0). Only when no
+    item is a violation does selection fall back to the overall max.
+    """
+    def _rank(r: ComplaintResponse) -> Tuple[float, int]:
+        return (
             r.percentage_overcharge or 0.0,
             _URGENCY_RANK.get(r.urgency, 0),
-        ),
-    )
+        )
+
+    violations = [r for r in responses if (r.percentage_overcharge or 0.0) > 0]
+    pool = violations if violations else responses
+    return max(pool, key=_rank)
 
 
 async def _persist_submission(

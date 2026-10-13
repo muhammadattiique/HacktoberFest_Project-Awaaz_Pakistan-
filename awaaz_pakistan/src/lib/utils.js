@@ -14,6 +14,9 @@ export function formatPrice(num, lang = 'en') {
 export function formatVariance(pct) {
   if (pct === null || pct === undefined) return null;
   const num = Number(pct);
+  // Prefix '+' only for genuine positives. Negatives rely on the native minus
+  // sign that toFixed() already produces, so we never emit '+-14.3%'. Zero is
+  // rendered plain as '0.0%'.
   const sign = num > 0 ? '+' : '';
   return `${sign}${num.toFixed(1)}%`;
 }

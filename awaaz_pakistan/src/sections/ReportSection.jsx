@@ -696,12 +696,18 @@ export const ReportSection = ({
         {/* VERDICT ASSESSMENT (Appears on successful processing) */}
         {verdictData && verdictData.complaints.length > 0 && (
           <div className="mt-12 animate-in fade-in slide-in-from-bottom-6 duration-500 space-y-6">
-            {/* 'N violations detected' header shown only for multi-item submissions */}
+            {/* 'N violations detected' header shown only for multi-item
+                submissions. Count only ACTUAL violations (overcharge > 0), not
+                every parsed item, so compliant/under-rate rows are not counted. */}
             {verdictData.complaints.length > 1 && (
               <h3 className="text-lg sm:text-xl font-bold text-rose-300 text-center">
                 {t.verdict.violationsCount.replaceAll(
                   '{count}',
-                  String(verdictData.complaints.length)
+                  String(
+                    verdictData.complaints.filter(
+                      (c) => c.percentage_overcharge > 0
+                    ).length
+                  )
                 )}
               </h3>
             )}

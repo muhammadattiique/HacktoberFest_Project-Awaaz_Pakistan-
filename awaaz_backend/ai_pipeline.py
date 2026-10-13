@@ -645,7 +645,13 @@ class AIPipeline:
         # urgency (which carries the illness/hazard escalation) when there is no
         # valid LLM hint.
         if final_category == "PERA - Overpricing":
-            if pct_overcharge >= settings.HIGH_SEVERITY_THRESHOLD_PCT:
+            if pct_overcharge <= 0:
+                # Reported price is at or below the official notified ceiling:
+                # the mentioned item is COMPLIANT. Keep it (never drop a named
+                # item), but never escalate — force Low regardless of any LLM
+                # urgency hint so a compliant item is never flagged High.
+                final_urgency = "Low"
+            elif pct_overcharge >= settings.HIGH_SEVERITY_THRESHOLD_PCT:
                 final_urgency = "High"
             elif pct_overcharge >= settings.OVERCHARGE_ALERT_THRESHOLD_PCT:
                 final_urgency = "Medium"
@@ -837,12 +843,39 @@ class AIPipeline:
                 logger.warning(f"Ollama multi LLM call raised, falling back to rules: {exc}")
                 llm_output = None
 
+            # Rule-only discovery (always run so LLM-missed items are caught).
+            # Computed BEFORE the LLM merge so an LLM item can be validated
+            # against the set of commodities genuinely present in the text.
+            rule_items = self._discover_items_by_rules(
+                clauses, text=text, det_lang=det_lang, rule_cat=rule_cat, rule_urg=rule_urg
+            )
+            rule_found_ids = {
+                it.get("item_canonical_id")
+                for it in rule_items
+                if it.get("item_canonical_id")
+            }
+
             if llm_output and isinstance(llm_output, list):
                 for raw in llm_output:
                     if not isinstance(raw, dict):
                         continue
                     item_name_hint = raw.get("item_name")
                     clause = self._attribute_clause(item_name_hint, clauses)
+                    # Drop an LLM item that is NOT attributable to any clause in
+                    # the transcript AND is not independently discovered by the
+                    # rule pass. This kills phantom items (e.g. a hallucinated
+                    # "Chicken" borrowing a stray price) that the chicken-heavy
+                    # prompt tends to emit. An emitted item must be genuinely
+                    # present in the text, not just plausible.
+                    if clause is None:
+                        res = rate_service.resolve_item(item_name_hint) if item_name_hint else None
+                        resolved_id = res[0] if res else None
+                        if resolved_id is None or resolved_id not in rule_found_ids:
+                            logger.info(
+                                "Dropping unattributed LLM item '%s' (no clause, not rule-found).",
+                                item_name_hint,
+                            )
+                            continue
                     llm_items.append(
                         self._reconcile_item(
                             item_name_hint=item_name_hint,
@@ -858,11 +891,6 @@ class AIPipeline:
                             has_llm=True,
                         )
                     )
-
-            # Rule-only discovery (always run so LLM-missed items are caught).
-            rule_items = self._discover_items_by_rules(
-                clauses, text=text, det_lang=det_lang, rule_cat=rule_cat, rule_urg=rule_urg
-            )
 
             # Union + de-dupe by canonical id.
             merged: Dict[str, Dict[str, Any]] = {}

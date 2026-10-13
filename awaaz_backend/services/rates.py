@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 import threading
 from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
@@ -116,23 +117,36 @@ class RateService:
 
     def find_all_items(self, text_or_name: str) -> List[Tuple[str, Dict[str, Any]]]:
         """All distinct ``(canonical_id, item_dict)`` whose name/alias (len>=3)
-        appears in the text.
+        is genuinely MENTIONED in the text as a whole word/token.
 
-        Mirrors ``resolve_item`` tiers 1-3 (exact id / exact alias / >=3-char
-        substring) but collects ALL matches instead of returning the first.
-        The greedy fuzzy tier-4 is deliberately excluded so discovery never
-        fabricates spurious commodities. De-duplicated by canonical id,
+        Mirrors ``resolve_item`` tiers 1-2 (exact id / exact alias) and a
+        tightened tier-3: an alias counts as present only on a real
+        word-boundary match against the text (``\\b alias \\b``), never on a
+        loose substring of an unrelated word. The old ``norm in alias``
+        direction is dropped entirely — a fragment of the text being contained
+        inside a longer alias is not a mention and used to let unrelated words
+        (and LLM-borrowed stray tokens) fabricate commodities. The greedy fuzzy
+        tier-4 is still deliberately excluded. De-duplicated by canonical id,
         preserving alias-map insertion order.
         """
         norm = (text_or_name or "").lower().strip()
         out: List[Tuple[str, Dict[str, Any]]] = []
         seen: set = set()
+        if not norm:
+            return out
         with self._lock:
             for alias, canonical_id in self._alias_map.items():
-                if len(alias) >= 3 and (alias == norm or alias in norm or norm in alias):
-                    if canonical_id not in seen:
-                        seen.add(canonical_id)
-                        out.append((canonical_id, dict(self.items[canonical_id])))
+                if len(alias) < 3:
+                    continue
+                if canonical_id in seen:
+                    continue
+                # Whole-word / whole-token match: the alias must appear in the
+                # text delimited by non-word boundaries (handles Latin and
+                # Urdu-script tokens alike). Equality is covered by the regex.
+                pattern = r"(?<!\w)" + re.escape(alias) + r"(?!\w)"
+                if re.search(pattern, norm):
+                    seen.add(canonical_id)
+                    out.append((canonical_id, dict(self.items[canonical_id])))
         return out
 
     def compare_price(
