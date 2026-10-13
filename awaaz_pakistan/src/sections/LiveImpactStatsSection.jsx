@@ -47,7 +47,7 @@ export const LiveImpactStatsSection = () => {
   const totalComplaints = stats?.total_complaints ?? 142;
   const violationsCaught = stats?.overpricing_cases ?? 118;
   const avgOvercharge = stats?.average_overcharge_pct ?? 42.6;
-  const languagesCount = 4; // Urdu, Punjabi, Pashto, English
+  const languagesCount = 6; // English, Urdu, Punjabi, Sindhi, Balochi, Pashto
 
   // Chart data
   const chartData = stats?.most_gouged_items?.map((item) => ({
@@ -127,7 +127,7 @@ export const LiveImpactStatsSection = () => {
             </div>
             <div className="mt-3 flex items-center gap-1.5 text-[11px] text-emerald-400">
               <CheckCircle className="w-3.5 h-3.5" />
-              <span>Urdu, Punjabi, Pashto, EN</span>
+              <span>EN, Urdu, Punjabi, Sindhi, Balochi, Pashto</span>
             </div>
           </CardTilt>
         </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { LANGUAGES } from '../../i18n/translations';
 import { Mic, Menu, X, ArrowUpRight } from 'lucide-react';
 
 export const Navbar = () => {
@@ -81,28 +82,20 @@ export const Navbar = () => {
 
           {/* Actions: Language Switcher + Primary Button */}
           <div className="hidden md:flex items-center gap-3">
-            {/* Language Switcher */}
-            <div className="flex items-center bg-[#131515]/70 backdrop-blur-md p-1 rounded-full border border-white/[0.08]">
-              <button
-                onClick={() => setLanguage('en')}
-                className={`px-2.5 py-1 text-xs rounded-full font-medium transition-all cursor-pointer ${
-                  language === 'en'
-                    ? 'bg-violet-600 text-white shadow-[0_0_12px_rgba(129,75,238,0.5)]'
-                    : 'text-white/60 hover:text-white'
-                }`}
+            {/* Language Switcher (data-driven from LANGUAGES) */}
+            <div className="flex items-center bg-[#131515]/70 backdrop-blur-md px-1 py-0.5 rounded-full border border-white/[0.08]">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                aria-label="Select interface language"
+                className="bg-transparent text-xs font-medium text-white/80 px-2.5 py-1 rounded-full cursor-pointer focus:outline-none focus:ring-1 focus:ring-violet-400 appearance-none"
               >
-                EN
-              </button>
-              <button
-                onClick={() => setLanguage('ur')}
-                className={`px-2.5 py-1 text-xs rounded-full font-medium transition-all cursor-pointer ${
-                  language === 'ur'
-                    ? 'bg-violet-600 text-white shadow-[0_0_12px_rgba(129,75,238,0.5)]'
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                اردو
-              </button>
+                {LANGUAGES.map((lng) => (
+                  <option key={lng.code} value={lng.code} className="bg-[#131515] text-white">
+                    {lng.native}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Report Now Primary CTA */}
@@ -118,12 +111,18 @@ export const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-2">
-            <button
-              onClick={() => setLanguage(language === 'en' ? 'ur' : 'en')}
-              className="px-2.5 py-1 text-xs rounded-full font-medium bg-white/10 text-white border border-white/10"
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              aria-label="Select interface language"
+              className="px-2.5 py-1 text-xs rounded-full font-medium bg-white/10 text-white border border-white/10 cursor-pointer focus:outline-none focus:ring-1 focus:ring-violet-400 appearance-none"
             >
-              {language === 'en' ? 'اردو' : 'EN'}
-            </button>
+              {LANGUAGES.map((lng) => (
+                <option key={lng.code} value={lng.code} className="bg-[#131515] text-white">
+                  {lng.native}
+                </option>
+              ))}
+            </select>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-xl bg-white/[0.05] border border-white/10 text-white/80 hover:text-white"

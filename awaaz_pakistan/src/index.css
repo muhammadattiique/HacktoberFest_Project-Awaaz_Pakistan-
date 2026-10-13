@@ -153,7 +153,12 @@
   animation-play-state: paused;
 }
 
-/* Urdu font helper */
+/* Perso-Arabic script font helper. Applied for all RTL languages
+   (ur/pa/sd/bal/ps) via the font-urdu body class and the VerdictCard
+   native_response check. Uses the system/bundled Noto Nastaliq Urdu stack with
+   no new network dependency.
+   TODO: split Naskh for sd/ps/bal — these scripts read better in Noto Naskh
+   Arabic than in Urdu Nastaliq; Nastaliq is a shared stopgap for now. */
 .font-urdu {
   font-family: 'Noto Nastaliq Urdu', 'Gulzar', serif;
   line-height: 1.8;

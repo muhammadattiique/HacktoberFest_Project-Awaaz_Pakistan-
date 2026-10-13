@@ -30,8 +30,23 @@ import {
 // preserving the rose/emerald theming, Badge variants, Noto Nastaliq RTL,
 // per-card Copy-ID and Replay-Voice. The shared transcript and map are rendered
 // once by the parent, not inside this card.
+// Detected-language labels whose native_response is written in a Perso-Arabic
+// (RTL) script and should use the Nastaliq/Naskh font + right alignment. Covers
+// Urdu plus the newly supported Sindhi/Balochi/Punjabi/Pashto script responses.
+// TODO: split Naskh for sd/ps/bal — Noto Nastaliq Urdu is a stopgap for all.
+const RTL_RESPONSE_LANGS = new Set([
+  'Urdu',
+  'Sindhi',
+  'Balochi',
+  'Baluchi',
+  'Punjabi',
+  'Pashto',
+  'Pushto',
+]);
+
 const VerdictCard = ({ complaint, copiedId, onCopyId, t, language, speakText }) => {
   const isViolation = complaint.percentage_overcharge > 0;
+  const isRtlResponse = RTL_RESPONSE_LANGS.has(complaint.detected_language);
 
   return (
     <CardTilt
@@ -127,7 +142,7 @@ const VerdictCard = ({ complaint, copiedId, onCopyId, t, language, speakText }) 
               onClick={() =>
                 speakText(
                   complaint.native_response,
-                  complaint.detected_language === 'Urdu' ? 'ur-PK' : 'en-US'
+                  isRtlResponse ? 'ur-PK' : 'en-US'
                 )
               }
               className="flex items-center gap-1 text-[11px] text-white/60 hover:text-white cursor-pointer"
@@ -138,7 +153,7 @@ const VerdictCard = ({ complaint, copiedId, onCopyId, t, language, speakText }) 
           </div>
           <p
             className={`text-sm sm:text-base text-white/90 leading-relaxed ${
-              complaint.detected_language === 'Urdu'
+              isRtlResponse
                 ? 'font-urdu text-right text-base sm:text-lg'
                 : 'text-left'
             }`}
@@ -342,8 +357,11 @@ export const ReportSection = ({
 
       // Speak the primary native response ONCE through SpeechSynthesis / LipSync
       if (normalized.primary?.native_response) {
-        const langCode =
-          normalized.primary.detected_language === 'Urdu' ? 'ur-PK' : 'en-US';
+        const langCode = RTL_RESPONSE_LANGS.has(
+          normalized.primary.detected_language
+        )
+          ? 'ur-PK'
+          : 'en-US';
         speakText(normalized.primary.native_response, langCode);
       }
 
@@ -539,6 +557,19 @@ export const ReportSection = ({
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>{t.report.reRecord}</span>
                   </button>
+                </div>
+              )}
+
+              {/* Balochi voice-recognition experimental notice. Balochi
+                  transcription is not reliable; recommend the text tab. This
+                  reuses the existing low-confidence backend path for any
+                  submitted audio and adds no new transcription logic. */}
+              {language === 'bal' && (
+                <div className="max-w-md mx-auto p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs text-left mb-4">
+                  <div className="flex items-start gap-2.5">
+                    <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <p>{t.report.balochiVoiceNotice}</p>
+                  </div>
                 </div>
               )}
 
