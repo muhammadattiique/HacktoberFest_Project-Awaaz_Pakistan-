@@ -51,7 +51,20 @@ BASIC_NUMBER_WORDS = {
     # Hundreds & Thousands
     "sau": 100, "so": 100, "sauu": 100, "sal": 100, "hundred": 100, "سو": 100,
     "hazaar": 1000, "hazar": 1000, "zar": 1000, "thousand": 1000, "ہزار": 1000,
-    "lakh": 100000, "laakh": 100000, "لاکھ": 100000
+    "lakh": 100000, "laakh": 100000, "لاکھ": 100000,
+    # Sindhi / Balochi romanized number words that differ from the shared forms
+    # above (do/teen/char/panch/sau/hazaar are already present and shared).
+    # NATIVE-REVIEW-REQUIRED: Roman Sindhi/Balochi numerals are not standardized.
+    "yak": 1, "hik": 1,            # Balochi / Sindhi 1
+    "du": 2,                       # Balochi 2 (distinct spelling from "do")
+    "ba": 2,                       # Sindhi 2
+    "sai": 3, "tei": 3,            # Balochi / Sindhi 3
+    "shash": 6,                    # Balochi 6
+    "hapt": 7,                     # Balochi 7
+    "hasht": 8,                    # Balochi 8
+    "nuh": 9,                      # Balochi 9
+    "dah": 10,                     # Balochi 10
+    "sad": 100                     # Balochi 100
 }
 
 # Special Pakistani fractional idioms
@@ -120,19 +133,23 @@ def parse_word_numbers(text: str) -> str:
     # Matches patterns like: [multiplier 1-9] sau [optional tens 1-99]
     compound_hundreds = [
         ("aik", 1), ("ek", 1), ("ikk", 1), ("yaw", 1), ("ایک", 1),
-        ("do", 2), ("dwa", 2), ("دو", 2),
+        ("do", 2), ("dwa", 2), ("du", 2), ("دو", 2),
         ("teen", 3), ("tin", 3), ("dre", 3), ("تین", 3),
         ("chaar", 4), ("char", 4), ("salor", 4), ("چار", 4),
         ("paanch", 5), ("panch", 5), ("panj", 5), ("pinza", 5), ("پانچ", 5),
         ("chhe", 6), ("che", 6), ("shpag", 6), ("چھ", 6),
         ("saat", 7), ("sat", 7), ("uwo", 7), ("سات", 7),
         ("aath", 8), ("ath", 8), ("ata", 8), ("آٹھ", 8),
-        ("nau", 9), ("no", 9), ("naha", 9), ("نو", 9)
+        ("nau", 9), ("no", 9), ("naha", 9), ("نو", 9),
+        # NATIVE-REVIEW-REQUIRED: Sindhi/Balochi 1-9 prefixes that differ from
+        # the shared forms above, mirrored from BASIC_NUMBER_WORDS.
+        ("yak", 1), ("hik", 1), ("ba", 2), ("sai", 3), ("tei", 3),
+        ("shash", 6), ("hapt", 7), ("hasht", 8), ("nuh", 9)
     ]
 
     for prefix, mult in compound_hundreds:
-        # Match 'prefix sau' or 'prefix so' or 'prefix سو' or 'prefix sal'
-        for sau_word in ["sau", "so", "sal", "سو"]:
+        # Match 'prefix sau' or 'prefix so' or 'prefix سو' or 'prefix sal' or 'prefix sad'
+        for sau_word in ["sau", "so", "sal", "sad", "سو"]:
             phrase = f"{prefix} {sau_word}"
             if phrase in lowered:
                 base_val = mult * 100
@@ -328,6 +345,13 @@ def detect_language(text: str) -> str:
         # Check for Pashto unique characters (ښ, ړ, ږ, ۍ, ڼ)
         if any(ch in text for ch in ['ښ', 'ړ', 'ږ', 'ۍ', 'ڼ']):
             return "Pashto"
+        # Check for Sindhi unique letters (not present in Urdu/Punjabi-Shahmukhi).
+        # NATIVE-REVIEW-REQUIRED: Sindhi implosive/aspirated letters.
+        if any(ch in text for ch in ['ڄ', 'ٺ', 'ٽ', 'ڻ', 'ڱ', 'ڳ', 'ڦ', 'ڀ', 'ٿ', 'ڏ']):
+            return "Sindhi"
+        # NOTE: Arabic-script Balochi has no unique code points and overlaps
+        # Urdu/Persian, so Balochi written in Arabic script may fall through to
+        # "Urdu" here. This is an accepted limitation (Roman-marker detection only).
         return "Urdu"
 
     text_lower = text.lower()
@@ -342,7 +366,26 @@ def detect_language(text: str) -> str:
     if len(tokens.intersection(english_words)) >= 2:
         return "English"
 
-    # 2. Punjabi Roman indicators (whole word checks)
+    # 2. Sindhi Roman indicators (whole word checks, high-precision markers).
+    # NATIVE-REVIEW-REQUIRED: Roman Sindhi is not standardized; shared tokens
+    # (qeemat/bazar) are deliberately excluded to avoid stealing Roman-Urdu detections.
+    sindhi_patterns = [
+        r'\bmaan\b', r'\btawhan\b', r'\btuhan\b', r'\baahe\b', r'\baahy\b',
+        r'\bkahro\b', r'\bghani\b'
+    ]
+    if any(re.search(pat, text_lower) for pat in sindhi_patterns):
+        return "Sindhi"
+
+    # 3. Balochi Roman indicators (whole word checks, high-precision markers).
+    # NATIVE-REVIEW-REQUIRED: Roman Balochi is not standardized; shared tokens
+    # (bazar) are deliberately excluded. Lowest-confidence detector.
+    balochi_patterns = [
+        r'\bmani\b', r'\btaw\b', r'\btau\b', r'\bint\b', r'\bent\b', r'\bgran\b'
+    ]
+    if any(re.search(pat, text_lower) for pat in balochi_patterns):
+        return "Balochi"
+
+    # 4. Punjabi Roman indicators (whole word checks)
     punjabi_patterns = [
         r'\bassi\b', r'\btussi\b', r'\bsaanu\b', r'\blabhya\b', r'\bkeeta\b',
         r'\bjanda\b', r'\bmundey\b', r'\btuhadi\b', r'\baakhda\b', r'\baakhdi\b',
@@ -351,7 +394,7 @@ def detect_language(text: str) -> str:
     if any(re.search(pat, text_lower) for pat in punjabi_patterns):
         return "Punjabi"
 
-    # 3. Pashto Roman indicators (whole word checks)
+    # 5. Pashto Roman indicators (whole word checks)
     pashto_patterns = [
         r'\bdera\b', r'\bmanana\b', r'\bstaso\b', r'\bzama\b', r'\bkhawand\b',
         r'\bkhorak\b', r'\bshoday\b', r'\bshaway\b', r'\brakrre\b', r'\bshodi\b'
@@ -434,6 +477,19 @@ def generate_native_acknowledgment(language: str, item_name: Optional[str] = Non
 
     elif language == "Pashto":
         return "ستاسو شکایت په بریالیتوب سره ثبت شو او اړوندې ادارې ته واستول شو. ستاسو له همکارۍ مننه."
+
+    elif language == "Sindhi":
+        # DRAFT — NATIVE-REVIEW-REQUIRED before production use.
+        # Roman gloss: "Tawhan ji shikayat daraj thi vai aahe. Laagaapil authority
+        # ddaanhan karrvaai laai mokli vai aahe. Mehrbani."
+        return "توهان جي شڪايت درج ٿي وئي آهي. لاڳاپيل اٿارٽيءَ ڏانهن ڪارروائيءَ لاءِ موڪلي وئي آهي. مهرباني."
+
+    elif language == "Balochi":
+        # DRAFT — NATIVE-REVIEW-REQUIRED. Arabic-script Balochi is not standardized;
+        # this string is best-effort and may need a Latin-script form.
+        # Roman gloss: "Shumay shikayat daraj boot. Maznen idaara-a karrvaai-e
+        # waasta deem daat boot. Mintawaar."
+        return "شمے شکایت درج بوت. مزنیں ادارہ ءَ کارروائی ئِے واستہ دیم دات بوت. منتوار."
 
     elif language == "English":
         return "Your complaint has been successfully registered and forwarded to the district price enforcement authorities. Thank you."

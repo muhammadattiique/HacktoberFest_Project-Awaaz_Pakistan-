@@ -81,6 +81,21 @@ def test_punjabi_and_pashto_numbers():
     assert "200" in parsed_ps
 
 
+def test_sindhi_and_balochi_numbers():
+    """Verify Sindhi and Balochi romanized words convert to numbers."""
+    # Balochi: du sau = 200
+    parsed_bal = parse_word_numbers("du sau rupay")
+    assert "200" in parsed_bal
+
+    # Balochi: sai sad = 300 (sad = 100)
+    parsed_bal2 = parse_word_numbers("sai sad rupay")
+    assert "300" in parsed_bal2
+
+    # Sindhi: ba sau = 200
+    parsed_sd = parse_word_numbers("ba sau rupay")
+    assert "200" in parsed_sd
+
+
 def test_quantity_unit_derivations():
     """Verify derivation of unit prices from quantities like pao, aadha kilo, seer, total bill."""
     # "100 rupay ka aadha kilo" -> 0.5kg for 100 -> 200/kg
@@ -116,6 +131,12 @@ def test_language_detection():
     assert detect_language("The shopkeeper is overcharging for potatoes at 200 rupees per kg") == "English"
     assert detect_language("Tuhadi intizamiya nu aakho dahi teen sau da ditta ae") == "Punjabi"
     assert detect_language("Dukaandar da pfa yaftah na de staso khorak kharab de") == "Pashto"
+    # Sindhi script (contains unique Sindhi letters ڻ, ڪ, ٿ)
+    assert detect_language("هي دڪاندار اڱڻ ٻه سؤ رپيا ۾ وڪڻي رهيو آهي") == "Sindhi"
+    # Sindhi Roman markers (maan, tawhan, aahe)
+    assert detect_language("maan chavan tho tawhan ji dukan ghani aahe") == "Sindhi"
+    # Balochi Roman markers (mani, taw, gran)
+    assert detect_language("mani gal taw sunk e dukandar gran int") == "Balochi"
 
 
 def test_category_and_urgency_classification():
@@ -148,4 +169,13 @@ def test_native_acknowledgment():
 
     ack_en = generate_native_acknowledgment("English")
     assert "registered" in ack_en.lower()
+
+    # Sindhi + Balochi draft acknowledgments must return non-empty Arabic-script strings
+    ack_sd = generate_native_acknowledgment("Sindhi")
+    assert ack_sd.strip()
+    assert any('\u0600' <= ch <= '\u06FF' for ch in ack_sd)
+
+    ack_bal = generate_native_acknowledgment("Balochi")
+    assert ack_bal.strip()
+    assert any('\u0600' <= ch <= '\u06FF' for ch in ack_bal)
 

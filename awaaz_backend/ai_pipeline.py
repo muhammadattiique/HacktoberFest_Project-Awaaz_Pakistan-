@@ -70,7 +70,7 @@ COMPLAINT_ITEM_SCHEMA = {
         },
         "detected_language": {
             "type": "string",
-            "description": "Detected language (Urdu, Roman Urdu, Punjabi, Pashto, English)"
+            "description": "Detected language (Urdu, Roman Urdu, Punjabi, Sindhi, Balochi, Pashto, English)"
         },
         "native_response": {
             "type": "string",
@@ -94,7 +94,7 @@ COMPLAINT_SCHEMA_MULTI = {
 }
 
 FEW_SHOT_SYSTEM_PROMPT = """You are Awaaz Pakistan's governance AI engine.
-Your task is to parse citizen complaints submitted in Urdu (Urdu script), Roman Urdu, Punjabi, Pashto, or English.
+Your task is to parse citizen complaints submitted in Urdu (Urdu script), Roman Urdu, Punjabi, Sindhi, Balochi, Pashto, or English.
 Classify the grievance into one of three official categories:
 1. 'PERA - Overpricing' (overcharging for food items, essentials, sugar, flour, milk, chicken, vegetables, roti)
 2. 'PFA - Food Safety' (adulterated food, expired items, insects in food, dirty milk, unhygienic restaurant)
@@ -157,6 +157,26 @@ Output: {"items": [{
   "urgency": "High",
   "detected_language": "English",
   "native_response": "Your complaint regarding open sewerage has been routed to CDA / Municipal services for immediate clearance."
+}]}
+
+Input: "هي دڪاندار اڱڻ 200 رپيا ڪلو ۾ وڪڻي رهيو آهي، سرڪاري ريٽ 100 رپيا آهي."
+Output: {"items": [{
+  "item_name": "Potato",
+  "reported_price": 200,
+  "category": "PERA - Overpricing",
+  "urgency": "High",
+  "detected_language": "Sindhi",
+  "native_response": "توهان جي شڪايت درج ٿي وئي آهي. پرائس ڪنٽرول مئجسٽريٽ ڏانهن موڪلي وئي آهي. مهرباني."
+}]}
+
+Input: "اے دکاندار آلو ۲۰۰ روپیہ کیلو ءَ پہ دیگ انت، سرکاری ریٹ ۱۰۰ روپیہ انت."
+Output: {"items": [{
+  "item_name": "Potato",
+  "reported_price": 200,
+  "category": "PERA - Overpricing",
+  "urgency": "High",
+  "detected_language": "Balochi",
+  "native_response": "شمے شکایت درج بوت. پرائس کنٹرول مجسٹریٹ ءَ دیم دات بوت. منتوار."
 }]}
 
 Input: "Bhai sahab, Raja Bazaar mein dukandar aaloo 150 rupay kilo bech raha hai jabke sarkari rate kam hai. Pyaaz bhi 200 rupay kilo le raha hai."
