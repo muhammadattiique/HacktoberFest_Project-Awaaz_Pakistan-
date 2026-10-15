@@ -619,17 +619,22 @@ class AIPipeline:
         Splits on sentence punctuation (``.`` ``۔`` ``!`` ``?`` newline) AND the
         enumerating connectives that separate item-price pairs in Pakistani
         code-switching: commas (``،``/``,``), the Roman/Urdu list connectives
-        (` aur `, ` اور `), the English ` and `, Punjabi ` tay `, Sindhi/Balochi
-        ` o `, and the price-trailing marker ` bhi `/` بھی `. Splitting on
-        ` and `/` aur `/` tay `/` o ` (not only commas) is what keeps the final
-        "...tomatoes at 250 ... and sugar at 180 ..." pair from collapsing into
-        one clause where sugar would borrow tomato's 250. Fragments are stripped
-        and empties dropped.
+        (` aur `, ` اور `), the English ` and `, Punjabi Roman ` tay `,
+        Sindhi/Balochi Roman ` o `, and the price-trailing marker ` bhi `/
+        ` بھی `. The native-script regional connectives are also split: Pashto
+        ` او ` (U+0627 U+0648), Punjabi Shahmukhi ` تے ` (U+062A U+06D2), and
+        Sindhi ` ۽ ` (U+06FD). Splitting on these list connectives (not only
+        commas) is what keeps a trailing "...tomatoes at 250 ... و/او/تے/۽ sugar
+        at 180 ..." pair from collapsing into one clause where sugar would
+        borrow tomato's 250. The tokens are space-padded, so ` او ` cannot
+        overlap the already-present ` اور `. Fragments are stripped and empties
+        dropped.
         """
         if not text:
             return []
         parts = re.split(
-            r"\.|۔|!|\?|\n| bhi | بھی | aur | اور | and | tay | o |،|,",
+            r"\.|۔|!|\?|\n| bhi | بھی | aur | اور | and | tay | o |،|,"
+            r"| او | تے | ۽ ",
             text,
         )
         return [p.strip() for p in parts if p and p.strip()]
@@ -816,6 +821,141 @@ class AIPipeline:
                 return nxt
         return own
 
+    @staticmethod
+    def _alias_candidates(item_info: Dict[str, Any]) -> List[str]:
+        """Ordered, de-duped alias strings for a resolved commodity.
+
+        Pulls the English name, Urdu name, and the explicit aliases list from an
+        item dict (the same fields rate_service builds its alias map from), so a
+        commodity can be located positionally with the SAME tokens
+        ``find_all_items`` matched on. Longest first, so a specific multi-word
+        alias is tried before a shorter prefix of it.
+        """
+        cands: List[str] = []
+        for key in ("name_en", "name_ur"):
+            val = item_info.get(key)
+            if val:
+                cands.append(str(val))
+        for alias in item_info.get("aliases", []) or []:
+            if alias:
+                cands.append(str(alias))
+        seen: set = set()
+        uniq: List[str] = []
+        for c in cands:
+            cl = c.lower().strip()
+            if len(cl) >= 3 and cl not in seen:
+                seen.add(cl)
+                uniq.append(cl)
+        uniq.sort(key=len, reverse=True)
+        return uniq
+
+    @staticmethod
+    def _earliest_alias_pos(clause_lower: str, aliases: List[str]) -> Optional[int]:
+        """Earliest word-boundary match START position of any alias in a clause.
+
+        Uses the exact pattern ``find_all_items`` uses
+        (``(?<!\\w)alias(?!\\w)``) so the positional attribution never widens the
+        matching discipline. Returns None when no alias matches.
+        """
+        best: Optional[int] = None
+        for alias in aliases:
+            pattern = r"(?<!\w)" + re.escape(alias) + r"(?!\w)"
+            m = re.search(pattern, clause_lower)
+            if m and (best is None or m.start() < best):
+                best = m.start()
+        return best
+
+    def _attribute_prices_positionally(
+        self, clause: str, found_items: List[Tuple[str, Dict[str, Any]]]
+    ) -> Dict[str, Dict[str, Any]]:
+        """Attribute each price in a 2+-commodity clause to its nearest commodity.
+
+        ``found_items`` is the ordered ``[(canonical_id, item_info), ...]`` list
+        rate_service.find_all_items returned for this clause. The whole-clause
+        ``extract_price_and_normalize`` only ever yields the FIRST plausible
+        price, so when a clause names two or more commodities the later ones
+        steal the first's price. This helper instead:
+
+          1. locates each commodity by the earliest word-boundary match of its
+             aliases (same discipline as find_all_items), and
+          2. locates every plausible PKR number (10<=n<=10000, excluding years),
+             reusing nlp_rules' digit/word-number normalisation,
+
+        then assigns each commodity the nearest price token that FOLLOWS it
+        (falling back to the nearest preceding one when none follows). It builds
+        a per-commodity sub-clause window — from the commodity's position up to
+        just past its assigned price number — so the caller can hand each
+        commodity a slice that ``extract_price_and_normalize`` re-parses for unit
+        idioms (per kilo / seer / pao etc.).
+
+        Returns an ordered mapping ``canonical_id -> {"sub_clause": str,
+        "price": Optional[float]}``. A commodity with no attributable price gets
+        the whole clause and ``price`` None, so behaviour never regresses below
+        today's whole-clause read.
+        """
+        result: Dict[str, Dict[str, Any]] = {}
+        if not clause:
+            return result
+
+        # Work on the digit/word-number-normalised clause so number positions
+        # and alias positions are measured against the SAME string.
+        converted = parse_word_numbers(normalize_digits(clause))
+        lowered = converted.lower()
+
+        # Plausible PKR price tokens with their START positions (same rule as
+        # extract_price_and_normalize's fallback tier).
+        price_tokens: List[Tuple[int, int, float]] = []  # (start, end, value)
+        for m in re.finditer(r"\b\d+\b", converted):
+            val = float(m.group())
+            if 10 <= val <= 10000 and val not in (2024, 2025, 2026):
+                price_tokens.append((m.start(), m.end(), val))
+
+        # Commodity positions, keyed by canonical id (preserve found order).
+        commodity_pos: List[Tuple[str, Dict[str, Any], Optional[int]]] = []
+        for canonical_id, item_info in found_items:
+            pos = self._earliest_alias_pos(lowered, self._alias_candidates(item_info))
+            commodity_pos.append((canonical_id, item_info, pos))
+
+        used_price_idx: set = set()
+        for canonical_id, item_info, pos in commodity_pos:
+            if pos is None or not price_tokens:
+                result[canonical_id] = {"sub_clause": clause, "price": None}
+                continue
+
+            # Prefer the nearest UNUSED price token that follows the commodity;
+            # fall back to the nearest unused token before it.
+            chosen_idx: Optional[int] = None
+            for i, (p_start, _p_end, _val) in enumerate(price_tokens):
+                if i in used_price_idx:
+                    continue
+                if p_start >= pos:
+                    chosen_idx = i
+                    break
+            if chosen_idx is None:
+                for i in range(len(price_tokens) - 1, -1, -1):
+                    if i in used_price_idx:
+                        continue
+                    if price_tokens[i][0] < pos:
+                        chosen_idx = i
+                        break
+
+            if chosen_idx is None:
+                result[canonical_id] = {"sub_clause": clause, "price": None}
+                continue
+
+            used_price_idx.add(chosen_idx)
+            p_start, p_end, val = price_tokens[chosen_idx]
+            # Sub-clause window: from the commodity (or price, whichever is
+            # earlier) up to just past the assigned price number, so unit idioms
+            # that trail the number (e.g. "250 rupay kilo") stay attached.
+            win_start = min(pos, p_start)
+            tail = converted[p_end:p_end + 24]
+            win_end = p_end + len(tail)
+            sub_clause = converted[win_start:win_end].strip()
+            result[canonical_id] = {"sub_clause": sub_clause or clause, "price": val}
+
+        return result
+
     def _discover_items_by_rules(
         self,
         clauses: List[str],
@@ -830,11 +970,24 @@ class AIPipeline:
         seen: set = set()
         for idx, clause in enumerate(clauses):
             found = rate_service.find_all_items(clause)
+            # When a single clause still names 2+ commodities, attribute each
+            # its OWN nearest-price sub-clause so a later commodity cannot steal
+            # the first one's price (the whole-clause read only yields the first
+            # plausible number). The single-commodity path keeps the historical
+            # own-clause / borrow-next (` bhi `) behaviour untouched.
+            positional = (
+                self._attribute_prices_positionally(clause, found)
+                if len(found) >= 2
+                else {}
+            )
             for canonical_id, item_info in found:
                 if canonical_id in seen:
                     continue
                 seen.add(canonical_id)
-                price_clause = self._price_clause_for(idx, clauses) if len(found) == 1 else clause
+                if len(found) == 1:
+                    price_clause = self._price_clause_for(idx, clauses)
+                else:
+                    price_clause = positional.get(canonical_id, {}).get("sub_clause") or clause
                 out.append(
                     self._reconcile_item(
                         item_name_hint=item_info.get("name_en", canonical_id),

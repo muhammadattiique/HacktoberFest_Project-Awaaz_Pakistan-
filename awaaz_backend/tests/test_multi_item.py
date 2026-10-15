@@ -194,6 +194,54 @@ def test_english_acknowledgment_is_english_not_roman_urdu():
     assert "thank you" in ack
 
 
+def test_pashto_digit_chain_each_item_own_price():
+    """BUG 1 regression — the Pashto connective ` او ` must split clauses so a
+    later commodity cannot steal an earlier one's price.
+
+    Input: '... ٹماٹر 250 ... او چینی 180 ... خرڅوي'. Before the fix ` او ` was
+    not a delimiter, so چینی stayed in ٹماٹر's clause and borrowed 250. چینی
+    (chini / Sugar) must read 180 and ٹماٹر (tamatar / Tomato) must read 250.
+    LLM stubbed so the rule-only segmentation + attribution is exercised.
+    The full 4-item resolution (الو/پياز) also needs FEAT-002 aliases; here we
+    assert only the two commodities already in-vocab via their Urdu-script
+    aliases, plus the detected language.
+    """
+    text = (
+        "جنابه، دوکاندار الو 150 روپۍ کيلو، پياز 200 روپۍ کيلو، "
+        "ٹماٹر 250 روپۍ کيلو او چینی 180 روپۍ کيلو خرڅوي"
+    )
+    with patch.object(ai_pipeline, "_call_ollama_llm_multi", return_value=None):
+        items = ai_pipeline.parse_complaint_items(text)
+    by_id = {it["item_canonical_id"]: it for it in items}
+
+    assert "tamatar" in by_id, by_id.keys()
+    assert "chini" in by_id, by_id.keys()
+    assert by_id["tamatar"]["reported_price"] == 250.0, by_id["tamatar"]
+    # The regression: chini must be 180, NOT tomato's 250.
+    assert by_id["chini"]["reported_price"] == 180.0, by_id["chini"]
+
+    for it in items:
+        assert it["detected_language"] == "Pashto", it
+
+
+def test_two_items_one_clause_positional():
+    """SECONDARY hardening — when a single clause names two commodities with two
+    prices, each gets its nearest-following price via the positional helper.
+
+    Exercises _attribute_prices_positionally directly on a forced single clause
+    'tamatar 250 aur chini 180' (as it would look before segmentation) so the
+    nearest-price attribution is covered without depending on the splitter.
+    """
+    clause = "tamatar 250 chini 180"
+    found = rate_service.find_all_items(clause)
+    found_ids = {cid for cid, _ in found}
+    assert {"tamatar", "chini"}.issubset(found_ids), found_ids
+
+    mapping = ai_pipeline._attribute_prices_positionally(clause, found)
+    assert mapping["tamatar"]["price"] == 250.0, mapping["tamatar"]
+    assert mapping["chini"]["price"] == 180.0, mapping["chini"]
+
+
 def test_highest_overcharge_sorts_first():
     """After the existing overcharge-desc sort the biggest violation is first,
     and an under-rate item never leads."""
