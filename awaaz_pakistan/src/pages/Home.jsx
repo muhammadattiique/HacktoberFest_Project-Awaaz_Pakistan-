@@ -10,7 +10,6 @@ import { KeyFeaturesSection } from '../sections/KeyFeaturesSection';
 import { ReportSection } from '../sections/ReportSection';
 import { LiveImpactStatsSection } from '../sections/LiveImpactStatsSection';
 import { RecentComplaintsSection } from '../sections/RecentComplaintsSection';
-import { HotspotsMapSection } from '../sections/HotspotsMapSection';
 import { OfficialRatesSection } from '../sections/OfficialRatesSection';
 import { FaqSection } from '../sections/FaqSection';
 import { FinalCtaSection } from '../sections/FinalCtaSection';
@@ -55,10 +54,7 @@ export const Home = () => {
         {/* 7. Recent Complaints Feed */}
         <RecentComplaintsSection />
 
-        {/* 8. Complaint Hotspots Interactive Map (OpenStreetMap) */}
-        <HotspotsMapSection />
-
-        {/* 9. Official Rates Directory */}
+        {/* 8. Official Rates Directory */}
         <OfficialRatesSection />
 
         {/* 9. FAQ with Location Pin Explanation */}

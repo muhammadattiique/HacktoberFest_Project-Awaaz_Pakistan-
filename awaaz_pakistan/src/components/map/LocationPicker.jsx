@@ -1,16 +1,19 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { MapContainer, Marker, Circle, useMap } from 'react-leaflet';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { MapPin, Navigation, AlertCircle, Check } from 'lucide-react';
 import { LOCATION_STATUS } from '../../hooks/useGeolocation';
-import {
-  MAP_LAYER_STATUS,
-  MapStatusOverlay,
-  OpenFreeMapLayer,
-} from './OpenFreeMapLayer';
 
-// Recenter map helper
+// OpenStreetMap standard raster tiles. Using Leaflet's TileLayer (rather than
+// the MapLibre vector layer) because raster OSM renders reliably across
+// environments and never leaves grey/blank tiles after a resize.
+const OSM_TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const OSM_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors';
+
+// Recenter map helper + resize-safety so no grey tiles are left after the map
+// container animates in or the window resizes.
 function ChangeView({ center, zoom }) {
   const map = useMap();
   useEffect(() => {
@@ -18,6 +21,15 @@ function ChangeView({ center, zoom }) {
       map.setView(center, zoom || 15, { animate: true });
     }
   }, [center, zoom, map]);
+  useEffect(() => {
+    const t = setTimeout(() => map.invalidateSize(), 200);
+    const onResize = () => map.invalidateSize();
+    window.addEventListener('resize', onResize);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [map]);
   return null;
 }
 
@@ -52,7 +64,6 @@ export const LocationPicker = ({
 }) => {
   const { t } = useLanguage();
   const markerRef = useRef(null);
-  const [mapStatus, setMapStatus] = useState(MAP_LAYER_STATUS.LOADING);
 
   // Default center: Islamabad / Rawalpindi
   const defaultPosition = [33.6844, 73.0479];
@@ -209,7 +220,12 @@ export const LocationPicker = ({
               className="w-full h-full z-0"
             >
               <ChangeView center={position} zoom={16} />
-              <OpenFreeMapLayer onStatusChange={setMapStatus} />
+              <TileLayer
+                url={OSM_TILE_URL}
+                attribution={OSM_ATTRIBUTION}
+                maxZoom={19}
+                detectRetina={true}
+              />
 
               {/* Accuracy Circle */}
               {typeof coordinates?.accuracy === 'number' && coordinates.accuracy >= 0 && (
@@ -235,7 +251,6 @@ export const LocationPicker = ({
                 icon={draggableIcon}
               />
             </MapContainer>
-            <MapStatusOverlay status={mapStatus} />
 
             {/* Drag helper hint */}
             <div className="absolute bottom-2 left-2 right-2 z-[400] flex items-center justify-between px-3 py-1.5 rounded-lg bg-black/75 backdrop-blur-md text-[11px] text-white/80 border border-white/10 pointer-events-none">
