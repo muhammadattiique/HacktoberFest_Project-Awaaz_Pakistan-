@@ -5,7 +5,10 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
-  timeout: 35000,
+  // Default generous timeout. Voice (Whisper + LLM on CPU) and multi-item text
+  // parsing routinely exceed 35s on CPU-only machines; a short default caused
+  // false "unable to connect" errors. Per-request overrides raise it further.
+  timeout: 180000, // 3 minutes
 });
 
 // Admin API Key storage
@@ -89,17 +92,27 @@ export const submitVoiceComplaint = async ({
   if (lat !== undefined && lat !== null) formData.append('lat', lat.toString());
   if (lng !== undefined && lng !== null) formData.append('lng', lng.toString());
 
+  // Voice runs Whisper transcription + multi-item LLM parsing on CPU, which can
+  // take well over a minute for a longer clip. Override the default 35s client
+  // timeout so a slow-but-successful backend response is not aborted (which the
+  // UI would otherwise surface as a misleading "unable to connect" error).
+  const VOICE_TIMEOUT_MS = 180000; // 3 minutes
+
+  // NOTE: do NOT set Content-Type manually for multipart. The browser must set
+  // it automatically so the required multipart boundary is included; forcing
+  // 'multipart/form-data' without a boundary produces a malformed request that
+  // can fail before any response (surfacing as a false "unable to connect").
   // Try primary endpoint first: /api/complaints/voice, fallback to /api/process-complaint
   let res;
   try {
     res = await apiClient.post('/api/complaints/voice', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: VOICE_TIMEOUT_MS,
       signal,
     });
   } catch (primaryErr) {
     if (primaryErr?.response?.status === 404) {
       res = await apiClient.post('/api/process-complaint', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: VOICE_TIMEOUT_MS,
         signal,
       });
     } else {
@@ -129,7 +142,12 @@ export const submitTextComplaint = async ({
     lng: lng ?? null,
   };
 
-  const res = await apiClient.post('/api/complaints/text', payload, { signal });
+  // Text still runs the multi-item LLM parse on CPU (can exceed the default
+  // 35s for long multi-item complaints), so give it a longer timeout too.
+  const res = await apiClient.post('/api/complaints/text', payload, {
+    timeout: 120000, // 2 minutes
+    signal,
+  });
   return { success: true, data: res.data, isDemo: false };
 };
 

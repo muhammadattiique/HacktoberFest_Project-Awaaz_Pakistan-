@@ -112,8 +112,12 @@ def is_audio_silent(wav_path: str) -> bool:
                 # e.g., max_volume: -91.0 dB
                 val_str = line.split("max_volume:")[1].replace("dB", "").strip()
                 max_vol = float(val_str)
-                # If peak volume is quieter than -55 dB, treat as silence
-                if max_vol <= -55.0:
+                # If peak volume is quieter than -70 dB, treat as silence.
+                # Threshold relaxed from -55 to -70 dB: real phone-mic
+                # recordings (quiet speakers, noisy markets, browser
+                # MediaRecorder gain) can peak low without being silent, and
+                # -55 dB was rejecting genuine voice notes.
+                if max_vol <= -70.0:
                     return True
     except Exception as e:
         logger.debug(f"Volume detection check failed: {e}")
@@ -176,15 +180,24 @@ def validate_and_convert_audio(
     if duration is None or duration == 0.0:
         duration = get_audio_duration_ffmpeg(output_wav_path)
 
+    logger.info(
+        "Audio validation: input=%s bytes, converted duration=%.2fs",
+        file_size, duration,
+    )
+
     if duration < settings.AUDIO_MIN_DURATION_SECONDS:
+        logger.warning("Audio rejected: too short (%.2fs < %.2fs)", duration, settings.AUDIO_MIN_DURATION_SECONDS)
         return False, duration, f"Audio duration ({duration}s) is too short. Minimum is {settings.AUDIO_MIN_DURATION_SECONDS}s."
 
     if duration > settings.AUDIO_MAX_DURATION_SECONDS:
+        logger.warning("Audio rejected: too long (%.2fs > %.2fs)", duration, settings.AUDIO_MAX_DURATION_SECONDS)
         return False, duration, f"Audio duration ({duration}s) exceeds maximum allowed {settings.AUDIO_MAX_DURATION_SECONDS}s."
 
     # Check silence
     if is_audio_silent(output_wav_path):
+        logger.warning("Audio rejected: detected as silence (peak <= -70 dB)")
         return False, duration, "Audio file contains only silence."
 
+    logger.info("Audio validation passed (%.2fs)", duration)
     return True, duration, "Success"
 

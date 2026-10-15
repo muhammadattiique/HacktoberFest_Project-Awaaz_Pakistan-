@@ -382,7 +382,14 @@ export const ReportSection = ({
         const responseMessage = err.response?.data?.detail || err.response?.data?.message;
         let friendly = err.message || t.report.networkError;
 
-        if (!err.response && err.request) {
+        const isTimeout =
+          err.code === 'ECONNABORTED' ||
+          /timeout/i.test(err.message || '');
+
+        if (isTimeout) {
+          friendly =
+            'Processing is taking longer than usual (voice transcription runs locally). Please wait a moment and try again, or submit your complaint as text.';
+        } else if (!err.response && err.request) {
           friendly = 'Unable to connect to the complaint service. Check your connection and try again.';
         } else if (status === 400) {
           friendly = responseMessage || t.report.emptyAudio;

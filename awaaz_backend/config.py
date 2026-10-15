@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     WHISPER_MODEL: str = "base"
     WHISPER_DEVICE: str = "cpu"
     UPLOAD_MAX_BYTES: int = 25 * 1024 * 1024  # 25MB limit
-    AUDIO_MIN_DURATION_SECONDS: float = 0.5
+    AUDIO_MIN_DURATION_SECONDS: float = 0.3
     AUDIO_MAX_DURATION_SECONDS: float = 120.0
 
     # Local Ollama LLM
