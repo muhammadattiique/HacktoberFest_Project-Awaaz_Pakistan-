@@ -10,6 +10,31 @@ from config import settings
 logger = logging.getLogger(__name__)
 
 
+# Conservative Arabic -> Urdu script-variant folding. Several regional spellings
+# (notably Pashto) use the Arabic forms of letters that the rate-list stores in
+# their Urdu forms, so an exact/word-boundary match would otherwise miss them
+# even though the words are the same. Only the SAFE, non-colliding substitutions
+# are folded here; this is additive normalization, NOT a widening to substrings.
+_SCRIPT_FOLD_MAP = {
+    "\u064A": "\u06CC",  # Arabic yeh ي -> Urdu yeh ی
+    "\u0649": "\u06CC",  # Arabic alef maksura ى -> Urdu yeh ی
+    "\u0643": "\u06A9",  # Arabic kaf ك -> Urdu kaf ک
+}
+# NATIVE-REVIEW-REQUIRED: heh variants intentionally not folded (ه/ہ/ۀ/ة carry
+# distinct roles across Urdu/Pashto/Sindhi and folding them risks collisions).
+
+
+def _normalize_script(s: str) -> str:
+    """Fold common Arabic letter variants to the Urdu forms the rate-list uses.
+
+    Lets a Pashto spelling like پياز (Arabic yeh U+064A) match the rate-list
+    پیاز (Urdu yeh U+06CC) without loosening the word-boundary matching.
+    """
+    if not s:
+        return s
+    return "".join(_SCRIPT_FOLD_MAP.get(ch, ch) for ch in s)
+
+
 class RateService:
     """
     Manages official district price rates for Islamabad and Rawalpindi.
@@ -38,20 +63,21 @@ class RateService:
                 self.meta = data.get("meta", {})
                 self.items = data.get("items", {})
 
-                # Build flat alias lookup
+                # Build flat alias lookup. Keys are script-normalized (Arabic
+                # variants folded to the Urdu forms) so a folded query matches.
                 alias_map = {}
                 for item_id, item_data in self.items.items():
                     # Item id itself
-                    alias_map[item_id.lower().strip()] = item_id
+                    alias_map[_normalize_script(item_id.lower().strip())] = item_id
                     # English name
                     if "name_en" in item_data:
-                        alias_map[item_data["name_en"].lower().strip()] = item_id
+                        alias_map[_normalize_script(item_data["name_en"].lower().strip())] = item_id
                     # Urdu name
                     if "name_ur" in item_data:
-                        alias_map[item_data["name_ur"].strip()] = item_id
+                        alias_map[_normalize_script(item_data["name_ur"].strip())] = item_id
                     # Aliases list
                     for alias in item_data.get("aliases", []):
-                        alias_map[alias.lower().strip()] = item_id
+                        alias_map[_normalize_script(alias.lower().strip())] = item_id
 
                 self._alias_map = alias_map
                 logger.info(f"Loaded {len(self.items)} rate items and {len(self._alias_map)} aliases from {self.path}")
@@ -85,7 +111,7 @@ class RateService:
         if not text_or_name:
             return None
 
-        normalized = text_or_name.lower().strip()
+        normalized = _normalize_script(text_or_name.lower().strip())
 
         with self._lock:
             # 1. Exact canonical ID
@@ -129,7 +155,7 @@ class RateService:
         tier-4 is still deliberately excluded. De-duplicated by canonical id,
         preserving alias-map insertion order.
         """
-        norm = (text_or_name or "").lower().strip()
+        norm = _normalize_script((text_or_name or "").lower().strip())
         out: List[Tuple[str, Dict[str, Any]]] = []
         seen: set = set()
         if not norm:

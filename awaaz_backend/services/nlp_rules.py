@@ -64,7 +64,31 @@ BASIC_NUMBER_WORDS = {
     "hasht": 8,                    # Balochi 8
     "nuh": 9,                      # Balochi 9
     "dah": 10,                     # Balochi 10
-    "sad": 100                     # Balochi 100
+    "sad": 100,                    # Balochi 100
+    # Pashto number words (Arabic/Pashto script).
+    # NATIVE-REVIEW-REQUIRED: Pashto numeral spellings vary regionally; the
+    # forms below are the common standard spellings but should be verified by a
+    # native speaker before production use.
+    "يو": 1,                       # Pashto 1
+    "دوه": 2,                      # Pashto 2
+    "درې": 3,                      # Pashto 3
+    "څلور": 4,                     # Pashto 4
+    "پنځه": 5,                     # Pashto 5
+    "شپږ": 6,                      # Pashto 6
+    "اووه": 7,                     # Pashto 7
+    "اته": 8,                      # Pashto 8
+    "نهه": 9,                      # Pashto 9
+    "لس": 10,                      # Pashto 10
+    "شل": 20,                      # Pashto 20
+    "پنځوس": 50,                   # Pashto 50
+    "سل": 100,                     # Pashto 100
+    "سوه": 100,                    # Pashto 100 (variant)
+    "زر": 1000,                    # Pashto 1000 (also shared Roman 'zar' above)
+    "زره": 1000,                   # Pashto 1000 (variant)
+    # Missing Punjabi (Shahmukhi) number words.
+    # NATIVE-REVIEW-REQUIRED: Punjabi Shahmukhi numeral spellings.
+    "تن": 3,                       # Punjabi 3
+    "پنجاہ": 50                    # Punjabi 50
 }
 
 # Special Pakistani fractional idioms
@@ -144,19 +168,24 @@ def parse_word_numbers(text: str) -> str:
         # NATIVE-REVIEW-REQUIRED: Sindhi/Balochi 1-9 prefixes that differ from
         # the shared forms above, mirrored from BASIC_NUMBER_WORDS.
         ("yak", 1), ("hik", 1), ("ba", 2), ("sai", 3), ("tei", 3),
-        ("shash", 6), ("hapt", 7), ("hasht", 8), ("nuh", 9)
+        ("shash", 6), ("hapt", 7), ("hasht", 8), ("nuh", 9),
+        # NATIVE-REVIEW-REQUIRED: Pashto 1-9 prefixes (for 'يو سل'=100 etc).
+        ("يو", 1), ("دوه", 2), ("درې", 3), ("څلور", 4), ("پنځه", 5),
+        ("شپږ", 6), ("اووه", 7), ("اته", 8), ("نهه", 9),
+        # NATIVE-REVIEW-REQUIRED: Punjabi Shahmukhi تن=3 (for 'تن سو'=300).
+        ("تن", 3)
     ]
 
     for prefix, mult in compound_hundreds:
-        # Match 'prefix sau' or 'prefix so' or 'prefix سو' or 'prefix sal' or 'prefix sad'
-        for sau_word in ["sau", "so", "sal", "sad", "سو"]:
+        # Match 'prefix sau' / 'so' / 'sal' / 'sad' / 'سو' or the Pashto سل / سوه
+        for sau_word in ["sau", "so", "sal", "sad", "سوه", "سو", "سل"]:
             phrase = f"{prefix} {sau_word}"
             if phrase in lowered:
                 base_val = mult * 100
                 lowered = lowered.replace(phrase, f" {base_val} ")
 
-        # Match 'prefix hazaar' or 'prefix hazar' or 'prefix zar' or 'prefix ہزار'
-        for hazar_word in ["hazaar", "hazar", "zar", "ہزار"]:
+        # Match 'prefix hazaar' / 'hazar' / 'zar' / 'ہزار' or the Pashto زر / زره
+        for hazar_word in ["hazaar", "hazar", "zar", "ہزار", "زره", "زر"]:
             phrase = f"{prefix} {hazar_word}"
             if phrase in lowered:
                 base_val = mult * 1000

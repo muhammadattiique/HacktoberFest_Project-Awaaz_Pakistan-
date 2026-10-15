@@ -202,9 +202,9 @@ def test_pashto_digit_chain_each_item_own_price():
     not a delimiter, so چینی stayed in ٹماٹر's clause and borrowed 250. چینی
     (chini / Sugar) must read 180 and ٹماٹر (tamatar / Tomato) must read 250.
     LLM stubbed so the rule-only segmentation + attribution is exercised.
-    The full 4-item resolution (الو/پياز) also needs FEAT-002 aliases; here we
-    assert only the two commodities already in-vocab via their Urdu-script
-    aliases, plus the detected language.
+    With FEAT-002's aliases + script folding now in place, the FULL 4-item set
+    {aloo, pyaaz, tamatar, chini} resolves — الو/پياز via the new Pashto aliases
+    (پياز's Arabic yeh folds to the rate-list Urdu yeh) — each with its own price.
     """
     text = (
         "جنابه، دوکاندار الو 150 روپۍ کيلو، پياز 200 روپۍ کيلو، "
@@ -214,14 +214,37 @@ def test_pashto_digit_chain_each_item_own_price():
         items = ai_pipeline.parse_complaint_items(text)
     by_id = {it["item_canonical_id"]: it for it in items}
 
-    assert "tamatar" in by_id, by_id.keys()
-    assert "chini" in by_id, by_id.keys()
+    # Full 4-item resolution now that FEAT-002 aliases are present.
+    assert {"aloo", "pyaaz", "tamatar", "chini"}.issubset(by_id.keys()), by_id.keys()
+    assert by_id["aloo"]["reported_price"] == 150.0, by_id["aloo"]
+    assert by_id["pyaaz"]["reported_price"] == 200.0, by_id["pyaaz"]
     assert by_id["tamatar"]["reported_price"] == 250.0, by_id["tamatar"]
     # The regression: chini must be 180, NOT tomato's 250.
     assert by_id["chini"]["reported_price"] == 180.0, by_id["chini"]
 
     for it in items:
         assert it["detected_language"] == "Pashto", it
+
+
+def test_punjabi_shahmukhi_rice_keeps_own_price():
+    """BUG 2 — a Punjabi Shahmukhi 5-item complaint resolves each item its own
+    price. چاول (rice) must read its own تن سو پنجاہ=350, not the tea's 1000,
+    and چاہ پتی resolves to the EXISTING chai_patti with its own 1000.
+    LLM stubbed so rule-only segmentation + attribution is exercised.
+    """
+    text = (
+        "دکاندار مرغی نو سو روپے، انڈے چار سو روپے، گھی پنج سو روپے، "
+        "چاول تن سو پنجاہ روپے، چاہ پتی اک ہزار روپے وچ بیچ رہیا اے"
+    )
+    with patch.object(ai_pipeline, "_call_ollama_llm_multi", return_value=None):
+        items = ai_pipeline.parse_complaint_items(text)
+    by_id = {it["item_canonical_id"]: it for it in items}
+
+    assert "chawal_basmati" in by_id, by_id.keys()
+    assert by_id["chawal_basmati"]["reported_price"] == 350.0, by_id["chawal_basmati"]
+
+    assert "chai_patti" in by_id, by_id.keys()
+    assert by_id["chai_patti"]["reported_price"] == 1000.0, by_id["chai_patti"]
 
 
 def test_two_items_one_clause_positional():

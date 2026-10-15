@@ -12,7 +12,7 @@
       "unit": "kg",
       "name_en": "Potato",
       "name_ur": "آلو",
-      "aliases": ["aloo", "alu", "aaloo", "potato", "potatoes", "آلو", "آلوو"],
+      "aliases": ["aloo", "alu", "aaloo", "potato", "potatoes", "آلو", "آلوو", "الو"],
       "category": "vegetable"
     },
     "pyaaz": {
@@ -20,7 +20,7 @@
       "unit": "kg",
       "name_en": "Onion",
       "name_ur": "پیاز",
-      "aliases": ["pyaaz", "pyaz", "piyaz", "piaaz", "onion", "onions", "پیاز"],
+      "aliases": ["pyaaz", "pyaz", "piyaz", "piaaz", "onion", "onions", "پیاز", "پياز", "بصر"],
       "category": "vegetable"
     },
     "tamatar": {
@@ -28,7 +28,7 @@
       "unit": "kg",
       "name_en": "Tomato",
       "name_ur": "ٹماٹر",
-      "aliases": ["tamatar", "tamaatar", "tomato", "tomatoes", "ٹماٹر"],
+      "aliases": ["tamatar", "tamaatar", "tomato", "tomatoes", "ٹماٹر", "رومي", "ٽماٽا", "ٽماٽو"],
       "category": "vegetable"
     },
     "adrak": {
@@ -84,7 +84,7 @@
       "unit": "kg",
       "name_en": "Sugar",
       "name_ur": "چینی",
-      "aliases": ["chini", "cheeni", "sugar", "shakar", "شکر", "چینی"],
+      "aliases": ["chini", "cheeni", "sugar", "shakar", "شکر", "چینی", "بوره", "کنڊ", "چيني"],
       "category": "grocery"
     },
     "atta_kg": {
@@ -92,7 +92,7 @@
       "unit": "kg",
       "name_en": "Wheat Flour (per kg)",
       "name_ur": "آٹا (فی کلو)",
-      "aliases": ["atta", "aata", "wheat flour", "flour", "chakki atta", "atta per kg", "آٹا"],
+      "aliases": ["atta", "aata", "wheat flour", "flour", "chakki atta", "atta per kg", "آٹا", "اٽو"],
       "category": "grocery"
     },
     "atta_20kg": {
@@ -156,7 +156,7 @@
       "unit": "kg",
       "name_en": "Chicken Meat",
       "name_ur": "مرغی کا گوشت",
-      "aliases": ["chicken", "murghi", "chicken meat", "broiler meat", "murghi ka gosht", "مرغی کا گوشت", "مرغی"],
+      "aliases": ["chicken", "murghi", "chicken meat", "broiler meat", "murghi ka gosht", "مرغی کا گوشت", "مرغی", "چرګ", "مرغ", "ڪڪڙ"],
       "category": "poultry"
     },
     "beef": {
@@ -180,7 +180,7 @@
       "unit": "dozen",
       "name_en": "Farm Eggs",
       "name_ur": "انڈے (فارمی)",
-      "aliases": ["anday", "ande", "eggs", "egg", "farm anday", "desi anday", "انڈے", "انڈا"],
+      "aliases": ["anday", "ande", "eggs", "egg", "farm anday", "desi anday", "انڈے", "انڈا", "هګۍ", "آنا", "بيضا"],
       "category": "poultry"
     },
     "cooking_oil": {
@@ -196,7 +196,7 @@
       "unit": "kg",
       "name_en": "Banaspati Ghee",
       "name_ur": "بناسپتی گھی",
-      "aliases": ["ghee", "ghee per kg", "banaspati ghee", "dalda ghee", "گھی", "بناسپتی گھی"],
+      "aliases": ["ghee", "ghee per kg", "banaspati ghee", "dalda ghee", "گھی", "بناسپتی گھی", "غوړي", "گيهه"],
       "category": "grocery"
     },
     "daal_chana": {
@@ -260,7 +260,7 @@
       "unit": "kg",
       "name_en": "Tea Leaves (Chai Patti)",
       "name_ur": "چائے کی پتی",
-      "aliases": ["chai", "chai patti", "tea", "tapal", "lipton", "چائے", "چائے کی پتی"],
+      "aliases": ["chai", "chai patti", "tea", "tapal", "lipton", "چائے", "چائے کی پتی", "چاہ پتی", "چاې"],
       "category": "grocery"
     }
   }

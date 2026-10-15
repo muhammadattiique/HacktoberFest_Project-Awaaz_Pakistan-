@@ -93,6 +93,26 @@ def test_price_comparison_calculation():
     assert comp_crit["severity"] == "Critical"  # >= 50% threshold
 
 
+def test_find_all_items_resolves_pashto_sindhi_staples():
+    """BUG 2 — Pashto/Sindhi regional spellings and the Punjabi tea alias resolve
+    via script-variant folding + the new aliases, without fabricating commodities.
+    """
+    # الو (Pashto/common Arabic-script potato) -> aloo
+    aloo_ids = {c for c, _ in rate_service.find_all_items("الو")}
+    assert "aloo" in aloo_ids
+
+    # پياز (Pashto, Arabic yeh U+064A) must fold to rate-list پیاز (Urdu yeh) -> pyaaz
+    pyaaz_ids = {c for c, _ in rate_service.find_all_items("پياز")}
+    assert "pyaaz" in pyaaz_ids
+
+    # چاہ پتی (Punjabi Shahmukhi tea) -> the EXISTING chai_patti item
+    chai_ids = {c for c, _ in rate_service.find_all_items("چاہ پتی")}
+    assert "chai_patti" in chai_ids
+
+    # No fabrication: a sentence with no commodity token resolves to nothing.
+    assert set(rate_service.find_all_items("mehngai zabardasti dukandar")) == set()
+
+
 def test_reload_rate_list():
     """Verify dynamic reloading works without errors."""
     success = rate_service.reload()

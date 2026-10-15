@@ -96,6 +96,18 @@ def test_sindhi_and_balochi_numbers():
     assert "200" in parsed_sd
 
 
+def test_pashto_number_words():
+    """BUG 2 — Pashto number words and the missing Punjabi تن/پنجاہ parse to digits."""
+    # Pashto: يو سل پنځوس = 100 + 50 = 150
+    assert "150" in parse_word_numbers("يو سل پنځوس")
+
+    # Pashto: دوه سوه = 200
+    assert "200" in parse_word_numbers("دوه سوه")
+
+    # Punjabi: تن سو پنجاہ = 300 + 50 = 350
+    assert "350" in parse_word_numbers("تن سو پنجاہ")
+
+
 def test_quantity_unit_derivations():
     """Verify derivation of unit prices from quantities like pao, aadha kilo, seer, total bill."""
     # "100 rupay ka aadha kilo" -> 0.5kg for 100 -> 200/kg
