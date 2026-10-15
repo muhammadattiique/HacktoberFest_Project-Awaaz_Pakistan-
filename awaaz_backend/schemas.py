@@ -94,7 +94,12 @@ class ComplaintResponse(BaseModel):
 class MultiComplaintResponse(BaseModel):
     submission_id: str
     complaints: List[ComplaintResponse]
-    primary: ComplaintResponse
+    # ``primary`` is None only when a submission contained items that are ALL
+    # priced at or below the official rate (no violation registered).
+    primary: Optional[ComplaintResponse] = None
+    # Human-readable note, e.g. when nothing was registered because every
+    # mentioned item was within the official rate.
+    message: Optional[str] = None
 
 
 class ComplaintListResponse(BaseModel):

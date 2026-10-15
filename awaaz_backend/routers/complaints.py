@@ -81,8 +81,37 @@ async def _persist_submission(
     items = await run_in_threadpool(ai_pipeline.parse_complaint_items, transcript_text)
     submission_id = str(uuid.uuid4())
 
+    # Only register genuine violations. A price-overcharge item whose reported
+    # price is at or below the official notified rate is NOT a violation and must
+    # not be recorded. Non-price categories (food safety / municipal) are always
+    # kept, and price items with no detected price (price <= 0) are kept so a
+    # magistrate can review them rather than silently dropping a citizen report.
+    def _is_registrable(extracted: Dict[str, Any]) -> bool:
+        if extracted.get("category") != "PERA - Overpricing":
+            return True  # food safety / municipal -> always register
+        reported = extracted.get("reported_price") or 0.0
+        if reported <= 0:
+            return True  # price not understood -> keep for review
+        overcharge = extracted.get("percentage_overcharge") or 0.0
+        return overcharge > 0  # overpricing item: register only if above rate
+
+    registrable = [it for it in items if _is_registrable(it)]
+
+    # Every mentioned item was a price item priced at or below the official rate:
+    # nothing to register. Return an empty, non-error result the UI can show.
+    if not registrable:
+        return MultiComplaintResponse(
+            submission_id=submission_id,
+            complaints=[],
+            primary=None,
+            message=(
+                "No complaint was registered. Every item mentioned is priced at "
+                "or below the official rate, so there is no overcharging violation."
+            ),
+        )
+
     complaints: List[Complaint] = []
-    for extracted in items:
+    for extracted in registrable:
         complaints.append(
             Complaint(
                 submission_id=submission_id,

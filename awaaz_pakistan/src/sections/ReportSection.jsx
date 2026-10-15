@@ -780,6 +780,24 @@ export const ReportSection = ({
             )}
           </div>
         )}
+
+        {/* No-violation notice: every item was priced at or below the official
+            rate, so nothing was registered. */}
+        {verdictData &&
+          verdictData.complaints.length === 0 &&
+          verdictData.message && (
+            <div className="mt-12 animate-in fade-in slide-in-from-bottom-6 duration-500">
+              <div className="p-6 sm:p-8 rounded-3xl border border-emerald-500/30 bg-[#09140d]/90 shadow-[0_0_40px_rgba(48,164,108,0.2)] text-center">
+                <Check className="w-8 h-8 text-emerald-400 mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-emerald-300 mb-1.5">
+                  {t.verdict.noViolationTitle}
+                </h3>
+                <p className="text-sm text-white/70 max-w-md mx-auto">
+                  {verdictData.message}
+                </p>
+              </div>
+            </div>
+          )}
       </div>
     </section>
   );

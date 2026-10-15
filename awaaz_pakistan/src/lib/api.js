@@ -44,12 +44,14 @@ export const normalizeComplaintResult = (data) => {
       submissionId: data.submission_id ?? null,
       complaints: data.complaints,
       primary: data.primary ?? data.complaints[0] ?? null,
+      message: data.message ?? null,
     };
   }
   return {
     submissionId: data?.submission_id ?? null,
     complaints: data ? [data] : [],
     primary: data ?? null,
+    message: data?.message ?? null,
   };
 };
 

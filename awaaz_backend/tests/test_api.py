@@ -170,6 +170,111 @@ def test_multi_item_complaint_splits_into_two_rows():
     assert patch_res.json()["submission_id"] == submission_id
 
 
+def test_text_complaint_drops_under_rate_items(monkeypatch):
+    """Router-level under-rate filter: a price item at/below the official rate
+    is NOT registered, while a genuine overcharge in the same submission is.
+
+    The parser still *returns* the under-rate item (compliant), so this is
+    purely the ``_persist_submission`` registration policy. ``parse_complaint_items``
+    is stubbed so the two layers are tested independently and deterministically.
+    """
+    stub_items = [
+        {  # Under-rate (compliant) -> must be dropped by the router.
+            "item_name": "Potato",
+            "item_canonical_id": "aloo",
+            "unit": "kg",
+            "reported_price": 80.0,
+            "official_price": 100.0,
+            "price_difference_pkr": -20.0,
+            "percentage_overcharge": -20.0,
+            "category": "PERA - Overpricing",
+            "urgency": "Low",
+            "detected_language": "Roman Urdu",
+            "extraction_confidence": 0.95,
+            "needs_review": False,
+            "native_response": "Aap ki shikayat darj kar li gayi hai.",
+            "routing_agency": "PERA",
+            "helpline_reference": "1717",
+        },
+        {  # Genuine violation -> must be registered.
+            "item_name": "Onion",
+            "item_canonical_id": "pyaaz",
+            "unit": "kg",
+            "reported_price": 200.0,
+            "official_price": 120.0,
+            "price_difference_pkr": 80.0,
+            "percentage_overcharge": 66.7,
+            "category": "PERA - Overpricing",
+            "urgency": "High",
+            "detected_language": "Roman Urdu",
+            "extraction_confidence": 0.95,
+            "needs_review": False,
+            "native_response": "Aap ki shikayat darj kar li gayi hai.",
+            "routing_agency": "PERA",
+            "helpline_reference": "1717",
+        },
+    ]
+    monkeypatch.setattr(
+        "routers.complaints.ai_pipeline.parse_complaint_items",
+        lambda _: stub_items,
+    )
+
+    res = client.post(
+        "/api/complaints/text",
+        json={"transcript_text": "Aloo 80 aur pyaaz 200 rupay kilo."},
+    )
+    assert res.status_code == 201
+    body = res.json()
+
+    # Only the genuine violation was registered.
+    assert len(body["complaints"]) == 1
+    assert body["complaints"][0]["item_canonical_id"] == "pyaaz"
+    assert body["primary"]["item_canonical_id"] == "pyaaz"
+    # The under-rate potato never became a row.
+    assert all(c["item_canonical_id"] != "aloo" for c in body["complaints"])
+
+
+def test_text_complaint_all_under_rate_registers_nothing(monkeypatch):
+    """When EVERY mentioned item is at/below the official rate, nothing is
+    registered: empty complaints list, no primary, and a human-readable note."""
+    stub_items = [
+        {
+            "item_name": "Potato",
+            "item_canonical_id": "aloo",
+            "unit": "kg",
+            "reported_price": 80.0,
+            "official_price": 100.0,
+            "price_difference_pkr": -20.0,
+            "percentage_overcharge": -20.0,
+            "category": "PERA - Overpricing",
+            "urgency": "Low",
+            "detected_language": "Roman Urdu",
+            "extraction_confidence": 0.95,
+            "needs_review": False,
+            "native_response": "Aap ki shikayat darj kar li gayi hai.",
+            "routing_agency": "PERA",
+            "helpline_reference": "1717",
+        },
+    ]
+    monkeypatch.setattr(
+        "routers.complaints.ai_pipeline.parse_complaint_items",
+        lambda _: stub_items,
+    )
+
+    res = client.post(
+        "/api/complaints/text",
+        json={"transcript_text": "Aloo 80 rupay kilo bik raha hai."},
+    )
+    assert res.status_code == 201
+    body = res.json()
+
+    assert body["complaints"] == []
+    assert body["primary"] is None
+    assert body["message"]
+    assert "below the official rate" in body["message"]
+    assert body["submission_id"] is not None
+
+
 def test_voice_transcription_failure_returns_503(monkeypatch):
     """Whisper service failures are distinct from genuine silent audio."""
     monkeypatch.setattr(

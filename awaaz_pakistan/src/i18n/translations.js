@@ -138,6 +138,7 @@ export const translations = {
       nativeResponse: "Citizen Advisory",
       viewOnMap: "Incident Location Pin",
       violationsCount: "{count} violations detected from your report",
+      noViolationTitle: "No overcharging found",
     },
     // Impact Stats
     stats: {
@@ -372,6 +373,7 @@ export const translations = {
       nativeResponse: "شہری کے لیے جوابی پیغام",
       viewOnMap: "جائے وقوعہ کا نقشہ",
       violationsCount: "آپ کی اطلاع سے {count} خلاف ورزیاں سامنے آئیں",
+      noViolationTitle: "کوئی زیادہ قیمت وصولی نہیں ملی",
     },
     stats: {
       badge: "لائیو اعداد و شمار",
