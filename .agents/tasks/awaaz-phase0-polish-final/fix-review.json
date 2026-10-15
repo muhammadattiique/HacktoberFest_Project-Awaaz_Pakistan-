@@ -1,0 +1,16 @@
+{
+  "verdict": "APPROVED",
+  "summary": "Both bugs are fixed cleanly and scoped to the backend parser. BUG 1: _segment_clauses now splits on the native connectives ` او ` (Pashto), ` تے ` (Punjabi Shahmukhi), and ` ۽ ` (Sindhi), and a new positional helper (_attribute_prices_positionally) assigns each commodity in a 2+-commodity clause its nearest-following price (nearest-preceding fallback, each token consumed once), handing _reconcile_item a per-commodity sub-clause so a trailing item can no longer steal the leader's price. The single-commodity own-clause/borrow-next (` bhi `) path and de-dupe are untouched. BUG 2: a conservative Arabic->Urdu fold (yeh/alef-maksura/kaf only, heh deliberately unfolded) applied symmetrically to alias-map keys and query text resolves Pashto پياز to rate-list پیاز; Pashto/Sindhi staple aliases plus Punjabi/Pashto tea aliases on the existing chai_patti (price unchanged, no new item) are added; the full Pashto numeral set and Punjabi تن=3/پنجاہ=50 land in BASIC_NUMBER_WORDS with careful compound ordering (سوه before سو, زره before زر). All verified: pytest tests/ -q = 63 passed (Ollama live); the probes return ['aloo'] ['pyaaz'] ['chai_patti'], 150/200/350 for the number words, two separate clauses for the Pashto split, and empty for the phantom-Chicken check. The exactly-7 no-Chicken, under-rate-kept, and aaloo+pyaaz pyaaz=200 invariants still pass, and the new Pashto 4-item (150/200/250/180) and Punjabi rice=350 end-to-end tests pass. The word-boundary matching discipline is not widened, complaints.py under-rate filtering and auth/CORS/schema and lazy whisper imports are untouched, native spellings carry greppable NATIVE-REVIEW-REQUIRED markers (rate-list spellings recorded in FEAT findings since JSON has no comments), and the work is committed locally on polish/final and not pushed. No blocker or major findings.",
+  "findings": [
+    {
+      "severity": "minor",
+      "file": "awaaz_backend/rate-list.json",
+      "detail": "Sindhi forms (بصر, ٽماٽا, ٽماٽو, کنڊ, چيني, ڪڪڙ, آنا, بيضا, گيهه, اٽو) and several Pashto forms (چاې, هګۍ, غوړي, رومي, بوره) are best-effort and unverified by a native speaker. Accepted for this task and flagged NATIVE-REVIEW-REQUIRED in code and FEAT-002 findings; schedule native-speaker review before production use. Not blocking."
+    },
+    {
+      "severity": "minor",
+      "file": "awaaz_backend/rate-list.json",
+      "detail": "The added Sindhi چيني (Arabic yeh U+064A) folds to the same alias-map key as sugar's existing چینی; both map to canonical id chini so the collision is benign today. Note it so a future alias on a different item does not silently reuse that folded key. Not blocking."
+    }
+  ]
+}

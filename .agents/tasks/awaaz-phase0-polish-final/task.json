@@ -1,0 +1,7 @@
+{
+  "task_id": "awaaz-phase0-polish-final",
+  "task_description": "Fix two backend bugs in Awaaz Pakistan multi-item complaint parsing: (BUG 1) price mis-attribution on long/multi-script chained complaints caused by missing clause-segmentation connectives and whole-clause price extraction when a clause holds 2+ commodities; (BUG 2) Pashto/Sindhi regional-script item names and number words not recognized. Preserve the existing under-rate filtering, auth/CORS/schema, and the 7-item no-Chicken invariant. Branch polish/final, commit locally, do not push.",
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null
+}
