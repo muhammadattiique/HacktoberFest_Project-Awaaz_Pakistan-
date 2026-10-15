@@ -119,6 +119,81 @@ def test_under_rate_llm_high_hint_is_overridden():
     assert by_id["aloo"]["urgency"] != "High"
 
 
+def test_english_comma_and_chain_each_item_gets_own_price():
+    """BUG 1 regression — comma + ` and ` chained English clauses.
+
+    "...potatoes at 150 ..., onions at 200 ..., tomatoes at 250 ... and sugar
+    at 180 ..." must attribute EACH item the price in its OWN clause. The final
+    " and sugar" pair used to collapse into tomato's clause, so sugar grabbed
+    250 instead of its own 180. LLM is stubbed so this is deterministic and the
+    rule-only clause attribution is exercised directly.
+    """
+    text = (
+        "Hello sir, in Raja Bazaar the shopkeeper is selling potatoes at 150 "
+        "rupees per kilo, onions at 200 rupees per kilo, tomatoes at 250 rupees "
+        "per kilo and sugar at 180 rupees per kilo. The official rates are much "
+        "lower. Please take action."
+    )
+    with patch.object(ai_pipeline, "_call_ollama_llm_multi", return_value=None):
+        items = ai_pipeline.parse_complaint_items(text)
+    by_id = {it["item_canonical_id"]: it for it in items}
+
+    # "sugar" resolves to the canonical "chini" (Sugar) id.
+    assert {"aloo", "pyaaz", "tamatar", "chini"}.issubset(by_id.keys()), by_id.keys()
+
+    # Each item carries the price from its OWN clause.
+    assert by_id["aloo"]["reported_price"] == 150.0
+    assert by_id["pyaaz"]["reported_price"] == 200.0
+    assert by_id["tamatar"]["reported_price"] == 250.0
+    # The regression: sugar must be 180, NOT tomato's 250.
+    assert by_id["chini"]["reported_price"] == 180.0, by_id["chini"]
+    assert by_id["chini"]["percentage_overcharge"] == pytest.approx(28.6, abs=0.2)
+
+    # BUG 2 — an English complaint gets an English acknowledgment, not Roman Urdu.
+    for it in items:
+        assert it["detected_language"] == "English", it
+        ack = (it.get("native_response") or "").lower()
+        assert "aap ki shikayat" not in ack, it
+        assert "shukriya" not in ack, it
+
+
+def test_aaloo_pyaaz_roman_driver_pyaaz_200_not_regressed():
+    """BUG 1 must not regress the aaloo + pyaaz Roman case.
+
+    "Pyaaz bhi 200 rupay kilo" trails its price in the next ` bhi ` clause, so
+    pyaaz must still borrow the adjacent 200 and aaloo must keep its own 150.
+    LLM stubbed so the clause-borrow logic is exercised directly.
+    """
+    text = "Aloo 150 rupay kilo bech raha hai. Pyaaz bhi 200 rupay kilo le raha hai."
+    with patch.object(ai_pipeline, "_call_ollama_llm_multi", return_value=None):
+        items = ai_pipeline.parse_complaint_items(text)
+    by_id = {it["item_canonical_id"]: it for it in items}
+    assert by_id["pyaaz"]["reported_price"] == 200.0, by_id["pyaaz"]
+    assert by_id["aloo"]["reported_price"] == 150.0, by_id["aloo"]
+
+
+def test_english_acknowledgment_is_english_not_roman_urdu():
+    """BUG 2 regression — even if the LLM emits a Roman-Urdu acknowledgment for
+    an English complaint, the stored native_response must be English."""
+    fake_llm = [{
+        "item_name": "Potato",
+        "reported_price": 150,
+        "category": "PERA - Overpricing",
+        "urgency": "High",
+        "detected_language": "English",
+        # Model drift: Roman-Urdu reply on an English complaint.
+        "native_response": "Aap ki shikayat darj kar li gayi hai. Shukriya.",
+    }]
+    text = "The shopkeeper is selling potatoes at 150 rupees per kilo. The official rate is lower."
+    with patch.object(ai_pipeline, "_call_ollama_llm_multi", return_value=fake_llm):
+        items = ai_pipeline.parse_complaint_items(text)
+    potato = {it["item_canonical_id"]: it for it in items}["aloo"]
+    assert potato["detected_language"] == "English"
+    ack = potato["native_response"].lower()
+    assert "aap ki shikayat" not in ack
+    assert "thank you" in ack
+
+
 def test_highest_overcharge_sorts_first():
     """After the existing overcharge-desc sort the biggest violation is first,
     and an under-rate item never leads."""

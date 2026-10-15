@@ -293,6 +293,61 @@ def _load_wav_mono_float32(path: str) -> np.ndarray:
     return np.ascontiguousarray(audio, dtype=np.float32)
 
 
+# Roman-Urdu markers used to detect when the small LLM has drifted into Roman
+# Urdu for a non-Roman-Urdu complaint (the acknowledgment must follow the
+# per-item detected language, not whatever the model happened to emit).
+_ROMAN_URDU_ACK_MARKERS = (
+    "aap ki shikayat",
+    "shikayat darj",
+    "karwai ke liye",
+    "price control magistrate",
+    "mutalliqa authority",
+    "shukriya",
+)
+
+# English markers used to reject an English acknowledgment when the detected
+# language is NOT English (e.g. the model answering a Roman-Urdu complaint in
+# English).
+_ENGLISH_ACK_MARKERS = (
+    "your complaint",
+    "please be assured",
+    "dear citizen",
+    "has been registered",
+    "has been routed",
+    "thank you",
+)
+
+
+def _native_hint_matches_language(native_hint: str, det_lang: str) -> bool:
+    """Return True when an LLM-supplied acknowledgment is written in ``det_lang``.
+
+    The acknowledgment must be in the same language/script as the per-item
+    detected language. Urdu/Punjabi/Sindhi/Balochi/Pashto all use Arabic script
+    here, so they require Arabic-script characters. English must look English
+    (and must NOT be Roman Urdu). Roman Urdu must NOT read as plain English.
+    When the hint disagrees with ``det_lang`` we reject it so the deterministic
+    ``generate_native_acknowledgment`` produces the correct-language text.
+    """
+    if not native_hint:
+        return False
+    hint = native_hint.strip()
+    lower = hint.lower()
+    has_arabic_script = any(
+        "\u0600" <= ch <= "\u06FF" or "\u0750" <= ch <= "\u077F" for ch in hint
+    )
+    has_roman_urdu = any(m in lower for m in _ROMAN_URDU_ACK_MARKERS)
+    has_english = any(m in lower for m in _ENGLISH_ACK_MARKERS)
+
+    if det_lang in ("Urdu", "Punjabi", "Sindhi", "Balochi", "Pashto"):
+        # These render in Arabic script; a Latin-only hint is a drift.
+        return has_arabic_script
+    if det_lang == "English":
+        # Must look English and must not be a Roman-Urdu canned reply.
+        return has_english and not has_roman_urdu and not has_arabic_script
+    # Roman Urdu: must be Latin script and not plain English wording.
+    return not has_arabic_script and not (has_english and not has_roman_urdu)
+
+
 class AIPipeline:
     def __init__(self):
         self._whisper_model = None
@@ -562,14 +617,19 @@ class AIPipeline:
         """Split a transcript into per-commodity clauses.
 
         Splits on sentence punctuation (``.`` ``۔`` ``!`` ``?`` newline) AND the
-        enumerating connectives that separate commodities in Pakistani
-        code-switching (` bhi `, ` بھی `, ` aur `, ` اور `, and commas ``،``/``,``).
-        Fragments are stripped and empties dropped.
+        enumerating connectives that separate item-price pairs in Pakistani
+        code-switching: commas (``،``/``,``), the Roman/Urdu list connectives
+        (` aur `, ` اور `), the English ` and `, Punjabi ` tay `, Sindhi/Balochi
+        ` o `, and the price-trailing marker ` bhi `/` بھی `. Splitting on
+        ` and `/` aur `/` tay `/` o ` (not only commas) is what keeps the final
+        "...tomatoes at 250 ... and sugar at 180 ..." pair from collapsing into
+        one clause where sugar would borrow tomato's 250. Fragments are stripped
+        and empties dropped.
         """
         if not text:
             return []
         parts = re.split(
-            r"\.|۔|!|\?|\n| bhi | بھی | aur | اور |،|,",
+            r"\.|۔|!|\?|\n| bhi | بھی | aur | اور | and | tay | o |،|,",
             text,
         )
         return [p.strip() for p in parts if p and p.strip()]
@@ -670,12 +730,16 @@ class AIPipeline:
             agency = "Capital Development Authority (CDA / MCI) / WASA Rawalpindi"
             helpline = settings.CDA_MUNICIPAL_HELPLINE
 
-        # 7. Native acknowledgment: keep usable LLM hint, else generate it.
+        # 7. Native acknowledgment: keep a usable LLM hint ONLY when it is
+        # written in the same language as the per-item detected language;
+        # otherwise generate the deterministic acknowledgment for det_lang. The
+        # small model frequently drifts to Roman Urdu regardless of the input
+        # language (e.g. an English complaint getting a Roman-Urdu "Aap ki
+        # shikayat..." reply), so the hint must agree with det_lang before we
+        # trust its wording. This keeps the acknowledgment consistent with the
+        # final_detected_lang pinned by the caller.
         final_native_response = None
-        if native_hint and len(native_hint) > 10 and not (
-            det_lang == "Roman Urdu"
-            and any(w in native_hint.lower() for w in ["your complaint", "please be assured", "dear citizen"])
-        ):
+        if native_hint and len(native_hint) > 10 and _native_hint_matches_language(native_hint, det_lang):
             final_native_response = native_hint
         if not final_native_response:
             final_native_response = generate_native_acknowledgment(
